@@ -1,0 +1,50 @@
+﻿################################################################################
+# .NET / Visual Studio
+################################################################################
+
+# Build output
+[Bb]in/
+[Oo]bj/
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Aa]rtifacts/
+[Bb]uild/
+[Ll]og/
+[Ll]ogs/
+
+# Visual Studio (all solution / repo levels)
+.vs/
+**/.vs/
+**/.vs/**
+*.user
+*.userosscache
+*.suo
+*.cache
+*.db
+*.db-shm
+*.db-wal
+*.wsuo
+*.slnx.sqlite
+**/FileContentIndex/
+**/DesignTimeBuild/
+**/CopilotIndices/
+
+# Rider
+.idea/
+
+# NuGet
+*.nupkg
+**/packages/*
+!**/packages/build/
+
+# Test results
+[Tt]est[Rr]esult*/
+*.trx
+*.coverage
+*.coveragexml
+
+# OS
+Thumbs.db
+.DS_Store

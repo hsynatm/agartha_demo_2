@@ -1,1 +1,13 @@
-<Solution />
+<Solution>
+  <Folder Name="/Common/">
+    <Project Path="Common/AMMS.Core/AMMS.Core.csproj" />
+    <Project Path="Common/AMMS.Infrastructure/AMMS.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/Hosts/">
+    <Project Path="Hosts/AMMS.Api/AMMS.Api.csproj" />
+  </Folder>
+  <Folder Name="/Modules/" />
+  <Folder Name="/SolutionItems/">
+    <File Path="SolutionItems/oku.txt" />
+  </Folder>
+</Solution>
