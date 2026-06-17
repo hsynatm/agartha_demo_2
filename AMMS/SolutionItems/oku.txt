@@ -5,9 +5,12 @@
 1- HBYP.MainApi selected proje yapılır
 2- Tools/Nuget Package Manager/ Package Manager Console seçilir
 3- Açılan pencerede Default proje hangi servis seçilecek ise o servisin "Infrastructure" projesi seçilir. Örnekolarak  "HBYP.VarlikVeEnvanterYonetimi.Infrastructure" gibi
-4- Add-Migration 2026_06_16_2 -OutputDir Persistence\Migrations
-5- Update-Database
+4- Add-Migration 2026_06_17_3 -Context VarlikVeEnvanterDbContext  -OutputDir Persistence\Migrations
+5- Update-Database -Context VarlikVeEnvanterDbContext
 
 
+////////// migarate  işlemi HBYP.Infrastructure  //////
 
 
+Add-Migration 2026_06_17_2 -Context AuditDbContext -OutputDir Auditing\Migrations
+Update-Database -Context AuditDbContext
