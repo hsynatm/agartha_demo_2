@@ -1,0 +1,5 @@
+{
+  "errors.bakim.not_found": "Maintenance work order was not found.",
+  "errors.bakim.update_final": "A completed or cancelled work order cannot be updated.",
+  "errors.bakim.past_date": "The planned date cannot be in the past."
+}

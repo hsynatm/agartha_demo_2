@@ -1,0 +1,5 @@
+{
+  "errors.ariza.not_found": "Fault record was not found.",
+  "errors.ariza.create_closed": "A new fault record cannot be created in a closed state.",
+  "errors.ariza.update_closed": "A closed fault record cannot be updated."
+}

@@ -1,0 +1,20 @@
+{
+  "errors.shared.validation_summary": "Bir veya daha fazla doğrulama hatası oluştu.",
+  "errors.shared.not_found": "İstenen kaynak bulunamadı.",
+  "errors.shared.unauthorized": "Kimlik doğrulama gerekli.",
+  "errors.shared.forbidden": "Bu işlem için yetkiniz yok.",
+  "errors.shared.internal": "Beklenmeyen bir hata oluştu. Lütfen destek ile iletişime geçin.",
+  "errors.shared.bad_request": "İstek geçersiz.",
+  "errors.shared.http_error": "İstek tamamlanamadı.",
+  "errors.shared.title.validation": "Doğrulama Hatası",
+  "errors.shared.title.business": "İş Kuralı Hatası",
+  "errors.shared.title.not_found": "Bulunamadı",
+  "errors.shared.title.unauthorized": "Yetkilendirme Gerekli",
+  "errors.shared.title.forbidden": "Erişim Engellendi",
+  "errors.shared.title.internal": "Sunucu Hatası",
+  "errors.shared.title.bad_request": "Geçersiz İstek",
+  "errors.shared.title.http_error": "İstek Hatası",
+  "validation.required": "{field} alanı zorunludur.",
+  "validation.max_length": "{field} alanı izin verilen uzunluğu aşıyor.",
+  "validation.invalid": "{field} alanı geçersiz."
+}

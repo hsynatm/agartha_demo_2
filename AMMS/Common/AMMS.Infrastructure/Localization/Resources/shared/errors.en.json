@@ -1,0 +1,20 @@
+{
+  "errors.shared.validation_summary": "One or more validation errors occurred.",
+  "errors.shared.not_found": "The requested resource was not found.",
+  "errors.shared.unauthorized": "Authentication is required.",
+  "errors.shared.forbidden": "You do not have permission to perform this action.",
+  "errors.shared.internal": "An unexpected error occurred. Please contact support.",
+  "errors.shared.bad_request": "The request is invalid.",
+  "errors.shared.http_error": "The request could not be completed.",
+  "errors.shared.title.validation": "Validation Error",
+  "errors.shared.title.business": "Business Error",
+  "errors.shared.title.not_found": "Not Found",
+  "errors.shared.title.unauthorized": "Unauthorized",
+  "errors.shared.title.forbidden": "Forbidden",
+  "errors.shared.title.internal": "Internal Server Error",
+  "errors.shared.title.bad_request": "Bad Request",
+  "errors.shared.title.http_error": "Request Error",
+  "validation.required": "The {field} field is required.",
+  "validation.max_length": "The {field} field exceeds the allowed length.",
+  "validation.invalid": "The {field} field is invalid."
+}

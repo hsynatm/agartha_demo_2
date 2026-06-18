@@ -1,0 +1,5 @@
+{
+  "errors.bakim.not_found": "لم يتم العثور على أمر عمل الصيانة.",
+  "errors.bakim.update_final": "لا يمكن تحديث أمر عمل مكتمل أو ملغى.",
+  "errors.bakim.past_date": "لا يمكن أن يكون التاريخ المخطط في الماضي."
+}

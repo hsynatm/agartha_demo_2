@@ -1,0 +1,5 @@
+{
+  "errors.ariza.not_found": "Arıza kaydı bulunamadı.",
+  "errors.ariza.create_closed": "Yeni arıza kaydı kapatılmış durumda oluşturulamaz.",
+  "errors.ariza.update_closed": "Kapatılmış arıza kaydı güncellenemez."
+}

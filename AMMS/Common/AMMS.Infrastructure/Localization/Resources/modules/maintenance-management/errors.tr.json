@@ -1,0 +1,5 @@
+{
+  "errors.bakim.not_found": "Bakım iş emri bulunamadı.",
+  "errors.bakim.update_final": "Tamamlanmış veya iptal edilmiş iş emri güncellenemez.",
+  "errors.bakim.past_date": "Planlanan tarih geçmiş bir gün olamaz."
+}

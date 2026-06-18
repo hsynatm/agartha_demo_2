@@ -1,0 +1,5 @@
+{
+  "errors.ariza.not_found": "لم يتم العثور على سجل العطل.",
+  "errors.ariza.create_closed": "لا يمكن إنشاء سجل عطل جديد في حالة مغلقة.",
+  "errors.ariza.update_closed": "لا يمكن تحديث سجل عطل مغلق."
+}

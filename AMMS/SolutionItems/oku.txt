@@ -2,14 +2,14 @@
 
 ////////// migarate  işlemi//////
 
-1- HBYP.MainApi selected proje yapılır
+1- AMMS.Api selected proje yapılır
 2- Tools/Nuget Package Manager/ Package Manager Console seçilir
-3- Açılan pencerede Default proje hangi servis seçilecek ise o servisin "Infrastructure" projesi seçilir. Örnekolarak  "HBYP.VarlikVeEnvanterYonetimi.Infrastructure" gibi
+3- Açılan pencerede Default proje hangi servis seçilecek ise o servisin "Infrastructure" projesi seçilir. Örnek olarak "AMMS.AssetManagement.Infrastructure" gibi
 4- Add-Migration 2026_06_17_3 -Context VarlikVeEnvanterDbContext  -OutputDir Persistence\Migrations
 5- Update-Database -Context VarlikVeEnvanterDbContext
 
 
-////////// migarate  işlemi HBYP.Infrastructure  //////
+////////// migrate işlemi AMMS.Infrastructure  //////
 
 
 Add-Migration 2026_06_17_2 -Context AuditDbContext -OutputDir Auditing\Migrations
