@@ -1,10 +1,7 @@
-﻿using AMMS.Core.Entities;
-using AMMS.Core.Interfaces;
-using AMMS.Core.Models;
+﻿using AMMS.Core.Interfaces;
+using AMMS.Shared.Entities;
+using AMMS.Shared.Models;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace AMMS.Infrastructure.Persistence
 {

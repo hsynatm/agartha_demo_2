@@ -1,4 +1,5 @@
-﻿using AMMS.Core.Models;
+﻿
+using AMMS.Shared.Models;
 
 namespace AMMS.Core.Interfaces
 {

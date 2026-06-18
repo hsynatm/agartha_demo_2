@@ -1,4 +1,4 @@
-﻿namespace AMMS.Core.Constants
+﻿namespace AMMS.Shared.Constants
 {
     public static class LogPropertyNames
     {
@@ -32,5 +32,7 @@
 
         public const string EntityId = "EntityId";
     }
+
+
 
 }

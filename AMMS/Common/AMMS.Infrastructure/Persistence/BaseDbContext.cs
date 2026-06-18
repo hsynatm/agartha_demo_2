@@ -1,15 +1,11 @@
-﻿using AMMS.Core.Entities;
-using AMMS.Core.Interfaces;
+﻿using AMMS.Core.Interfaces;
+using AMMS.Shared.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
-using System;
-using System.Collections.Generic;
 using System.Reflection;
-using System.Text;
 
 namespace AMMS.Infrastructure.Persistence
 {
-
 
     public abstract class BaseDbContext : DbContext
     {

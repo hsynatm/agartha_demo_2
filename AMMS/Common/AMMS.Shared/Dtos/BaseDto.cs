@@ -1,4 +1,4 @@
-﻿namespace AMMS.Core.Dto
+﻿namespace AMMS.Shared.Dtos
 {
     public abstract class BaseDto
     {
@@ -14,5 +14,4 @@
 
         public bool IsDeleted { get; set; }
     }
-
 }

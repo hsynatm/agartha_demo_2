@@ -1,5 +1,5 @@
 ﻿using AMMS.Core.Interfaces;
-using AMMS.Core.Models;
+using AMMS.Shared.Models;
 
 namespace AMMS.Infrastructure.Services
 {

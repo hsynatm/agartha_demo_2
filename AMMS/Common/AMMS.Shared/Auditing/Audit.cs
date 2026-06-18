@@ -1,4 +1,4 @@
-﻿namespace AMMS.Core.Auditing
+﻿namespace AMMS.Shared.Auditing
 {
     public static class Audit
     {
@@ -13,5 +13,4 @@
         [AttributeUsage(AttributeTargets.Property)]
         public sealed class IgnoreAttribute : Attribute;
     }
-
 }

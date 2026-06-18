@@ -1,10 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using System.Reflection;
-using System.Text.Json;
-using AMMS.Core.Auditing;
-using AMMS.Core.Entities;
+﻿using AMMS.Shared.Auditing;
+using AMMS.Shared.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Reflection;
+using System.Text.Json;
 
 namespace AMMS.Infrastructure.Auditing
 {

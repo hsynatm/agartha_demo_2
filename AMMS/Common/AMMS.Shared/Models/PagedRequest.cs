@@ -1,4 +1,4 @@
-﻿namespace AMMS.Core.Models
+﻿namespace AMMS.Shared.Models
 {
     public class PagedRequest
     {
@@ -17,5 +17,4 @@
             set => _pageSize = value < 1 ? 10 : value > 100 ? 100 : value;
         }
     }
-
 }

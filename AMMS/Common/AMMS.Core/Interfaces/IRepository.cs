@@ -1,5 +1,5 @@
-﻿using AMMS.Core.Entities;
-using AMMS.Core.Models;
+﻿using AMMS.Shared.Entities;
+using AMMS.Shared.Models;
 
 namespace AMMS.Core.Interfaces
 {

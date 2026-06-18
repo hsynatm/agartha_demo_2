@@ -1,5 +1,5 @@
-﻿using AMMS.Core.Constants;
-using AMMS.Core.Interfaces;
+﻿using AMMS.Core.Interfaces;
+using AMMS.Shared.Constants;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;

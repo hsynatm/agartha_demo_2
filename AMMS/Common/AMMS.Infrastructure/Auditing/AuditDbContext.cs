@@ -1,5 +1,5 @@
-﻿using AMMS.Core.Auditing;
-using AMMS.Infrastructure.Persistence;
+﻿using AMMS.Infrastructure.Persistence;
+using AMMS.Shared.Auditing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using System.ComponentModel.DataAnnotations;

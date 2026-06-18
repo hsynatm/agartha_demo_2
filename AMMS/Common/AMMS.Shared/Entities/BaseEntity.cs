@@ -1,7 +1,7 @@
-﻿using AMMS.Core.Auditing;
+﻿using AMMS.Shared.Auditing;
 using System.ComponentModel.DataAnnotations;
 
-namespace AMMS.Core.Entities
+namespace AMMS.Shared.Entities
 {
     public abstract class BaseEntity
     {
@@ -24,5 +24,4 @@ namespace AMMS.Core.Entities
         [Audit.Ignore]
         public bool IsDeleted { get; set; }
     }
-
 }

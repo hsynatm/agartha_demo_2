@@ -1,4 +1,4 @@
-﻿namespace AMMS.Core.Models
+﻿namespace AMMS.Shared.Models
 {
     public class CurrentUser
     {
