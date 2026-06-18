@@ -1,4 +1,4 @@
-﻿namespace AMMS.Core.Interfaces.Persistence
+﻿namespace AMMS.Core.Interfaces
 {
     public interface IUnitOfWork
     {

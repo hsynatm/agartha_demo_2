@@ -6,11 +6,4 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Folder Include="Auditing\" />
-    <Folder Include="Constants\" />
-    <Folder Include="Exceptions\" />
-    <Folder Include="Localization\" />
-  </ItemGroup>
-
 </Project>

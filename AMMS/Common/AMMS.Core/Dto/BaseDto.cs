@@ -1,6 +1,6 @@
 ﻿namespace AMMS.Core.Dto
 {
-    public abstract class  BaseDto
+    public abstract class BaseDto
     {
         public Guid Id { get; set; }
 
@@ -13,7 +13,6 @@
         public string? UpdatedBy { get; set; }
 
         public bool IsDeleted { get; set; }
-
-
     }
+
 }

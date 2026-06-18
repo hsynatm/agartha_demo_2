@@ -1,7 +1,7 @@
 ﻿using AMMS.Core.Entities;
 using AMMS.Core.Models;
 
-namespace AMMS.Core.Interfaces.Persistence
+namespace AMMS.Core.Interfaces
 {
     public interface IRepository<T> where T : BaseEntity
     {
