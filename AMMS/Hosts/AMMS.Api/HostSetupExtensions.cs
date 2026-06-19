@@ -3,14 +3,10 @@ using AMMS.Infrastructure.Auditing;
 using AMMS.Infrastructure.Logging;
 using AssetManagement.Application;
 using AssetManagement.Infrastructure;
-using AssetManagement.Infrastructure.Persistence;
 using FaultManagement.Application;
 using FaultManagement.Infrastructure;
-using FaultManagement.Infrastructure.Persistence;
 using MaintenanceManagement.Application;
 using MaintenanceManagement.Infrastructure;
-using MaintenanceManagement.Infrastructure.Persistence;
-using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 
 namespace AMMS.Api;
@@ -47,23 +43,5 @@ internal static class HostSetupExtensions
         });
         app.MapGet("/", () => Results.Redirect("/scalar")).ExcludeFromDescription();
         return app;
-    }
-
-    public static async Task ApplyDevelopmentMigrationsAsync(this WebApplication app)
-    {
-        if (!app.Environment.IsDevelopment())
-        {
-            return;
-        }
-
-        using var scope = app.Services.CreateScope();
-        var services = scope.ServiceProvider;
-
-        await services.GetRequiredService<AuditDbContext>().Database.MigrateAsync();
-        await services.GetRequiredService<AssetManagementDbContext>().Database.MigrateAsync();
-        await services.GetRequiredService<FaultManagementDbContext>().Database.MigrateAsync();
-        await services.GetRequiredService<MaintenanceManagementDbContext>().Database.MigrateAsync();
-
-        app.Logger.LogInformation("Development database migrations applied.");
     }
 }

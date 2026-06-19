@@ -35,7 +35,7 @@ namespace AMMS.Infrastructure.Auditing
 
 			foreach (var entry in context.ChangeTracker.Entries())
 			{
-				if (entry.Entity is AuditLog or not Audit.IAuditableEntity)
+				if (entry.Entity is AuditLogEntry or not Audit.IAuditableEntity)
 				{
 					continue;
 				}
@@ -52,7 +52,7 @@ namespace AMMS.Infrastructure.Auditing
 
 		private void EnsureModuleNameConfigured()
 		{
-			if (string.IsNullOrWhiteSpace(_moduleContext.ModuleName))
+			if (string.IsNullOrWhiteSpace(_moduleName))
 			{
 				throw new InvalidOperationException("Audit module name is required.");
 			}
@@ -93,7 +93,7 @@ namespace AMMS.Infrastructure.Auditing
 			}
 
 			return new AuditEntry(
-				ModuleName: _moduleContext.ModuleName,
+				ModuleName: _moduleName,
 				EntityName: ResolveEntityName(entry),
 				EntityId: ResolveEntityId(entry),
 				OperationType: operationType.Value,

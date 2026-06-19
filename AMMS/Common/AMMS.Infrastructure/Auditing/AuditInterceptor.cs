@@ -12,7 +12,7 @@ namespace AMMS.Infrastructure.Auditing
         private readonly ICurrentUserService _currentUserService;
         private readonly ICurrentOrganizationService _currentOrganizationService;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly IAuditModuleContext _moduleContext;
+        private readonly string _moduleName;
         private readonly ILogger<AuditInterceptor> _logger;
 
         private readonly Dictionary<DbContextId, List<AuditEntry>> _pendingEntriesByContext = new();
@@ -22,15 +22,15 @@ namespace AMMS.Infrastructure.Auditing
             ICurrentUserService currentUserService,
             ICurrentOrganizationService currentOrganizationService,
             IHttpContextAccessor httpContextAccessor,
-            IAuditModuleContext moduleContext,
-            ILogger<AuditInterceptor> logger)
+            ILogger<AuditInterceptor> logger,
+            string moduleName)
         {
             _auditDbContext = auditDbContext;
             _currentUserService = currentUserService;
             _currentOrganizationService = currentOrganizationService;
             _httpContextAccessor = httpContextAccessor;
-            _moduleContext = moduleContext;
             _logger = logger;
+            _moduleName = moduleName;
         }
 
         public override InterceptionResult<int> SavingChanges(DbContextEventData eventData, InterceptionResult<int> result)
@@ -101,7 +101,7 @@ namespace AMMS.Infrastructure.Auditing
                 _logger.LogError(
                     ex,
                     "Operation failed. {Module} {Operation}",
-                    _moduleContext.ModuleName,
+                    _moduleName,
                     "AuditWrite");
             }
         }
@@ -117,28 +117,52 @@ namespace AMMS.Infrastructure.Auditing
 
             foreach (var entry in entries)
             {
-                _auditDbContext.AuditLogs.Add(new AuditLog
-                {
-                    Id = Guid.NewGuid(),
-                    OrganizationId = entry.OrganizationId,
-                    UserId = entry.UserId,
-                    ModuleName = entry.ModuleName,
-                    EntityName = entry.EntityName,
-                    EntityId = entry.EntityId,
-                    OperationType = entry.OperationType,
-                    OldValues = entry.OldValues,
-                    NewValues = entry.NewValues,
-                    ChangedColumns = entry.ChangedColumns,
-                    IpAddress = entry.IpAddress,
-                    TraceId = entry.TraceId,
-                    CreatedAt = now
-                });
+                AddAuditLog(entry, now);
             }
 
             await _auditDbContext.SaveChangesAsync(cancellationToken);
         }
+
+        private void AddAuditLog(AuditEntry entry, DateTime now)
+        {
+            var auditLog = CreateAuditLogEntity(entry.ModuleName);
+            auditLog.Id = Guid.NewGuid();
+            auditLog.OrganizationId = entry.OrganizationId;
+            auditLog.UserId = entry.UserId;
+            auditLog.ModuleName = entry.ModuleName;
+            auditLog.EntityName = entry.EntityName;
+            auditLog.EntityId = entry.EntityId;
+            auditLog.OperationType = entry.OperationType;
+            auditLog.OldValues = entry.OldValues;
+            auditLog.NewValues = entry.NewValues;
+            auditLog.ChangedColumns = entry.ChangedColumns;
+            auditLog.IpAddress = entry.IpAddress;
+            auditLog.TraceId = entry.TraceId;
+            auditLog.CreatedAt = now;
+
+            switch (entry.ModuleName)
+            {
+                case AuditModuleNames.AssetManagement:
+                    _auditDbContext.AssetManagementAuditLogs.Add((AssetManagementAuditLog)auditLog);
+                    break;
+                case AuditModuleNames.FaultManagement:
+                    _auditDbContext.FaultManagementAuditLogs.Add((FaultManagementAuditLog)auditLog);
+                    break;
+                case AuditModuleNames.MaintenanceManagement:
+                    _auditDbContext.MaintenanceManagementAuditLogs.Add((MaintenanceManagementAuditLog)auditLog);
+                    break;
+                default:
+                    throw new InvalidOperationException($"Unsupported audit module: {entry.ModuleName}");
+            }
+        }
+
+        private static AuditLogEntry CreateAuditLogEntity(string moduleName) =>
+            moduleName switch
+            {
+                AuditModuleNames.AssetManagement => new AssetManagementAuditLog(),
+                AuditModuleNames.FaultManagement => new FaultManagementAuditLog(),
+                AuditModuleNames.MaintenanceManagement => new MaintenanceManagementAuditLog(),
+                _ => throw new InvalidOperationException($"Unsupported audit module: {moduleName}")
+            };
     }
-
-
-
 }

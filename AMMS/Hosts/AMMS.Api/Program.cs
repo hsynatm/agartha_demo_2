@@ -35,7 +35,6 @@ try
 
     var app = builder.Build();
 
-    await app.ApplyDevelopmentMigrationsAsync();
     app.UseAmmsApiDocumentation();
     app.UseAmmsPipeline();
     app.UseAuthorization();

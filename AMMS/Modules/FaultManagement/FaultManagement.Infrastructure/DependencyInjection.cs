@@ -15,12 +15,10 @@ public static class DependencyInjection
 
     public static IServiceCollection AddFaultManagementInfrastructure(this IServiceCollection services, string connectionString)
     {
-        services.AddAuditModule(ModuleName);
-
         services.AddDbContext<FaultManagementDbContext>((serviceProvider, options) =>
         {
             options.UseNpgsql(connectionString);
-            options.UseAmmsAuditInterceptor(serviceProvider);
+            options.UseAmmsAuditInterceptor(serviceProvider, ModuleName);
         });
 
         services.AddScoped<IFaultManagementRepository, FaultManagementRepository>();

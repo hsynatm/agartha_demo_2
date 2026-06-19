@@ -14,6 +14,7 @@
 Add-Migration 2026_06_19_1 -Context AuditDbContext -OutputDir Auditing\Migrations
 Update-Database -Context AuditDbContext
 
+
 -- 2
 Add-Migration 2026_06_19_2 -Context AssetManagementDbContext  -OutputDir Persistence\Migrations
 Update-Database -Context AssetManagementDbContext

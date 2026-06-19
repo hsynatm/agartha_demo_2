@@ -7,10 +7,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace AMMS.Infrastructure.Auditing
 {
-
-
-    [Table("audit_logs")]
-    public class AuditLog
+    public abstract class AuditLogEntry
     {
         public Guid Id { get; set; }
 
@@ -21,13 +18,13 @@ namespace AMMS.Infrastructure.Auditing
         public string? UserId { get; set; }
 
         [MaxLength(100)]
-        public required string ModuleName { get; set; }
+        public string ModuleName { get; set; } = null!;
 
         [MaxLength(200)]
-        public required string EntityName { get; set; }
+        public string EntityName { get; set; } = null!;
 
         [MaxLength(100)]
-        public required string EntityId { get; set; }
+        public string EntityId { get; set; } = null!;
 
         public Audit.OperationType OperationType { get; set; }
 
@@ -49,6 +46,12 @@ namespace AMMS.Infrastructure.Auditing
         public DateTime CreatedAt { get; set; }
     }
 
+    public sealed class AssetManagementAuditLog : AuditLogEntry;
+
+    public sealed class FaultManagementAuditLog : AuditLogEntry;
+
+    public sealed class MaintenanceManagementAuditLog : AuditLogEntry;
+
     internal sealed record AuditEntry(
         string ModuleName,
         string EntityName,
@@ -68,15 +71,33 @@ namespace AMMS.Infrastructure.Auditing
         {
         }
 
-        public DbSet<AuditLog> AuditLogs => Set<AuditLog>();
+        public DbSet<AssetManagementAuditLog> AssetManagementAuditLogs => Set<AssetManagementAuditLog>();
+        public DbSet<FaultManagementAuditLog> FaultManagementAuditLogs => Set<FaultManagementAuditLog>();
+        public DbSet<MaintenanceManagementAuditLog> MaintenanceManagementAuditLogs => Set<MaintenanceManagementAuditLog>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.HasDefaultSchema("audit");
 
-            modelBuilder.Entity<AuditLog>(entity =>
+            ConfigureAuditTable<AssetManagementAuditLog>(
+                modelBuilder,
+                AuditModuleNames.GetTableName(AuditModuleNames.AssetManagement));
+
+            ConfigureAuditTable<FaultManagementAuditLog>(
+                modelBuilder,
+                AuditModuleNames.GetTableName(AuditModuleNames.FaultManagement));
+
+            ConfigureAuditTable<MaintenanceManagementAuditLog>(
+                modelBuilder,
+                AuditModuleNames.GetTableName(AuditModuleNames.MaintenanceManagement));
+        }
+
+        private static void ConfigureAuditTable<TAuditLog>(ModelBuilder modelBuilder, string tableName)
+            where TAuditLog : AuditLogEntry
+        {
+            modelBuilder.Entity<TAuditLog>(entity =>
             {
-                entity.ToTable("audit_logs");
+                entity.ToTable(tableName);
                 entity.HasKey(x => x.Id);
                 entity.Property(x => x.ModuleName).IsRequired();
                 entity.Property(x => x.EntityName).IsRequired();
@@ -96,23 +117,4 @@ namespace AMMS.Infrastructure.Auditing
             return new AuditDbContext(optionsBuilder.Options);
         }
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }

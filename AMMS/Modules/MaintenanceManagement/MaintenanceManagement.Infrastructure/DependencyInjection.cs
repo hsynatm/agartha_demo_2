@@ -15,12 +15,10 @@ public static class DependencyInjection
 
     public static IServiceCollection AddMaintenanceManagementInfrastructure(this IServiceCollection services, string connectionString)
     {
-        services.AddAuditModule(ModuleName);
-
         services.AddDbContext<MaintenanceManagementDbContext>((serviceProvider, options) =>
         {
             options.UseNpgsql(connectionString);
-            options.UseAmmsAuditInterceptor(serviceProvider);
+            options.UseAmmsAuditInterceptor(serviceProvider, ModuleName);
         });
 
         services.AddScoped<IMaintenanceManagementRepository, MaintenanceManagementRepository>();
