@@ -1,4 +1,6 @@
 ﻿using AMMS.Infrastructure.Localization;
+using AMMS.Infrastructure.Logging;
+using AMMS.Shared.Constants;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
@@ -56,13 +58,17 @@ namespace AMMS.Infrastructure.Middleware
             var culture = GetCulture(context);
             var mapped = MapException(exception, _environment, _localizer, culture);
 
+            var moduleName = ApiModuleNameResolver.ResolveFromPath(context.Request.Path.Value) ?? "Unknown";
+
             if (mapped.StatusCode >= StatusCodes.Status500InternalServerError)
             {
                 _logger.LogError(
                     exception,
-                    "Unhandled exception. {Module} {Operation} {TraceId} {RequestPath} {RequestMethod}",
-                    "AMMS.Infrastructure",
-                    "HttpRequest",
+                    "Request failed. {ModuleName} {ErrorCode} {LocalizationKey} {StatusCode} {TraceId} {RequestPath} {RequestMethod}",
+                    moduleName,
+                    mapped.ErrorCode,
+                    mapped.LocalizationKey,
+                    mapped.StatusCode,
                     context.TraceIdentifier,
                     context.Request.Path.Value,
                     context.Request.Method);
@@ -71,9 +77,11 @@ namespace AMMS.Infrastructure.Middleware
             {
                 _logger.LogWarning(
                     exception,
-                    "Request failed. {ErrorCode} {LocalizationKey} {TraceId} {RequestPath} {RequestMethod}",
+                    "Request failed. {ModuleName} {ErrorCode} {LocalizationKey} {StatusCode} {TraceId} {RequestPath} {RequestMethod}",
+                    moduleName,
                     mapped.ErrorCode,
                     mapped.LocalizationKey,
+                    mapped.StatusCode,
                     context.TraceIdentifier,
                     context.Request.Path.Value,
                     context.Request.Method);

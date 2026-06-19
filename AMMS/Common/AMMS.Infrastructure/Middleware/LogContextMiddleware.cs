@@ -33,9 +33,10 @@ namespace AMMS.Infrastructure.Middleware
             var correlationId = context.Items[CorrelationIdConstants.HttpContextItemKey] as string
                 ?? context.Request.Headers[CorrelationIdConstants.HeaderName].FirstOrDefault()
                 ?? traceId;
+            var moduleName = ApiModuleNameResolver.ResolveFromPath(requestPath);
 
             var userId = currentUserService.CurrentUser?.UserId;
-            var organizationId = currentOrganizationService.CurrentOrganization?.OrganizationId;
+            var tenantId = currentOrganizationService.CurrentOrganization?.OrganizationId;
 
             using (LogContext.PushProperty(LogPropertyNames.Application, _applicationName))
             using (LogContext.PushProperty(LogPropertyNames.EnvironmentName, _environmentName))
@@ -46,14 +47,11 @@ namespace AMMS.Infrastructure.Middleware
             using (LogContext.PushProperty(LogPropertyNames.RequestQuery, requestQuery))
             using (LogContext.PushProperty(LogPropertyNames.RequestMethod, context.Request.Method))
             using (LogContext.PushProperty(LogPropertyNames.UserId, userId))
-            using (LogContext.PushProperty(LogPropertyNames.OrganizationId, organizationId))
+            using (LogContext.PushProperty(LogPropertyNames.TenantId, tenantId))
+            using (LogContext.PushProperty(LogPropertyNames.ModuleName, moduleName))
             {
                 await _next(context);
             }
         }
     }
-
-
-
-
 }

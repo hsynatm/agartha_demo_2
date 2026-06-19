@@ -27,3 +27,130 @@ Update-Database -Context FaultManagementDbContext
 -- 4
 Add-Migration 2026_06_19_4 -Context MaintenanceManagementDbContext  -OutputDir Persistence\Migrations
 Update-Database -Context MaintenanceManagementDbContext
+
+
+
+////////// Graylog (dev / prod) //////
+
+## Onemli mimari not (Graylog 6+)
+
+Graylog 6, ayri OpenSearch container'i ile calismaz.
+"Graylog Data Node" (graylog-datanode) gerekir.
+Preflight ekraninda "No data nodes found" hatasi = datanode eksik veya henuz yapilandirilmamis.
+
+## Stack baslatma
+
+cd SolutionItems
+docker compose down -v
+docker compose up -d
+
+UI: http://localhost:9000
+
+## ILK GIRIS (onemli - Graylog 6)
+
+Graylog 6 ilk acilista "preflight/setup" ekrani gelir.
+Bu asamada admin/admin CALISMAZ.
+
+1) Gecici sifreyi logdan al:
+   docker logs graylog | findstr "Initial configuration"
+
+   Ornek cikti:
+   username 'admin' and password 'XXXXXXXX'
+
+2) Bu gecici sifre ile giris yap (setup wizard'i tamamla)
+
+## Preflight wizard (KRITIK - Skip kullanma)
+
+Wizard sirasi:
+1. Certificate Authority (CA) olustur
+2. Provision certificates ekraninda 30-60 sn bekle, gerekirse F5 ile yenile
+3. Data node listesinde "datanode" gorunmeli
+4. "Skip provisioning"e BASMA - bu adim sorunun kaynagi
+5. "Provision certificate and continue" aktif olunca tikla
+6. Wizard bitene kadar bekle (2-5 dk)
+
+Basari kontrolu:
+  docker ps --filter name=graylog
+  (graylog -> healthy olmali)
+  docker exec graylog-datanode sh -c "test -f /var/lib/graylog-datanode/opensearch/config/keystore.jks && echo OK"
+
+Eger data node gelmiyorsa veya buton pasifse:
+  docker compose down -v
+  docker compose up -d
+  (yukaridaki adimlari tekrarla, Skip etme)
+
+3) Setup tamamlandiktan SONRA kalici giris:
+   Kullanici: admin
+   Sifre: admin
+   (docker-compose GRAYLOG_ROOT_PASSWORD_SHA2 = admin hash)
+
+Ozet:
+- Ilk ekran  -> logdaki gecici sifre
+- Normal kullanim -> admin / admin
+
+## Kalici sifre sifirlama (dev)
+
+Eger gecici sifre kaybolduysa veya admin/admin hala olmuyorsa:
+cd SolutionItems
+docker compose down -v
+docker compose up -d
+docker logs graylog | findstr "Initial configuration"
+(yeni gecici sifre ile tekrar setup yap)
+
+GELF UDP/TCP port: 12201 (Serilog Tcp on 127.0.0.1 onerilir; Windows Docker icin Udp yerine Tcp)
+
+Graylog input: hem GELF UDP AMMS hem GELF TCP AMMS olmali.
+
+## Log seviye stratejisi (HBYP)
+
+Development -> Graylog:
+  Information, Warning, Error, Fatal
+  Debug Graylog'a gitmez (Console/File'da kalir)
+
+Production -> Graylog:
+  Warning, Error, Fatal
+  Information Graylog'a gitmez
+
+HTTP request log seviyeleri:
+  2xx / 3xx -> Information
+  4xx -> Warning
+  5xx / exception -> Error
+
+## Serilog konfig dosyalari
+
+- appsettings.Development.json -> Graylog restrictedToMinimumLevel: Information
+- appsettings.Production.json -> Graylog restrictedToMinimumLevel: Warning
+- appsettings.json -> Graylog host/port (localhost:12201)
+
+## Graylog arama ornekleri
+
+Tum dev API loglari:
+  Application:AMMS.Api AND EnvironmentName:Development
+
+CorrelationId ile izleme:
+  CorrelationId:<header-degeri>
+
+Modul bazli:
+  ModuleName:FaultManagement
+
+Hata takibi (Warning+):
+  Application:AMMS.Api AND (StatusCode:>=400 OR level:>=4)
+
+Validation hatalari:
+  Application:AMMS.Api AND ErrorCode:VALIDATION_ERROR
+
+Audit (dev):
+  Application:AMMS.Api AND message:"Audit entry written"
+
+## Manuel test (VS F5 sonrasi)
+
+1. POST Create 201 -> Graylog'da Information request logu
+2. POST bos body 400 -> Warning + ErrorCode + LocalizationKey
+3. GET olmayan kayit 404 -> Warning
+4. Istek header: X-Correlation-ID: test-123 -> CorrelationId:test-123 ile bulunur
+
+## Sorun giderme
+
+- graylog-opensearch Restarting ise: Docker Desktop memory artir (min 4GB) veya compose yeniden baslat
+- Log gelmiyorsa: netstat ile 12201 LISTENING kontrol et
+- API Docker icinde calisirsa hostname localhost yerine graylog olmali

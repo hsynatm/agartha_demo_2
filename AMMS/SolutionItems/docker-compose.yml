@@ -1,49 +1,74 @@
+# Graylog 6+ requires Graylog Data Node (not standalone OpenSearch).
+# Preflight wizard configures the datanode; then Graylog indexes logs.
+
 services:
 
   mongodb:
     image: mongo:7
     container_name: graylog-mongodb
     restart: unless-stopped
+    networks:
+      - graylog
     volumes:
       - mongodb_data:/data/db
 
-  opensearch:
-    image: opensearchproject/opensearch:2.15.0
-    container_name: graylog-opensearch
+  datanode:
+    image: graylog/graylog-datanode:6.1
+    container_name: graylog-datanode
+    hostname: datanode
     restart: unless-stopped
+    depends_on:
+      - mongodb
     environment:
-      - discovery.type=single-node
-      - plugins.security.disabled=true
-      - OPENSEARCH_JAVA_OPTS=-Xms1g -Xmx1g
+      GRAYLOG_DATANODE_NODE_ID_FILE: /var/lib/graylog-datanode/node-id
+      GRAYLOG_DATANODE_PASSWORD_SECRET: amms-graylog-secret-key-2026
+      GRAYLOG_DATANODE_MONGODB_URI: mongodb://mongodb:27017/graylog
     ulimits:
       memlock:
         soft: -1
         hard: -1
-    volumes:
-      - opensearch_data:/usr/share/opensearch/data
+      nofile:
+        soft: 65536
+        hard: 65536
     ports:
+      - "8999:8999"
       - "9200:9200"
+      - "9300:9300"
+    networks:
+      - graylog
+    volumes:
+      - graylog_datanode_data:/var/lib/graylog-datanode
 
   graylog:
     image: graylog/graylog:6.1
     container_name: graylog
+    hostname: server
     restart: unless-stopped
     depends_on:
       - mongodb
-      - opensearch
+      - datanode
+    entrypoint: /usr/bin/tini -- /docker-entrypoint.sh
     environment:
+      GRAYLOG_NODE_ID_FILE: /usr/share/graylog/data/node-id
       GRAYLOG_PASSWORD_SECRET: amms-graylog-secret-key-2026
       GRAYLOG_ROOT_PASSWORD_SHA2: 8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918
+      GRAYLOG_HTTP_BIND_ADDRESS: 0.0.0.0:9000
       GRAYLOG_HTTP_EXTERNAL_URI: http://localhost:9000/
-
       GRAYLOG_MONGODB_URI: mongodb://mongodb:27017/graylog
-      GRAYLOG_OPENSEARCH_HOSTS: http://opensearch:9200
-
     ports:
       - "9000:9000"
       - "12201:12201/udp"
       - "12201:12201/tcp"
+    networks:
+      - graylog
+    volumes:
+      - graylog_data:/usr/share/graylog/data
+
+networks:
+  graylog:
+    driver: bridge
 
 volumes:
   mongodb_data:
-  opensearch_data:
+  graylog_datanode_data:
+  graylog_data:

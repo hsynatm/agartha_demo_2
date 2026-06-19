@@ -32,6 +32,7 @@ namespace AMMS.Infrastructure.Logging
                 options.MessageTemplate =
                     "[{Application}] {RequestMethod} {RequestPath} => {StatusCode} ({Elapsed:0.0000}ms)";
 
+                // HBYP: 2xx/3xx -> Information, 4xx -> Warning, 5xx/exception -> Error
                 options.GetLevel = (httpContext, elapsed, exception) =>
                 {
                     if (exception is not null || httpContext.Response.StatusCode >= 500)
@@ -55,6 +56,7 @@ namespace AMMS.Infrastructure.Logging
 
                     var requestPath = httpContext.Request.Path.Value ?? string.Empty;
                     var requestQuery = SensitiveQueryStringMasker.Mask(httpContext.Request.QueryString.Value);
+                    var moduleName = ApiModuleNameResolver.ResolveFromPath(requestPath);
 
                     diagnosticContext.Set(LogPropertyNames.Application, hostEnvironment.ApplicationName);
                     diagnosticContext.Set(LogPropertyNames.EnvironmentName, hostEnvironment.EnvironmentName);
@@ -65,20 +67,17 @@ namespace AMMS.Infrastructure.Logging
                     diagnosticContext.Set(LogPropertyNames.RequestPath, requestPath);
                     diagnosticContext.Set(LogPropertyNames.RequestQuery, requestQuery);
                     diagnosticContext.Set(LogPropertyNames.StatusCode, httpContext.Response.StatusCode);
+                    diagnosticContext.Set(LogPropertyNames.ModuleName, moduleName);
 
                     var userService = httpContext.RequestServices.GetService<ICurrentUserService>();
                     var organizationService = httpContext.RequestServices.GetService<ICurrentOrganizationService>();
 
                     diagnosticContext.Set(LogPropertyNames.UserId, userService?.CurrentUser?.UserId);
-                    diagnosticContext.Set(LogPropertyNames.OrganizationId, organizationService?.CurrentOrganization?.OrganizationId);
+                    diagnosticContext.Set(LogPropertyNames.TenantId, organizationService?.CurrentOrganization?.OrganizationId);
                 };
             });
 
             return app;
         }
     }
-
-
-
-
 }

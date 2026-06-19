@@ -26,6 +26,9 @@ public class FaultManagementController : ApiBaseController
     [HttpGet("{id:guid}")]
     public async Task<ActionResult<FaultReportDto>> GetById(Guid id, CancellationToken cancellationToken)
     {
+
+        Convert.ToInt32("ffff");
+
         var result = await _service.GetByIdAsync(id, cancellationToken);
         return Ok(result);
     }

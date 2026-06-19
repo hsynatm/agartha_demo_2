@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
 namespace AMMS.Infrastructure.Auditing
@@ -14,6 +15,7 @@ namespace AMMS.Infrastructure.Auditing
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly string _moduleName;
         private readonly ILogger<AuditInterceptor> _logger;
+        private readonly IHostEnvironment _hostEnvironment;
 
         private readonly Dictionary<DbContextId, List<AuditEntry>> _pendingEntriesByContext = new();
 
@@ -23,6 +25,7 @@ namespace AMMS.Infrastructure.Auditing
             ICurrentOrganizationService currentOrganizationService,
             IHttpContextAccessor httpContextAccessor,
             ILogger<AuditInterceptor> logger,
+            IHostEnvironment hostEnvironment,
             string moduleName)
         {
             _auditDbContext = auditDbContext;
@@ -30,6 +33,7 @@ namespace AMMS.Infrastructure.Auditing
             _currentOrganizationService = currentOrganizationService;
             _httpContextAccessor = httpContextAccessor;
             _logger = logger;
+            _hostEnvironment = hostEnvironment;
             _moduleName = moduleName;
         }
 
@@ -100,7 +104,7 @@ namespace AMMS.Infrastructure.Auditing
             {
                 _logger.LogError(
                     ex,
-                    "Operation failed. {Module} {Operation}",
+                    "Audit write failed. {ModuleName} {Operation}",
                     _moduleName,
                     "AuditWrite");
             }
@@ -121,6 +125,19 @@ namespace AMMS.Infrastructure.Auditing
             }
 
             await _auditDbContext.SaveChangesAsync(cancellationToken);
+
+            if (_hostEnvironment.IsDevelopment())
+            {
+                foreach (var entry in entries)
+                {
+                    _logger.LogInformation(
+                        "Audit entry written. {ModuleName} {EntityName} {OperationType} {EntityId}",
+                        entry.ModuleName,
+                        entry.EntityName,
+                        entry.OperationType,
+                        entry.EntityId);
+                }
+            }
         }
 
         private void AddAuditLog(AuditEntry entry, DateTime now)

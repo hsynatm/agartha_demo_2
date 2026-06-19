@@ -12,6 +12,8 @@
 
         public const string UserId = "UserId";
 
+        public const string TenantId = "TenantId";
+
         public const string OrganizationId = "OrganizationId";
 
         public const string ClientIp = "ClientIp";
@@ -26,13 +28,20 @@
 
         public const string Elapsed = "Elapsed";
 
+        public const string ModuleName = "ModuleName";
+
         public const string Module = "Module";
 
         public const string Operation = "Operation";
 
         public const string EntityId = "EntityId";
+
+        public const string ErrorCode = "ErrorCode";
+
+        public const string LocalizationKey = "LocalizationKey";
+
+        public const string EntityName = "EntityName";
+
+        public const string OperationType = "OperationType";
     }
-
-
-
 }
