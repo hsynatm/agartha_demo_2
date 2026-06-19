@@ -1,10 +1,11 @@
-﻿using AMMS.Shared.Entities;
+﻿using AMMS.Shared.Auditing;
+using AMMS.Shared.Entities;
 using MaintenanceManagement.Domain.Enums;
 
 namespace MaintenanceManagement.Domain.Entities
 {
 
-    public sealed class MaintenancePlan : BaseEntity
+    public sealed class MaintenancePlan : BaseEntity, Audit.IAuditableEntity
     {
         public string PlanCode { get; private set; } = null!;
         public string Name { get; private set; } = null!;

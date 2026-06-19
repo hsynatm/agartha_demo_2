@@ -1,9 +1,10 @@
-﻿using AMMS.Shared.Entities;
+﻿using AMMS.Shared.Auditing;
+using AMMS.Shared.Entities;
 
 namespace MaintenanceManagement.Domain.Entities
 {
 
-    public sealed class MaintenancePlanTask : BaseEntity
+    public sealed class MaintenancePlanTask : BaseEntity, Audit.IAuditableEntity
     {
         public Guid MaintenancePlanId { get; private set; }
 

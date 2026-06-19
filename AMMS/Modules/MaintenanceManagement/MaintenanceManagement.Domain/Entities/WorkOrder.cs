@@ -1,9 +1,10 @@
-﻿using AMMS.Shared.Entities;
+﻿using AMMS.Shared.Auditing;
+using AMMS.Shared.Entities;
 using MaintenanceManagement.Domain.Enums;
 
 namespace MaintenanceManagement.Domain.Entities
 {
-    public sealed class WorkOrder : BaseEntity
+    public sealed class WorkOrder : BaseEntity, Audit.IAuditableEntity
     {
         public string WorkOrderNumber { get; private set; } = null!;
 

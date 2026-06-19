@@ -1,8 +1,8 @@
 using AMMS.Api;
+using AMMS.Api.Json;
 using AMMS.Api.OpenApi;
 using AMMS.Infrastructure;
 using AMMS.Infrastructure.Logging;
-using Microsoft.Extensions.Hosting;
 using Serilog;
 
 Log.Logger = new LoggerConfiguration()
@@ -15,13 +15,11 @@ try
 
     builder.AddSerilogLogging();
 
-    builder.Services.AddControllers()
-        .ConfigureApiBehaviorOptions(options =>
-        {
-            // Validasyon ApiBaseController.EnsureValidRequest() içinde yapılır;
-            // [ApiController] otomatik 400 filtresi action'a girmeden isteği kesmesin.
-            options.SuppressModelStateInvalidFilter = true;
-        });
+    builder.Services.AddControllers().ConfigureApiBehaviorOptions(options =>
+    {
+        options.SuppressModelStateInvalidFilter = true; //model valid olmasa bile,controllere git,kendim kontrol edeceğim
+    }).AddAmmsJsonOptions();
+
     if (builder.Environment.IsApiDocumentationEnabled())
     {
         builder.Services.AddAmmsOpenApi();

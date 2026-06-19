@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace AMMS.Api.Controllers;
 
-[Route("api/v1/maintenance-management")]
+[Route("api/v1/maintenance-management/[action]")]
 public class MaintenanceManagementController : ApiBaseController
 {
     private readonly IMaintenanceManagementService _service;
@@ -36,7 +36,7 @@ public class MaintenanceManagementController : ApiBaseController
         [FromBody] WorkOrderDto request,
         CancellationToken cancellationToken)
     {
-        EnsureValidRequest();
+        EnsureValidRequest(request);
 
         var result = await _service.CreateAsync(request, cancellationToken);
         return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
@@ -48,7 +48,7 @@ public class MaintenanceManagementController : ApiBaseController
         [FromBody] WorkOrderDto request,
         CancellationToken cancellationToken)
     {
-        EnsureValidRequest();
+        EnsureValidRequest(request);
 
         var result = await _service.UpdateAsync(id, request, cancellationToken);
         return Ok(result);

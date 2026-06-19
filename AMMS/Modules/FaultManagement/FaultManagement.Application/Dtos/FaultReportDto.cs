@@ -18,15 +18,15 @@ namespace FaultManagement.Application.Dtos
         public FaultImpactType ImpactType { get; set; }
         public FaultStatus Status { get; set; }
         public int? RpnScore { get; set; }
-        public DateTime ReportedAt { get; set; }
-        public Guid ReportedByUserId { get; set; }
+        public DateTime? ReportedAt { get; set; }
+        public Guid? ReportedByUserId { get; set; }
         public string ReportedByDisplayName { get; set; } = null!;
         public Guid? AssignedToUserId { get; set; }
         public string? AssignedToDisplayName { get; set; }
         public decimal? Latitude { get; set; }
         public decimal? Longitude { get; set; }
-        public ICollection<FaultAttachmentDto> Attachments { get; set; } = [];
-        public ICollection<FaultActivityDto> Activities { get; set; } = [];
-        public ICollection<FaultRepairActionDto> RepairActions { get; set; } = [];
+        public ICollection<FaultAttachmentDto>? Attachments { get; set; } = [];
+        public ICollection<FaultActivityDto>? Activities { get; set; } = [];
+        public ICollection<FaultRepairActionDto>? RepairActions { get; set; } = [];
     }
 }

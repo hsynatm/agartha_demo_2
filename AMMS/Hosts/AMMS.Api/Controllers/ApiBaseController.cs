@@ -1,5 +1,6 @@
 ﻿using AMMS.Core.Exceptions;
 using AMMS.Core.Localization;
+using AMMS.Infrastructure.Validation;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AMMS.Api.Controllers
@@ -8,26 +9,17 @@ namespace AMMS.Api.Controllers
     [ApiController]
     public abstract class ApiBaseController : ControllerBase
     {
-        protected void ClearModelStateError(string key)
+        protected void EnsureValidRequest(object? model = null)
         {
-            ModelState.Remove(key);
-        }
-
-        protected void ClearModelStateErrorsForPrefix(string prefix)
-        {
-            foreach (var key in ModelState.Keys
-                         .Where(existingKey =>
-                             string.Equals(existingKey, prefix, StringComparison.OrdinalIgnoreCase)
-                             || existingKey.StartsWith(prefix + ".", StringComparison.OrdinalIgnoreCase)
-                             || existingKey.StartsWith(prefix + "[", StringComparison.OrdinalIgnoreCase))
-                         .ToList())
+            if (model is null)
             {
-                ModelState.Remove(key);
+                ModelState.AddModelError(nameof(model), LocalizationKeys.Shared.Required);
             }
-        }
+            else
+            {
+                NonNullableModelValidator.Validate(model, ModelState);
+            }
 
-        protected void EnsureValidRequest()
-        {
             if (ModelState.IsValid)
             {
                 return;

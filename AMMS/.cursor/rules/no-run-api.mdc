@@ -1,0 +1,24 @@
+---
+description: Cursor agent must not start or run AMMS.Api or any host process
+alwaysApply: true
+---
+
+# Do Not Start the Application
+
+The user runs AMMS.Api only from Visual Studio (F5 / Stop Debugging). Cursor must **never** start the project.
+
+## Forbidden
+
+- `dotnet run` (including `--no-build`, background, or `block_until_ms: 0`)
+- Starting `AMMS.Api`, IIS Express, Docker container, or `dotnet watch`
+- Any shell command whose primary purpose is to launch the API for testing or verification
+
+## Allowed instead
+
+- `dotnet build` — compile only
+- `dotnet test` — run tests without starting the host
+- Static code analysis, reading logs the user provides, or explaining how the user can run/debug in VS
+
+## If verification needs a running API
+
+Ask the user to start the project in Visual Studio and share the result (response, log, screenshot). Do not start it yourself.

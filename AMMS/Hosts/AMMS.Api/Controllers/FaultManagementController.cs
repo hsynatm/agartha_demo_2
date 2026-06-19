@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace AMMS.Api.Controllers;
 
-[Route("api/v1/fault-management")]
+[Route("api/v1/fault-management/[action]")]
 public class FaultManagementController : ApiBaseController
 {
     private readonly IFaultManagementService _service;
@@ -17,9 +17,7 @@ public class FaultManagementController : ApiBaseController
     }
 
     [HttpGet]
-    public async Task<ActionResult<PagedResult<FaultReportDto>>> GetPaged(
-        [FromQuery] PagedRequest request,
-        CancellationToken cancellationToken)
+    public async Task<ActionResult<PagedResult<FaultReportDto>>> GetPaged([FromQuery] PagedRequest request, CancellationToken cancellationToken)
     {
         var result = await _service.GetPagedAsync(request, cancellationToken);
         return Ok(result);
@@ -33,23 +31,17 @@ public class FaultManagementController : ApiBaseController
     }
 
     [HttpPost]
-    public async Task<ActionResult<FaultReportDto>> Create(
-        [FromBody] FaultReportDto request,
-        CancellationToken cancellationToken)
+    public async Task<ActionResult<FaultReportDto>> Create([FromBody] FaultReportDto request,CancellationToken cancellationToken)
     {
-        EnsureValidRequest();
-
+        EnsureValidRequest(request);
         var result = await _service.CreateAsync(request, cancellationToken);
         return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
     }
 
     [HttpPut("{id:guid}")]
-    public async Task<ActionResult<FaultReportDto>> Update(
-        Guid id,
-        [FromBody] FaultReportDto request,
-        CancellationToken cancellationToken)
+    public async Task<ActionResult<FaultReportDto>> Update(Guid id,[FromBody] FaultReportDto request,CancellationToken cancellationToken)
     {
-        EnsureValidRequest();
+        EnsureValidRequest(request);
 
         var result = await _service.UpdateAsync(id, request, cancellationToken);
         return Ok(result);

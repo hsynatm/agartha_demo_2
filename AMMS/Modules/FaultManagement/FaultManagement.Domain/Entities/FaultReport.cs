@@ -1,9 +1,10 @@
-﻿using AMMS.Shared.Entities;
+﻿using AMMS.Shared.Auditing;
+using AMMS.Shared.Entities;
 using FaultManagement.Domain.Enums;
 
 namespace FaultManagement.Domain.Entities
 {
-    public sealed class FaultReport : BaseEntity
+    public sealed class FaultReport : BaseEntity, Audit.IAuditableEntity
     {
         public string FaultNumber { get; private set; } = null!;
 

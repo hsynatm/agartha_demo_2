@@ -5,7 +5,7 @@ namespace FaultManagement.Application.Dtos
 {
     public sealed class FaultActivityDto : BaseDto
     {
-        public Guid FaultReportId { get; set; }
+        public Guid? FaultReportId { get; set; }
         public FaultActivityType ActivityType { get; set; }
         public string Description { get; set; } = null!;
         public Guid PerformedByUserId { get; set; }
