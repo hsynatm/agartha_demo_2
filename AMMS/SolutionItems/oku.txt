@@ -9,8 +9,20 @@
 5- Update-Database -Context VarlikVeEnvanterDbContext
 
 
-////////// migrate işlemi AMMS.Infrastructure  //////
 
-
-Add-Migration 2026_06_17_2 -Context AuditDbContext -OutputDir Auditing\Migrations
+-- 1 
+Add-Migration 2026_06_19_1 -Context AuditDbContext -OutputDir Auditing\Migrations
 Update-Database -Context AuditDbContext
+
+-- 2
+Add-Migration 2026_06_19_2 -Context AssetManagementDbContext  -OutputDir Persistence\Migrations
+Update-Database -Context AssetManagementDbContext
+
+
+-- 3
+Add-Migration 2026_06_19_3 -Context FaultManagementDbContext  -OutputDir Persistence\Migrations
+Update-Database -Context FaultManagementDbContext
+
+-- 4
+Add-Migration 2026_06_19_4 -Context MaintenanceManagementDbContext  -OutputDir Persistence\Migrations
+Update-Database -Context MaintenanceManagementDbContext

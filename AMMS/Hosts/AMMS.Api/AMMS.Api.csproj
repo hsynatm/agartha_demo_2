@@ -4,18 +4,47 @@
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <UserSecretsId>3f8e59bb-fe22-44df-8b9f-c1c767c9d6a3</UserSecretsId>
+    <UserSecretsId>amms-api-dev-secrets</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <DockerfileContext>..\..</DockerfileContext>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.9" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.9">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.9">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.23.0" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.2" />
+    <PackageReference Include="Scalar.AspNetCore" Version="2.1.0" />
+    <PackageReference Include="Serilog.AspNetCore" Version="10.0.0" />
+    <PackageReference Include="Serilog.Enrichers.Environment" Version="3.0.1" />
+    <PackageReference Include="Serilog.Enrichers.Process" Version="3.0.0" />
+    <PackageReference Include="Serilog.Enrichers.Thread" Version="4.0.0" />
+    <PackageReference Include="Serilog.Formatting.Compact" Version="3.0.0" />
+    <PackageReference Include="Serilog.Settings.Configuration" Version="10.0.0" />
+    <PackageReference Include="Serilog.Sinks.Console" Version="6.1.1" />
+    <PackageReference Include="Serilog.Sinks.File" Version="7.0.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\Common\AMMS.Core\AMMS.Core.csproj" />
+    <ProjectReference Include="..\..\Common\AMMS.Infrastructure\AMMS.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\Modules\AssetManagement\AssetManagement.Application\AssetManagement.Application.csproj" />
+    <ProjectReference Include="..\..\Modules\AssetManagement\AssetManagement.Infrastructure\AssetManagement.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\Modules\FaultManagement\FaultManagement.Application\FaultManagement.Application.csproj" />
+    <ProjectReference Include="..\..\Modules\FaultManagement\FaultManagement.Infrastructure\FaultManagement.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\Modules\MaintenanceManagement\MaintenanceManagement.Application\MaintenanceManagement.Application.csproj" />
+    <ProjectReference Include="..\..\Modules\MaintenanceManagement\MaintenanceManagement.Infrastructure\MaintenanceManagement.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Logs\" />
   </ItemGroup>
 
 </Project>

@@ -1,20 +1,55 @@
-var builder = WebApplication.CreateBuilder(args);
+using AMMS.Api;
+using AMMS.Api.OpenApi;
+using AMMS.Infrastructure;
+using AMMS.Infrastructure.Logging;
+using Microsoft.Extensions.Hosting;
+using Serilog;
 
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console()
+    .CreateBootstrapLogger();
 
-builder.Services.AddControllers();
-builder.Services.AddOpenApi();
-
-var app = builder.Build();
-
-if (app.Environment.IsDevelopment())
+try
 {
-    app.MapOpenApi();
+    var builder = WebApplication.CreateBuilder(args);
+
+    builder.AddSerilogLogging();
+
+    builder.Services.AddControllers()
+        .ConfigureApiBehaviorOptions(options =>
+        {
+            // Validasyon ApiBaseController.EnsureValidRequest() içinde yapılır;
+            // [ApiController] otomatik 400 filtresi action'a girmeden isteği kesmesin.
+            options.SuppressModelStateInvalidFilter = true;
+        });
+    if (builder.Environment.IsApiDocumentationEnabled())
+    {
+        builder.Services.AddAmmsOpenApi();
+    }
+    builder.Services.AddHealthChecks();
+
+    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
+        ?? throw new InvalidOperationException("Connection string 'DefaultConnection' is not configured.");
+
+    builder.Services.AddAmmsModules(connectionString);
+
+    var app = builder.Build();
+
+    await app.ApplyDevelopmentMigrationsAsync();
+    app.UseAmmsApiDocumentation();
+    app.UseAmmsPipeline();
+    app.UseAuthorization();
+    app.MapControllers();
+    app.MapHealthChecks("/health");
+
+    app.Run();
 }
-
-app.UseHttpsRedirection();
-
-app.UseAuthorization();
-
-app.MapControllers();
-
-app.Run();
+catch (Exception ex) when (ex is not HostAbortedException)
+{
+    Log.Fatal(ex, "Application terminated unexpectedly.");
+    throw;
+}
+finally
+{
+    await Log.CloseAndFlushAsync();
+}

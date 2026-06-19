@@ -30,9 +30,9 @@
 
         public static class Modules
         {
-            public static class ArizaYonetimi
+            public static class FaultManagement
             {
-                public const string Folder = "ariza-yonetimi";
+                public const string Folder = "fault-management";
 
                 public const string NotFound = "errors.ariza.not_found";
                 public const string CreateClosed = "errors.ariza.create_closed";
@@ -40,15 +40,15 @@
 
                 public static class ErrorCodes
                 {
-                    public const string NotFound = "ARIZA_NOT_FOUND";
-                    public const string CreateClosed = "ARIZA_CREATE_CLOSED";
-                    public const string UpdateClosed = "ARIZA_UPDATE_CLOSED";
+                    public const string NotFound = "FAULT_NOT_FOUND";
+                    public const string CreateClosed = "FAULT_CREATE_CLOSED";
+                    public const string UpdateClosed = "FAULT_UPDATE_CLOSED";
                 }
             }
 
-            public static class BakimPlanlama
+            public static class MaintenanceManagement
             {
-                public const string Folder = "bakim-planlama";
+                public const string Folder = "maintenance-management";
 
                 public const string NotFound = "errors.bakim.not_found";
                 public const string UpdateFinal = "errors.bakim.update_final";
@@ -56,21 +56,21 @@
 
                 public static class ErrorCodes
                 {
-                    public const string NotFound = "BAKIM_NOT_FOUND";
-                    public const string UpdateFinal = "BAKIM_UPDATE_FINAL";
-                    public const string PastDate = "BAKIM_PAST_DATE";
+                    public const string NotFound = "MAINTENANCE_NOT_FOUND";
+                    public const string UpdateFinal = "MAINTENANCE_UPDATE_FINAL";
+                    public const string PastDate = "MAINTENANCE_PAST_DATE";
                 }
             }
 
-            public static class VarlikEnvanter
+            public static class AssetManagement
             {
-                public const string Folder = "varlik-envanter";
+                public const string Folder = "asset-management";
 
                 public const string NotFound = "errors.varlik.not_found";
 
                 public static class ErrorCodes
                 {
-                    public const string NotFound = "VARLIK_NOT_FOUND";
+                    public const string NotFound = "ASSET_NOT_FOUND";
                 }
             }
         }

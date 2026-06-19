@@ -8,6 +8,24 @@ namespace AMMS.Api.Controllers
     [ApiController]
     public abstract class ApiBaseController : ControllerBase
     {
+        protected void ClearModelStateError(string key)
+        {
+            ModelState.Remove(key);
+        }
+
+        protected void ClearModelStateErrorsForPrefix(string prefix)
+        {
+            foreach (var key in ModelState.Keys
+                         .Where(existingKey =>
+                             string.Equals(existingKey, prefix, StringComparison.OrdinalIgnoreCase)
+                             || existingKey.StartsWith(prefix + ".", StringComparison.OrdinalIgnoreCase)
+                             || existingKey.StartsWith(prefix + "[", StringComparison.OrdinalIgnoreCase))
+                         .ToList())
+            {
+                ModelState.Remove(key);
+            }
+        }
+
         protected void EnsureValidRequest()
         {
             if (ModelState.IsValid)
@@ -17,27 +35,87 @@ namespace AMMS.Api.Controllers
 
             var errors = ModelState
                 .Where(entry => entry.Value?.Errors.Count > 0)
+                .SelectMany(entry => entry.Value!.Errors.Select(error => (Field: NormalizeFieldName(entry.Key), Error: error)))
+                .GroupBy(item => item.Field, StringComparer.OrdinalIgnoreCase)
                 .ToDictionary(
-                    entry => entry.Key,
-                    entry => entry.Value!.Errors
-                        .Select(error => CreateValidationError(entry.Key, error.ErrorMessage))
-                        .ToArray());
+                    group => group.Key,
+                    group => group
+                        .Select(item => CreateValidationError(group.Key, item.Error.ErrorMessage))
+                        .ToArray(),
+                    StringComparer.OrdinalIgnoreCase);
 
             throw new AmmsException.Validation(errors);
         }
 
         private static LocalizationKeys.LocalizationError CreateValidationError(string fieldName, string? errorMessage)
         {
-            var localizationKey = LocalizationKeys.IsLocalizationKey(errorMessage)
-                ? errorMessage!
-                : LocalizationKeys.Shared.Invalid;
-
             return new LocalizationKeys.LocalizationError(
-                localizationKey,
+                ResolveLocalizationKey(errorMessage),
                 new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase)
                 {
                     ["field"] = fieldName
                 });
+        }
+
+        private static string ResolveLocalizationKey(string? errorMessage)
+        {
+            if (LocalizationKeys.IsLocalizationKey(errorMessage))
+            {
+                return errorMessage!;
+            }
+
+            if (string.IsNullOrWhiteSpace(errorMessage))
+            {
+                return LocalizationKeys.Shared.Invalid;
+            }
+
+            if (errorMessage.Contains("required", StringComparison.OrdinalIgnoreCase))
+            {
+                return LocalizationKeys.Shared.Required;
+            }
+
+            if (errorMessage.Contains("maximum", StringComparison.OrdinalIgnoreCase)
+                || errorMessage.Contains("max length", StringComparison.OrdinalIgnoreCase)
+                || errorMessage.Contains("character", StringComparison.OrdinalIgnoreCase))
+            {
+                return LocalizationKeys.Shared.MaxLength;
+            }
+
+            return LocalizationKeys.Shared.Invalid;
+        }
+
+        private static string NormalizeFieldName(string modelStateKey)
+        {
+            if (string.IsNullOrWhiteSpace(modelStateKey))
+            {
+                return modelStateKey;
+            }
+
+            if (modelStateKey.StartsWith("$.", StringComparison.Ordinal))
+            {
+                return ToCamelCase(modelStateKey[2..]);
+            }
+
+            if (string.Equals(modelStateKey, "$", StringComparison.Ordinal))
+            {
+                return modelStateKey;
+            }
+
+            var fieldName = modelStateKey.Contains('.')
+                ? modelStateKey.Split('.')[^1]
+                : modelStateKey;
+
+            return ToCamelCase(fieldName);
+        }
+
+        private static string ToCamelCase(string value)
+        {
+            if (string.IsNullOrEmpty(value) || char.IsLower(value[0]))
+            {
+                return value;
+            }
+
+            return char.ToLowerInvariant(value[0]) + value[1..];
         }
     }
 

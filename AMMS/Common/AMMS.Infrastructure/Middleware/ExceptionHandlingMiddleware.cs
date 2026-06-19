@@ -130,6 +130,15 @@ namespace AMMS.Infrastructure.Middleware
             if (mapped.Errors is not null)
             {
                 problem.Extensions["errors"] = mapped.Errors;
+
+                if (mapped.Errors is System.Collections.IDictionary errorsByField)
+                {
+                    problem.Extensions["invalidFields"] = errorsByField.Keys
+                        .Cast<object>()
+                        .Select(key => key.ToString())
+                        .Where(key => key is not null)
+                        .ToArray();
+                }
             }
 
             return problem;

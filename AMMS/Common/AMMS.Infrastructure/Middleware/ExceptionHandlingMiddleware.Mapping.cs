@@ -175,7 +175,14 @@ namespace AMMS.Infrastructure.Middleware
             return keyedErrors.ToDictionary(
                 entry => entry.Key,
                 entry => entry.Value
-                    .Select(error => localizer.GetString(error.LocalizationKey, culture, error.MessageArgs))
+                    .Select(error => new Dictionary<string, object?>(StringComparer.OrdinalIgnoreCase)
+                    {
+                        ["field"] = error.MessageArgs?.TryGetValue("field", out var field) == true
+                            ? field
+                            : entry.Key,
+                        ["localizationKey"] = error.LocalizationKey,
+                        ["message"] = localizer.GetString(error.LocalizationKey, culture, error.MessageArgs)
+                    })
                     .ToArray(),
                 StringComparer.OrdinalIgnoreCase);
         }

@@ -7,11 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Auditing\Migrations\" />
-    <Folder Include="Localization\Resources\modules\fault-management\" />
-    <Folder Include="Localization\Resources\modules\asset-management\" />
-    <Folder Include="Localization\Resources\modules\maintenance-management\" />
-    <Folder Include="Localization\Resources\shared\" />
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
 
   <ItemGroup>
@@ -26,6 +22,61 @@
 
   <ItemGroup>
     <ProjectReference Include="..\AMMS.Core\AMMS.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Auditing\Migrations\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Localization\Resources\shared\errors.tr.json">
+      <LogicalName>amms.loc.shared.errors.tr</LogicalName>
+      <WithCulture>false</WithCulture>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Localization\Resources\shared\errors.en.json">
+      <LogicalName>amms.loc.shared.errors.en</LogicalName>
+      <WithCulture>false</WithCulture>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Localization\Resources\shared\errors.ar.json">
+      <LogicalName>amms.loc.shared.errors.ar</LogicalName>
+      <WithCulture>false</WithCulture>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Localization\Resources\modules\fault-management\errors.tr.json">
+      <LogicalName>amms.loc.modules.fault-management.errors.tr</LogicalName>
+      <WithCulture>false</WithCulture>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Localization\Resources\modules\fault-management\errors.en.json">
+      <LogicalName>amms.loc.modules.fault-management.errors.en</LogicalName>
+      <WithCulture>false</WithCulture>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Localization\Resources\modules\fault-management\errors.ar.json">
+      <LogicalName>amms.loc.modules.fault-management.errors.ar</LogicalName>
+      <WithCulture>false</WithCulture>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Localization\Resources\modules\maintenance-management\errors.tr.json">
+      <LogicalName>amms.loc.modules.maintenance-management.errors.tr</LogicalName>
+      <WithCulture>false</WithCulture>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Localization\Resources\modules\maintenance-management\errors.en.json">
+      <LogicalName>amms.loc.modules.maintenance-management.errors.en</LogicalName>
+      <WithCulture>false</WithCulture>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Localization\Resources\modules\maintenance-management\errors.ar.json">
+      <LogicalName>amms.loc.modules.maintenance-management.errors.ar</LogicalName>
+      <WithCulture>false</WithCulture>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Localization\Resources\modules\asset-management\errors.tr.json">
+      <LogicalName>amms.loc.modules.asset-management.errors.tr</LogicalName>
+      <WithCulture>false</WithCulture>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Localization\Resources\modules\asset-management\errors.en.json">
+      <LogicalName>amms.loc.modules.asset-management.errors.en</LogicalName>
+      <WithCulture>false</WithCulture>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Localization\Resources\modules\asset-management\errors.ar.json">
+      <LogicalName>amms.loc.modules.asset-management.errors.ar</LogicalName>
+      <WithCulture>false</WithCulture>
+    </EmbeddedResource>
   </ItemGroup>
 
 </Project>

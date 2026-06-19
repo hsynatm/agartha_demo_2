@@ -1,7 +1,24 @@
 {
   "Version": 1,
   "WorkspaceRootPath": "C:\\Agartha_Project\\demo2\\AMMS\\",
-  "Documents": [],
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{70478290-7EC4-C532-B156-CAB8D7D72EDB}|Hosts\\AMMS.Api\\AMMS.Api.csproj|c:\\agartha_project\\demo2\\amms\\hosts\\amms.api\\controllers\\assetmanagementcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{70478290-7EC4-C532-B156-CAB8D7D72EDB}|Hosts\\AMMS.Api\\AMMS.Api.csproj|solutionrelative:hosts\\amms.api\\controllers\\assetmanagementcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1886D57A-3222-2912-90A9-65C809356FB7}|Modules\\AssetManagement\\AssetManagement.Application\\AssetManagement.Application.csproj|c:\\agartha_project\\demo2\\amms\\modules\\assetmanagement\\assetmanagement.application\\dtos\\assetdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1886D57A-3222-2912-90A9-65C809356FB7}|Modules\\AssetManagement\\AssetManagement.Application\\AssetManagement.Application.csproj|solutionrelative:modules\\assetmanagement\\assetmanagement.application\\dtos\\assetdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{70478290-7EC4-C532-B156-CAB8D7D72EDB}|Hosts\\AMMS.Api\\AMMS.Api.csproj|c:\\agartha_project\\demo2\\amms\\hosts\\amms.api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{70478290-7EC4-C532-B156-CAB8D7D72EDB}|Hosts\\AMMS.Api\\AMMS.Api.csproj|solutionrelative:hosts\\amms.api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F6F462E1-D058-33EE-9A35-BBD49B846676}|SolutionItems{F6F462E1-D058-33EE-9A35-BBD49B846676}|C:\\Agartha_Project\\demo2\\AMMS\\SolutionItems\\oku.txt||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{F6F462E1-D058-33EE-9A35-BBD49B846676}|SolutionItems{F6F462E1-D058-33EE-9A35-BBD49B846676}|solutionrelative:SolutionItems\\oku.txt||{8B382828-6202-11D1-8870-0000F87579D2}"
+    }
+  ],
   "DocumentGroupContainers": [
     {
       "Orientation": 0,
@@ -9,11 +26,59 @@
       "DocumentGroups": [
         {
           "DockedWidth": 235,
-          "SelectedChildIndex": -1,
+          "SelectedChildIndex": 2,
           "Children": [
             {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "AssetDto.cs",
+              "DocumentMoniker": "C:\\Agartha_Project\\demo2\\AMMS\\Modules\\AssetManagement\\AssetManagement.Application\\Dtos\\AssetDto.cs",
+              "RelativeDocumentMoniker": "Modules\\AssetManagement\\AssetManagement.Application\\Dtos\\AssetDto.cs",
+              "ToolTip": "C:\\Agartha_Project\\demo2\\AMMS\\Modules\\AssetManagement\\AssetManagement.Application\\Dtos\\AssetDto.cs",
+              "RelativeToolTip": "Modules\\AssetManagement\\AssetManagement.Application\\Dtos\\AssetDto.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAAqAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-06-19T07:47:24.729Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Agartha_Project\\demo2\\AMMS\\Hosts\\AMMS.Api\\Program.cs",
+              "RelativeDocumentMoniker": "Hosts\\AMMS.Api\\Program.cs",
+              "ToolTip": "C:\\Agartha_Project\\demo2\\AMMS\\Hosts\\AMMS.Api\\Program.cs",
+              "RelativeToolTip": "Hosts\\AMMS.Api\\Program.cs",
+              "ViewState": "AgIAAAkAAAAAAAAAAAAiwA4AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-06-19T07:13:57.298Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "AssetManagementController.cs",
+              "DocumentMoniker": "C:\\Agartha_Project\\demo2\\AMMS\\Hosts\\AMMS.Api\\Controllers\\AssetManagementController.cs",
+              "RelativeDocumentMoniker": "Hosts\\AMMS.Api\\Controllers\\AssetManagementController.cs",
+              "ToolTip": "C:\\Agartha_Project\\demo2\\AMMS\\Hosts\\AMMS.Api\\Controllers\\AssetManagementController.cs",
+              "RelativeToolTip": "Hosts\\AMMS.Api\\Controllers\\AssetManagementController.cs",
+              "ViewState": "AgIAABYAAAAAAAAAAAAswCQAAAAEAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-06-19T06:22:37.602Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "oku.txt",
+              "DocumentMoniker": "C:\\Agartha_Project\\demo2\\AMMS\\SolutionItems\\oku.txt",
+              "RelativeDocumentMoniker": "SolutionItems\\oku.txt",
+              "ToolTip": "C:\\Agartha_Project\\demo2\\AMMS\\SolutionItems\\oku.txt",
+              "RelativeToolTip": "SolutionItems\\oku.txt",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABsAAAA3AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003109|",
+              "WhenOpened": "2026-06-19T06:05:03.954Z",
+              "EditorCaption": ""
             }
           ]
         }

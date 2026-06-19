@@ -1,10 +1,11 @@
-﻿using AMMS.Shared.Entities;
+﻿using AMMS.Shared.Auditing;
+using AMMS.Shared.Entities;
 using AssetManagement.Domain.Enums;
 
 namespace AssetManagement.Domain.Entities
 {
 
-    public sealed class AssetDocument : BaseEntity
+    public sealed class AssetDocument : BaseEntity, Audit.IAuditableEntity
     {
         public Guid AssetId { get; private set; }
         public Asset Asset { get; private set; } = null!;
