@@ -100,6 +100,8 @@ docker logs graylog | findstr "Initial configuration"
 GELF UDP/TCP port: 12201 (Serilog Tcp on 127.0.0.1 onerilir; Windows Docker icin Udp yerine Tcp)
 
 Graylog input: hem GELF UDP AMMS hem GELF TCP AMMS olmali.
+  Serilog transportType=Tcp kullandigi icin GELF TCP AMMS zorunludur.
+  TCP input eksikse: cd SolutionItems && .\setup-graylog-tcp-input.ps1
 
 ## Log seviye stratejisi (HBYP)
 
