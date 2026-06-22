@@ -3,24 +3,16 @@
   "WorkspaceRootPath": "C:\\Agartha_Project\\demo2\\AMMS\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{2E39F5A6-84C4-28CD-F3B9-4E2A1F7E1B42}|Common\\AMMS.Infrastructure\\AMMS.Infrastructure.csproj|c:\\agartha_project\\demo2\\amms\\common\\amms.infrastructure\\middleware\\exceptionhandlingmiddleware.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{2E39F5A6-84C4-28CD-F3B9-4E2A1F7E1B42}|Common\\AMMS.Infrastructure\\AMMS.Infrastructure.csproj|solutionrelative:common\\amms.infrastructure\\middleware\\exceptionhandlingmiddleware.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{F6F462E1-D058-33EE-9A35-BBD49B846676}|SolutionItems{F6F462E1-D058-33EE-9A35-BBD49B846676}|C:\\Agartha_Project\\demo2\\AMMS\\SolutionItems\\docker-compose.yml||{06C066C6-04A2-4E5D-8202-439FD4234EF1}",
+      "RelativeMoniker": "D:0:0:{F6F462E1-D058-33EE-9A35-BBD49B846676}|SolutionItems{F6F462E1-D058-33EE-9A35-BBD49B846676}|solutionrelative:SolutionItems\\docker-compose.yml||{06C066C6-04A2-4E5D-8202-439FD4234EF1}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{2E39F5A6-84C4-28CD-F3B9-4E2A1F7E1B42}|Common\\AMMS.Infrastructure\\AMMS.Infrastructure.csproj|c:\\agartha_project\\demo2\\amms\\common\\amms.infrastructure\\logging\\graylogjsonformatter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{2E39F5A6-84C4-28CD-F3B9-4E2A1F7E1B42}|Common\\AMMS.Infrastructure\\AMMS.Infrastructure.csproj|solutionrelative:common\\amms.infrastructure\\logging\\graylogjsonformatter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{70478290-7EC4-C532-B156-CAB8D7D72EDB}|Hosts\\AMMS.Api\\AMMS.Api.csproj|c:\\agartha_project\\demo2\\amms\\hosts\\amms.api\\appsettings.production.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{70478290-7EC4-C532-B156-CAB8D7D72EDB}|Hosts\\AMMS.Api\\AMMS.Api.csproj|solutionrelative:hosts\\amms.api\\appsettings.production.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{70478290-7EC4-C532-B156-CAB8D7D72EDB}|Hosts\\AMMS.Api\\AMMS.Api.csproj|c:\\agartha_project\\demo2\\amms\\hosts\\amms.api\\controllers\\faultmanagementcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{70478290-7EC4-C532-B156-CAB8D7D72EDB}|Hosts\\AMMS.Api\\AMMS.Api.csproj|solutionrelative:hosts\\amms.api\\controllers\\faultmanagementcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{1886D57A-3222-2912-90A9-65C809356FB7}|Modules\\AssetManagement\\AssetManagement.Application\\AssetManagement.Application.csproj|c:\\agartha_project\\demo2\\amms\\modules\\assetmanagement\\assetmanagement.application\\services\\assetmanagementservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{1886D57A-3222-2912-90A9-65C809356FB7}|Modules\\AssetManagement\\AssetManagement.Application\\AssetManagement.Application.csproj|solutionrelative:modules\\assetmanagement\\assetmanagement.application\\services\\assetmanagementservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{70478290-7EC4-C532-B156-CAB8D7D72EDB}|Hosts\\AMMS.Api\\AMMS.Api.csproj|c:\\agartha_project\\demo2\\amms\\hosts\\amms.api\\controllers\\assetmanagementcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{70478290-7EC4-C532-B156-CAB8D7D72EDB}|Hosts\\AMMS.Api\\AMMS.Api.csproj|solutionrelative:hosts\\amms.api\\controllers\\assetmanagementcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{70478290-7EC4-C532-B156-CAB8D7D72EDB}|Hosts\\AMMS.Api\\AMMS.Api.csproj|c:\\agartha_project\\demo2\\amms\\hosts\\amms.api\\appsettings.development.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{70478290-7EC4-C532-B156-CAB8D7D72EDB}|Hosts\\AMMS.Api\\AMMS.Api.csproj|solutionrelative:hosts\\amms.api\\appsettings.development.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     }
   ],
   "DocumentGroupContainers": [
@@ -39,66 +31,40 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "ExceptionHandlingMiddleware.cs",
-              "DocumentMoniker": "C:\\Agartha_Project\\demo2\\AMMS\\Common\\AMMS.Infrastructure\\Middleware\\ExceptionHandlingMiddleware.cs",
-              "RelativeDocumentMoniker": "Common\\AMMS.Infrastructure\\Middleware\\ExceptionHandlingMiddleware.cs",
-              "ToolTip": "C:\\Agartha_Project\\demo2\\AMMS\\Common\\AMMS.Infrastructure\\Middleware\\ExceptionHandlingMiddleware.cs",
-              "RelativeToolTip": "Common\\AMMS.Infrastructure\\Middleware\\ExceptionHandlingMiddleware.cs",
-              "ViewState": "AgIAAHUAAAAAAAAAAAAowFUAAABFAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-06-22T10:52:01.612Z",
+              "Title": "docker-compose.yml",
+              "DocumentMoniker": "C:\\Agartha_Project\\demo2\\AMMS\\SolutionItems\\docker-compose.yml",
+              "RelativeDocumentMoniker": "SolutionItems\\docker-compose.yml",
+              "ToolTip": "C:\\Agartha_Project\\demo2\\AMMS\\SolutionItems\\docker-compose.yml",
+              "RelativeToolTip": "SolutionItems\\docker-compose.yml",
+              "ViewState": "AgIAABsAAAAAAAAAAAAAADMAAABpAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003775|",
+              "WhenOpened": "2026-06-22T11:09:16.767Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 1,
-              "Title": "GraylogJsonFormatter.cs",
-              "DocumentMoniker": "C:\\Agartha_Project\\demo2\\AMMS\\Common\\AMMS.Infrastructure\\Logging\\GraylogJsonFormatter.cs",
-              "RelativeDocumentMoniker": "Common\\AMMS.Infrastructure\\Logging\\GraylogJsonFormatter.cs",
-              "ToolTip": "C:\\Agartha_Project\\demo2\\AMMS\\Common\\AMMS.Infrastructure\\Logging\\GraylogJsonFormatter.cs",
-              "RelativeToolTip": "Common\\AMMS.Infrastructure\\Logging\\GraylogJsonFormatter.cs",
-              "ViewState": "AgIAAA4AAAAAAAAAAAAAwCMAAAANAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-06-22T10:28:12.815Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "AssetManagementService.cs",
-              "DocumentMoniker": "C:\\Agartha_Project\\demo2\\AMMS\\Modules\\AssetManagement\\AssetManagement.Application\\Services\\AssetManagementService.cs",
-              "RelativeDocumentMoniker": "Modules\\AssetManagement\\AssetManagement.Application\\Services\\AssetManagementService.cs",
-              "ToolTip": "C:\\Agartha_Project\\demo2\\AMMS\\Modules\\AssetManagement\\AssetManagement.Application\\Services\\AssetManagementService.cs",
-              "RelativeToolTip": "Modules\\AssetManagement\\AssetManagement.Application\\Services\\AssetManagementService.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABkAAAAMAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-06-22T05:50:02.624Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "AssetManagementController.cs",
-              "DocumentMoniker": "C:\\Agartha_Project\\demo2\\AMMS\\Hosts\\AMMS.Api\\Controllers\\AssetManagementController.cs",
-              "RelativeDocumentMoniker": "Hosts\\AMMS.Api\\Controllers\\AssetManagementController.cs",
-              "ToolTip": "C:\\Agartha_Project\\demo2\\AMMS\\Hosts\\AMMS.Api\\Controllers\\AssetManagementController.cs",
-              "RelativeToolTip": "Hosts\\AMMS.Api\\Controllers\\AssetManagementController.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABoAAAAEAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-06-22T05:50:48.511Z",
+              "Title": "appsettings.Production.json",
+              "DocumentMoniker": "C:\\Agartha_Project\\demo2\\AMMS\\Hosts\\AMMS.Api\\appsettings.Production.json",
+              "RelativeDocumentMoniker": "Hosts\\AMMS.Api\\appsettings.Production.json",
+              "ToolTip": "C:\\Agartha_Project\\demo2\\AMMS\\Hosts\\AMMS.Api\\appsettings.Production.json",
+              "RelativeToolTip": "Hosts\\AMMS.Api\\appsettings.Production.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2026-06-22T11:08:09.102Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 2,
-              "Title": "FaultManagementController.cs",
-              "DocumentMoniker": "C:\\Agartha_Project\\demo2\\AMMS\\Hosts\\AMMS.Api\\Controllers\\FaultManagementController.cs",
-              "RelativeDocumentMoniker": "Hosts\\AMMS.Api\\Controllers\\FaultManagementController.cs",
-              "ToolTip": "C:\\Agartha_Project\\demo2\\AMMS\\Hosts\\AMMS.Api\\Controllers\\FaultManagementController.cs",
-              "RelativeToolTip": "Hosts\\AMMS.Api\\Controllers\\FaultManagementController.cs",
-              "ViewState": "AgIAAAMAAAAAAAAAAAAAAB0AAAAIAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-06-22T05:49:49.298Z",
+              "Title": "appsettings.Development.json",
+              "DocumentMoniker": "C:\\Agartha_Project\\demo2\\AMMS\\Hosts\\AMMS.Api\\appsettings.Development.json",
+              "RelativeDocumentMoniker": "Hosts\\AMMS.Api\\appsettings.Development.json",
+              "ToolTip": "C:\\Agartha_Project\\demo2\\AMMS\\Hosts\\AMMS.Api\\appsettings.Development.json",
+              "RelativeToolTip": "Hosts\\AMMS.Api\\appsettings.Development.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAcAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2026-06-22T11:06:03.571Z",
               "EditorCaption": ""
             }
           ]
