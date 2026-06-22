@@ -7,7 +7,6 @@ using FaultManagement.Application;
 using FaultManagement.Infrastructure;
 using MaintenanceManagement.Application;
 using MaintenanceManagement.Infrastructure;
-using Scalar.AspNetCore;
 
 namespace AMMS.Api;
 
@@ -36,12 +35,13 @@ internal static class HostSetupExtensions
             return app;
         }
 
-        app.MapOpenApi();
-        app.MapScalarApiReference(options =>
+        app.UseSwagger();
+        app.UseSwaggerUI(options =>
         {
-            options.AddDocument("v1", "AMMS API");
+            options.SwaggerEndpoint("/swagger/v1/swagger.json", "AMMS API v1");
+            options.RoutePrefix = "swagger";
         });
-        app.MapGet("/", () => Results.Redirect("/scalar")).ExcludeFromDescription();
+        app.MapGet("/", () => Results.Redirect("/swagger")).ExcludeFromDescription();
         return app;
     }
 }

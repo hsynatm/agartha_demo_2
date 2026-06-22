@@ -1,6 +1,6 @@
-namespace AMMS.Api.OpenApi;
+namespace AMMS.Api.Swagger;
 
-internal static class AmmsOpenApiCreateExamples
+internal static class AmmsSwaggerCreateExamples
 {
     public const string FaultReport = """
         {

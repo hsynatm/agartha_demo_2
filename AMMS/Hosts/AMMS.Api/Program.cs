@@ -1,6 +1,6 @@
 using AMMS.Api;
 using AMMS.Api.Json;
-using AMMS.Api.OpenApi;
+using AMMS.Api.Swagger;
 using AMMS.Infrastructure;
 using AMMS.Infrastructure.Logging;
 using Serilog;
@@ -22,7 +22,7 @@ try
 
     if (builder.Environment.IsApiDocumentationEnabled())
     {
-        builder.Services.AddAmmsOpenApi();
+        builder.Services.AddAmmsSwagger();
     }
     builder.Services.AddHealthChecks();
 
