@@ -40,6 +40,10 @@
 
         public const string LocalizationKey = "LocalizationKey";
 
+        public const string Title = "Title";
+
+        public const string Detail = "Detail";
+
         public const string EntityName = "EntityName";
 
         public const string OperationType = "OperationType";

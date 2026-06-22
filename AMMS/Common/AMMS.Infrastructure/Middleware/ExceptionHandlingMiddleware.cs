@@ -1,6 +1,5 @@
 ﻿using AMMS.Infrastructure.Localization;
 using AMMS.Infrastructure.Logging;
-using AMMS.Shared.Constants;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
@@ -23,11 +22,7 @@ namespace AMMS.Infrastructure.Middleware
         private readonly IHostEnvironment _environment;
         private readonly JsonStringLocalizer _localizer;
 
-        public ExceptionHandlingMiddleware(
-            RequestDelegate next,
-            ILogger<ExceptionHandlingMiddleware> logger,
-            IHostEnvironment environment,
-            JsonStringLocalizer localizer)
+        public ExceptionHandlingMiddleware(RequestDelegate next,ILogger<ExceptionHandlingMiddleware> logger,IHostEnvironment environment,JsonStringLocalizer localizer)
         {
             _next = next;
             _logger = logger;
@@ -59,33 +54,7 @@ namespace AMMS.Infrastructure.Middleware
             var mapped = MapException(exception, _environment, _localizer, culture);
 
             var moduleName = ApiModuleNameResolver.ResolveFromPath(context.Request.Path.Value) ?? "Unknown";
-
-            if (mapped.StatusCode >= StatusCodes.Status500InternalServerError)
-            {
-                _logger.LogError(
-                    exception,
-                    "Request failed. {ModuleName} {ErrorCode} {LocalizationKey} {StatusCode} {TraceId} {RequestPath} {RequestMethod}",
-                    moduleName,
-                    mapped.ErrorCode,
-                    mapped.LocalizationKey,
-                    mapped.StatusCode,
-                    context.TraceIdentifier,
-                    context.Request.Path.Value,
-                    context.Request.Method);
-            }
-            else
-            {
-                _logger.LogWarning(
-                    exception,
-                    "Request failed. {ModuleName} {ErrorCode} {LocalizationKey} {StatusCode} {TraceId} {RequestPath} {RequestMethod}",
-                    moduleName,
-                    mapped.ErrorCode,
-                    mapped.LocalizationKey,
-                    mapped.StatusCode,
-                    context.TraceIdentifier,
-                    context.Request.Path.Value,
-                    context.Request.Method);
-            }
+            LogRequestFailed(context, mapped, moduleName, exception);
 
             await WriteProblemDetailsAsync(context, mapped.StatusCode, CreateProblemDetails(context, mapped, culture));
         }
@@ -104,7 +73,46 @@ namespace AMMS.Infrastructure.Middleware
 
             var culture = GetCulture(context);
             var mapped = MapHttpStatus(context.Response.StatusCode, _localizer, culture);
+            var moduleName = ApiModuleNameResolver.ResolveFromPath(context.Request.Path.Value) ?? "Unknown";
+            LogRequestFailed(context, mapped, moduleName, exception: null);
             await WriteProblemDetailsAsync(context, mapped.StatusCode, CreateProblemDetails(context, mapped, culture));
+        }
+
+        private void LogRequestFailed(HttpContext context,MappedException mapped,string moduleName,Exception? exception)
+        {
+            const string messageTemplate =
+                "Request failed. {Title} {Detail} {ModuleName} {ErrorCode} {LocalizationKey} {StatusCode} {TraceId} {RequestPath} {RequestMethod}";
+
+            if (mapped.StatusCode >= StatusCodes.Status500InternalServerError)
+            {
+                _logger.LogError(
+                    exception,
+                    messageTemplate,
+                    mapped.Title,
+                    mapped.Detail,
+                    moduleName,
+                    mapped.ErrorCode,
+                    mapped.LocalizationKey,
+                    mapped.StatusCode,
+                    context.TraceIdentifier,
+                    context.Request.Path.Value,
+                    context.Request.Method);
+            }
+            else
+            {
+                _logger.LogWarning(
+                    exception,
+                    messageTemplate,
+                    mapped.Title,
+                    mapped.Detail,
+                    moduleName,
+                    mapped.ErrorCode,
+                    mapped.LocalizationKey,
+                    mapped.StatusCode,
+                    context.TraceIdentifier,
+                    context.Request.Path.Value,
+                    context.Request.Method);
+            }
         }
 
         private static string GetCulture(HttpContext context) =>

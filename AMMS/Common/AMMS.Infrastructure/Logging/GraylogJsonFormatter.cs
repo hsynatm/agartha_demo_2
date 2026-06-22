@@ -27,6 +27,7 @@ namespace AMMS.Infrastructure.Logging
             output.Write("\",\"Level\":\"");
             output.Write(logEvent.Level);
             output.Write("\",\"Message\":");
+
             JsonValueFormatter.WriteQuotedJsonString(
                 logEvent.RenderMessage(CultureInfo.InvariantCulture),
                 output);

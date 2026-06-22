@@ -3,8 +3,16 @@
   "WorkspaceRootPath": "C:\\Agartha_Project\\demo2\\AMMS\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{F6F462E1-D058-33EE-9A35-BBD49B846676}|SolutionItems{F6F462E1-D058-33EE-9A35-BBD49B846676}|C:\\Agartha_Project\\demo2\\AMMS\\SolutionItems\\oku.txt||{8B382828-6202-11D1-8870-0000F87579D2}",
-      "RelativeMoniker": "D:0:0:{F6F462E1-D058-33EE-9A35-BBD49B846676}|SolutionItems{F6F462E1-D058-33EE-9A35-BBD49B846676}|solutionrelative:SolutionItems\\oku.txt||{8B382828-6202-11D1-8870-0000F87579D2}"
+      "AbsoluteMoniker": "D:0:0:{2E39F5A6-84C4-28CD-F3B9-4E2A1F7E1B42}|Common\\AMMS.Infrastructure\\AMMS.Infrastructure.csproj|c:\\agartha_project\\demo2\\amms\\common\\amms.infrastructure\\middleware\\exceptionhandlingmiddleware.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2E39F5A6-84C4-28CD-F3B9-4E2A1F7E1B42}|Common\\AMMS.Infrastructure\\AMMS.Infrastructure.csproj|solutionrelative:common\\amms.infrastructure\\middleware\\exceptionhandlingmiddleware.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2E39F5A6-84C4-28CD-F3B9-4E2A1F7E1B42}|Common\\AMMS.Infrastructure\\AMMS.Infrastructure.csproj|c:\\agartha_project\\demo2\\amms\\common\\amms.infrastructure\\logging\\graylogjsonformatter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2E39F5A6-84C4-28CD-F3B9-4E2A1F7E1B42}|Common\\AMMS.Infrastructure\\AMMS.Infrastructure.csproj|solutionrelative:common\\amms.infrastructure\\logging\\graylogjsonformatter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{70478290-7EC4-C532-B156-CAB8D7D72EDB}|Hosts\\AMMS.Api\\AMMS.Api.csproj|c:\\agartha_project\\demo2\\amms\\hosts\\amms.api\\controllers\\faultmanagementcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{70478290-7EC4-C532-B156-CAB8D7D72EDB}|Hosts\\AMMS.Api\\AMMS.Api.csproj|solutionrelative:hosts\\amms.api\\controllers\\faultmanagementcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{1886D57A-3222-2912-90A9-65C809356FB7}|Modules\\AssetManagement\\AssetManagement.Application\\AssetManagement.Application.csproj|c:\\agartha_project\\demo2\\amms\\modules\\assetmanagement\\assetmanagement.application\\services\\assetmanagementservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -13,10 +21,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{70478290-7EC4-C532-B156-CAB8D7D72EDB}|Hosts\\AMMS.Api\\AMMS.Api.csproj|c:\\agartha_project\\demo2\\amms\\hosts\\amms.api\\controllers\\assetmanagementcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{70478290-7EC4-C532-B156-CAB8D7D72EDB}|Hosts\\AMMS.Api\\AMMS.Api.csproj|solutionrelative:hosts\\amms.api\\controllers\\assetmanagementcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{70478290-7EC4-C532-B156-CAB8D7D72EDB}|Hosts\\AMMS.Api\\AMMS.Api.csproj|c:\\agartha_project\\demo2\\amms\\hosts\\amms.api\\controllers\\faultmanagementcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{70478290-7EC4-C532-B156-CAB8D7D72EDB}|Hosts\\AMMS.Api\\AMMS.Api.csproj|solutionrelative:hosts\\amms.api\\controllers\\faultmanagementcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -35,32 +39,45 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "oku.txt",
-              "DocumentMoniker": "C:\\Agartha_Project\\demo2\\AMMS\\SolutionItems\\oku.txt",
-              "RelativeDocumentMoniker": "SolutionItems\\oku.txt",
-              "ToolTip": "C:\\Agartha_Project\\demo2\\AMMS\\SolutionItems\\oku.txt",
-              "RelativeToolTip": "SolutionItems\\oku.txt",
-              "ViewState": "AgIAAG4AAAAAAAAAAAAAAHMAAAAcAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003109|",
-              "WhenOpened": "2026-06-22T10:04:51.695Z",
+              "Title": "ExceptionHandlingMiddleware.cs",
+              "DocumentMoniker": "C:\\Agartha_Project\\demo2\\AMMS\\Common\\AMMS.Infrastructure\\Middleware\\ExceptionHandlingMiddleware.cs",
+              "RelativeDocumentMoniker": "Common\\AMMS.Infrastructure\\Middleware\\ExceptionHandlingMiddleware.cs",
+              "ToolTip": "C:\\Agartha_Project\\demo2\\AMMS\\Common\\AMMS.Infrastructure\\Middleware\\ExceptionHandlingMiddleware.cs",
+              "RelativeToolTip": "Common\\AMMS.Infrastructure\\Middleware\\ExceptionHandlingMiddleware.cs",
+              "ViewState": "AgIAAHUAAAAAAAAAAAAowFUAAABFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-06-22T10:52:01.612Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 1,
+              "Title": "GraylogJsonFormatter.cs",
+              "DocumentMoniker": "C:\\Agartha_Project\\demo2\\AMMS\\Common\\AMMS.Infrastructure\\Logging\\GraylogJsonFormatter.cs",
+              "RelativeDocumentMoniker": "Common\\AMMS.Infrastructure\\Logging\\GraylogJsonFormatter.cs",
+              "ToolTip": "C:\\Agartha_Project\\demo2\\AMMS\\Common\\AMMS.Infrastructure\\Logging\\GraylogJsonFormatter.cs",
+              "RelativeToolTip": "Common\\AMMS.Infrastructure\\Logging\\GraylogJsonFormatter.cs",
+              "ViewState": "AgIAAA4AAAAAAAAAAAAAwCMAAAANAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-06-22T10:28:12.815Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
               "Title": "AssetManagementService.cs",
               "DocumentMoniker": "C:\\Agartha_Project\\demo2\\AMMS\\Modules\\AssetManagement\\AssetManagement.Application\\Services\\AssetManagementService.cs",
               "RelativeDocumentMoniker": "Modules\\AssetManagement\\AssetManagement.Application\\Services\\AssetManagementService.cs",
               "ToolTip": "C:\\Agartha_Project\\demo2\\AMMS\\Modules\\AssetManagement\\AssetManagement.Application\\Services\\AssetManagementService.cs",
               "RelativeToolTip": "Modules\\AssetManagement\\AssetManagement.Application\\Services\\AssetManagementService.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAAAnAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABkAAAAMAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-06-22T05:50:02.624Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 4,
               "Title": "AssetManagementController.cs",
               "DocumentMoniker": "C:\\Agartha_Project\\demo2\\AMMS\\Hosts\\AMMS.Api\\Controllers\\AssetManagementController.cs",
               "RelativeDocumentMoniker": "Hosts\\AMMS.Api\\Controllers\\AssetManagementController.cs",
@@ -73,7 +90,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 2,
               "Title": "FaultManagementController.cs",
               "DocumentMoniker": "C:\\Agartha_Project\\demo2\\AMMS\\Hosts\\AMMS.Api\\Controllers\\FaultManagementController.cs",
               "RelativeDocumentMoniker": "Hosts\\AMMS.Api\\Controllers\\FaultManagementController.cs",
