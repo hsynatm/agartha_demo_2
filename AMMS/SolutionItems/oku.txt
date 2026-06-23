@@ -131,6 +131,29 @@ Tum dev API loglari:
 
 CorrelationId ile izleme:
   CorrelationId:<header-degeri>
+  (HTTP request, EF Core, exception ve audit loglarinda AmmsGraylogSchemaEnricher ile ayni deger)
+
+## Graylog log semasi (standart alan seti)
+
+Tum log tipleri (200/400/404/500/exception) AmmsGraylogSchemaEnricher ile ayni kolonlari tasir.
+Veri yoksa alan cikarilmaz; string alanlar "-", numerik alanlar 0 kullanilir.
+
+Zorunlu alanlar:
+  Application, ClientIp, CorrelationId, Elapsed, ElapsedMilliseconds, EnvironmentName,
+  ErrorCode, LocalizationKey, ModuleName, RequestMethod, RequestPath, SourceContext,
+  StatusCode, TenantId, Title, Detail, Host, Scheme, TraceId, message, source,
+  stringLevel, timestamp
+
+Opsiyonel (her zaman dolu; exception yoksa "-"):
+  ConnectionId, ExceptionMessage, ExceptionSource, ExceptionType, StackTrace, RequestId
+
+ErrorCode / LocalizationKey / Title / Detail:
+  - 2xx: "-" (AmmsLogSchemaContext.SetFromRequest)
+  - 4xx/5xx: ExceptionHandlingMiddleware -> AmmsLogSchemaContext.SetFromMapped
+
+Pipeline sirasi (onemli):
+  CorrelationId -> Culture -> LogContext -> RequestLogging -> ExceptionHandling
+  ExceptionHandling controller'a yakin; request log final StatusCode ile duser.
 
 Modul bazli:
   ModuleName:FaultManagement

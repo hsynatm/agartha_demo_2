@@ -18,8 +18,7 @@ namespace AMMS.Infrastructure.Logging
                     .ReadFrom.Configuration(context.Configuration)
                     .ReadFrom.Services(services)
                     .Enrich.FromLogContext()
-                    .Enrich.WithProperty(LogPropertyNames.Application, context.HostingEnvironment.ApplicationName)
-                    .Enrich.WithProperty(LogPropertyNames.EnvironmentName, context.HostingEnvironment.EnvironmentName);
+                    .Enrich.With(services.GetRequiredService<AmmsGraylogSchemaEnricher>());
             });
 
             return builder;
@@ -32,7 +31,6 @@ namespace AMMS.Infrastructure.Logging
                 options.MessageTemplate =
                     "[{Application}] {RequestMethod} {RequestPath} => {StatusCode} ({Elapsed:0.0000}ms)";
 
-                // HBYP: 2xx/3xx -> Information, 4xx -> Warning, 5xx/exception -> Error
                 options.GetLevel = (httpContext, elapsed, exception) =>
                 {
                     if (exception is not null || httpContext.Response.StatusCode >= 500)
@@ -50,30 +48,35 @@ namespace AMMS.Infrastructure.Logging
 
                 options.EnrichDiagnosticContext = (diagnosticContext, httpContext) =>
                 {
-                    var hostEnvironment = httpContext.RequestServices.GetRequiredService<IHostEnvironment>();
-                    var correlationId = httpContext.Request.Headers["X-Correlation-ID"].FirstOrDefault()
-                        ?? httpContext.TraceIdentifier;
+                    AmmsLogSchemaContext.SetFromRequest(
+                        httpContext,
+                        httpContext.Response.StatusCode,
+                        GraylogSchemaDefaults.Elapsed);
 
-                    var requestPath = httpContext.Request.Path.Value ?? string.Empty;
-                    var requestQuery = SensitiveQueryStringMasker.Mask(httpContext.Request.QueryString.Value);
-                    var moduleName = ApiModuleNameResolver.ResolveFromPath(requestPath);
+                    var schema = AmmsLogSchemaContext.Get(httpContext);
+                    var requestPath = httpContext.Request.Path.Value ?? GraylogSchemaDefaults.String;
+                    var moduleName = ApiModuleNameResolver.ResolveFromPath(requestPath) ?? GraylogSchemaDefaults.String;
 
-                    diagnosticContext.Set(LogPropertyNames.Application, hostEnvironment.ApplicationName);
-                    diagnosticContext.Set(LogPropertyNames.EnvironmentName, hostEnvironment.EnvironmentName);
-                    diagnosticContext.Set(LogPropertyNames.TraceId, httpContext.TraceIdentifier);
-                    diagnosticContext.Set(LogPropertyNames.CorrelationId, correlationId);
-                    diagnosticContext.Set(LogPropertyNames.ClientIp, httpContext.Connection.RemoteIpAddress?.ToString());
-                    diagnosticContext.Set(LogPropertyNames.RequestMethod, httpContext.Request.Method);
+                    diagnosticContext.Set(LogPropertyNames.StatusCode, schema.StatusCode);
+                    diagnosticContext.Set(LogPropertyNames.Elapsed, schema.Elapsed);
+                    diagnosticContext.Set(LogPropertyNames.ElapsedMilliseconds, schema.ElapsedMilliseconds);
+                    diagnosticContext.Set(LogPropertyNames.ErrorCode, schema.ErrorCode);
+                    diagnosticContext.Set(LogPropertyNames.LocalizationKey, schema.LocalizationKey);
+                    diagnosticContext.Set(LogPropertyNames.Title, schema.Title);
+                    diagnosticContext.Set(LogPropertyNames.Detail, schema.Detail);
                     diagnosticContext.Set(LogPropertyNames.RequestPath, requestPath);
-                    diagnosticContext.Set(LogPropertyNames.RequestQuery, requestQuery);
-                    diagnosticContext.Set(LogPropertyNames.StatusCode, httpContext.Response.StatusCode);
+                    diagnosticContext.Set(LogPropertyNames.RequestMethod, httpContext.Request.Method);
                     diagnosticContext.Set(LogPropertyNames.ModuleName, moduleName);
+                    diagnosticContext.Set(LogPropertyNames.CorrelationId, CorrelationIdResolver.Resolve(httpContext) ?? GraylogSchemaDefaults.String);
+                    diagnosticContext.Set(LogPropertyNames.TraceId, httpContext.TraceIdentifier);
+                    diagnosticContext.Set(LogPropertyNames.ClientIp, httpContext.Connection.RemoteIpAddress?.ToString() ?? GraylogSchemaDefaults.String);
+                    diagnosticContext.Set(LogPropertyNames.Host, httpContext.Request.Host.Value ?? GraylogSchemaDefaults.String);
+                    diagnosticContext.Set(LogPropertyNames.Scheme, httpContext.Request.Scheme ?? GraylogSchemaDefaults.String);
 
-                    var userService = httpContext.RequestServices.GetService<ICurrentUserService>();
                     var organizationService = httpContext.RequestServices.GetService<ICurrentOrganizationService>();
-
-                    diagnosticContext.Set(LogPropertyNames.UserId, userService?.CurrentUser?.UserId);
-                    diagnosticContext.Set(LogPropertyNames.TenantId, organizationService?.CurrentOrganization?.OrganizationId);
+                    diagnosticContext.Set(
+                        LogPropertyNames.TenantId,
+                        organizationService?.CurrentOrganization?.OrganizationId?.ToString() ?? GraylogSchemaDefaults.String);
                 };
             });
 

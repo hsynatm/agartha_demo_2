@@ -30,9 +30,7 @@ namespace AMMS.Infrastructure.Middleware
             var clientIp = context.Connection.RemoteIpAddress?.ToString();
             var requestPath = context.Request.Path.Value ?? string.Empty;
             var requestQuery = SensitiveQueryStringMasker.Mask(context.Request.QueryString.Value);
-            var correlationId = context.Items[CorrelationIdConstants.HttpContextItemKey] as string
-                ?? context.Request.Headers[CorrelationIdConstants.HeaderName].FirstOrDefault()
-                ?? traceId;
+            var correlationId = CorrelationIdResolver.Resolve(context) ?? traceId;
             var moduleName = ApiModuleNameResolver.ResolveFromPath(requestPath);
 
             var userId = currentUserService.CurrentUser?.UserId;

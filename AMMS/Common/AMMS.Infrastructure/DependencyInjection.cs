@@ -1,4 +1,5 @@
 ﻿using AMMS.Core.Interfaces;
+using AMMS.Infrastructure.Logging;
 using AMMS.Infrastructure.Localization;
 using AMMS.Infrastructure.Services;
 using Microsoft.Extensions.DependencyInjection;
@@ -12,6 +13,7 @@ namespace AMMS.Infrastructure
         public static IServiceCollection AddAmmsInfrastructure(this IServiceCollection services)
         {
             services.AddHttpContextAccessor();
+            services.AddSingleton<AmmsGraylogSchemaEnricher>();
             services.AddScoped<ICurrentUserService, CurrentUserService>();
             services.AddScoped<ICurrentOrganizationService, CurrentOrganizationService>();
             services.AddSingleton<JsonStringLocalizer>();

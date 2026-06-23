@@ -52,9 +52,7 @@ namespace AMMS.Infrastructure.Middleware
 
             var culture = GetCulture(context);
             var mapped = MapException(exception, _environment, _localizer, culture);
-
-            var moduleName = ApiModuleNameResolver.ResolveFromPath(context.Request.Path.Value) ?? "Unknown";
-            LogRequestFailed(context, mapped, moduleName, exception);
+            LogRequestFailed(context, mapped, exception);
 
             await WriteProblemDetailsAsync(context, mapped.StatusCode, CreateProblemDetails(context, mapped, culture));
         }
@@ -73,45 +71,31 @@ namespace AMMS.Infrastructure.Middleware
 
             var culture = GetCulture(context);
             var mapped = MapHttpStatus(context.Response.StatusCode, _localizer, culture);
-            var moduleName = ApiModuleNameResolver.ResolveFromPath(context.Request.Path.Value) ?? "Unknown";
-            LogRequestFailed(context, mapped, moduleName, exception: null);
+            LogRequestFailed(context, mapped, exception: null);
             await WriteProblemDetailsAsync(context, mapped.StatusCode, CreateProblemDetails(context, mapped, culture));
         }
 
-        private void LogRequestFailed(HttpContext context,MappedException mapped,string moduleName,Exception? exception)
+        private void LogRequestFailed(HttpContext context, MappedException mapped, Exception? exception)
         {
-            const string messageTemplate =
-                "Request failed. {Title} {Detail} {ModuleName} {ErrorCode} {LocalizationKey} {StatusCode} {TraceId} {RequestPath} {RequestMethod}";
+            context.Response.StatusCode = mapped.StatusCode;
+
+            AmmsLogSchemaContext.SetFromMapped(
+                context,
+                mapped.ErrorCode,
+                mapped.LocalizationKey,
+                mapped.Title,
+                mapped.Detail,
+                mapped.StatusCode);
+
+            const string messageTemplate = "Request failed.";
 
             if (mapped.StatusCode >= StatusCodes.Status500InternalServerError)
             {
-                _logger.LogError(
-                    exception,
-                    messageTemplate,
-                    mapped.Title,
-                    mapped.Detail,
-                    moduleName,
-                    mapped.ErrorCode,
-                    mapped.LocalizationKey,
-                    mapped.StatusCode,
-                    context.TraceIdentifier,
-                    context.Request.Path.Value,
-                    context.Request.Method);
+                _logger.LogError(exception, messageTemplate);
             }
             else
             {
-                _logger.LogWarning(
-                    exception,
-                    messageTemplate,
-                    mapped.Title,
-                    mapped.Detail,
-                    moduleName,
-                    mapped.ErrorCode,
-                    mapped.LocalizationKey,
-                    mapped.StatusCode,
-                    context.TraceIdentifier,
-                    context.Request.Path.Value,
-                    context.Request.Method);
+                _logger.LogWarning(exception, messageTemplate);
             }
         }
 
@@ -120,9 +104,7 @@ namespace AMMS.Infrastructure.Middleware
 
         private static ProblemDetails CreateProblemDetails(HttpContext context, MappedException mapped, string culture)
         {
-            var correlationId = context.Items[CorrelationIdConstants.HttpContextItemKey] as string
-                ?? context.Request.Headers[CorrelationIdConstants.HeaderName].FirstOrDefault()
-                ?? context.TraceIdentifier;
+            var correlationId = CorrelationIdResolver.Resolve(context) ?? context.TraceIdentifier;
 
             var problem = new ProblemDetails
             {

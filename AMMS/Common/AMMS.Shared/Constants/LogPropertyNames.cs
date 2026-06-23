@@ -28,6 +28,8 @@
 
         public const string Elapsed = "Elapsed";
 
+        public const string ElapsedMilliseconds = "ElapsedMilliseconds";
+
         public const string ModuleName = "ModuleName";
 
         public const string Module = "Module";
@@ -47,5 +49,31 @@
         public const string EntityName = "EntityName";
 
         public const string OperationType = "OperationType";
+
+        public const string SourceContext = "SourceContext";
+
+        public const string Host = "Host";
+
+        public const string Scheme = "Scheme";
+
+        public const string StringLevel = "stringLevel";
+
+        public const string Message = "message";
+
+        public const string Source = "source";
+
+        public const string Timestamp = "timestamp";
+
+        public const string ConnectionId = "ConnectionId";
+
+        public const string RequestId = "RequestId";
+
+        public const string ExceptionMessage = "ExceptionMessage";
+
+        public const string ExceptionSource = "ExceptionSource";
+
+        public const string ExceptionType = "ExceptionType";
+
+        public const string StackTrace = "StackTrace";
     }
 }
