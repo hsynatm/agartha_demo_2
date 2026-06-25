@@ -29,15 +29,17 @@ try
     var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
         ?? throw new InvalidOperationException("Connection string 'DefaultConnection' is not configured.");
 
-    builder.Services.AddAmmsModules(connectionString);
+    builder.Services.AddAmmsModules(connectionString, builder.Configuration);
 
     var app = builder.Build();
 
     app.UseAmmsApiDocumentation();
     app.UseAmmsPipeline();
+    app.UseCors("Spa");
+    app.UseAuthentication();
     app.UseAuthorization();
     app.MapControllers();
-    app.MapHealthChecks("/health");
+    app.MapHealthChecks("/health").AllowAnonymous();
 
     app.Run();
 }

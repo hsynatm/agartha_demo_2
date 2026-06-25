@@ -179,3 +179,83 @@ Audit (dev):
 - graylog-opensearch Restarting ise: Docker Desktop memory artir (min 4GB) veya compose yeniden baslat
 - Log gelmiyorsa: netstat ile 12201 LISTENING kontrol et
 - API Docker icinde calisirsa hostname localhost yerine graylog olmali
+
+////////// Keycloak SSO //////
+
+## Mimari
+
+- Keycloak: login + token uretimi (Docker)
+- SPA: Authorization Code + PKCE ile token alir
+- AMMS.Api: JWT Bearer ile token dogrular (yeni API projesi YOK)
+
+## Keycloak baslatma
+
+cd SolutionItems
+docker compose -f docker-compose.keycloak.yml up -d
+
+## ONEMLI: Iki farkli kullanici turu var
+
+### 1) Keycloak Admin Console (yonetim arayuzu)
+
+URL: http://localhost:8080/admin
+  Username: admin
+  Password: admin
+
+Bu bilgi docker-compose.keycloak.yml icinde tanimli (KC_BOOTSTRAP_ADMIN_USERNAME / PASSWORD).
+Keycloak ilk acilista master realm admin kullanicisini otomatik olusturur.
+
+Admin Console'a test kullanicisi ile GIRILMEZ.
+
+### 2) AMMS test kullanicisi (API / SPA login)
+
+Realm: amms (SolutionItems/keycloak/amms-realm.json import)
+  Username: test
+  Password: Test123!
+  Role: operator
+  organization_id: 1
+
+Bu kullanici API token almak icindir (Postman veya SPA login).
+Admin Console icin degildir.
+
+Realm secimi: Admin Console'da sol ustten "amms" realm'ine gecerek
+test kullanicisini Users menusunden gorebilirsiniz (admin ile giris sonrasi).
+
+## API konfigurasyonu
+
+appsettings.json -> Authentication:
+  Authority: http://localhost:8080/realms/amms
+  Audience: amms-spa
+  SpaClientId: amms-spa
+
+Cors -> AllowedOrigins: SPA origin (ornek http://localhost:3000)
+
+## Token alma (Postman / test)
+
+POST http://localhost:8080/realms/amms/protocol/openid-connect/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=password
+client_id=amms-spa
+username=test
+password=Test123!
+
+Yanittaki access_token ile API cagrisi:
+  Authorization: Bearer {access_token}
+
+## Beklenen davranis
+
+- Token yok -> 401 Unauthorized
+- Gecerli token -> 200 + CreatedBy/UpdatedBy + Graylog UserId/TenantId dolu
+- /health -> AllowAnonymous (token gerekmez)
+
+## SPA entegrasyonu
+
+1. Public client: amms-spa (PKCE zorunlu)
+2. Login redirect -> Keycloak -> callback
+3. Her API isteginde Authorization: Bearer {access_token}
+
+## Sorun giderme
+
+- 401 invalid audience: token audience account veya amms-spa olmali
+- CORS hatasi: Cors:AllowedOrigins SPA portunu icermeli
+- Keycloak ayaga kalkmadi: docker logs amms-keycloak

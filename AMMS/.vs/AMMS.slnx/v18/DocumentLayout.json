@@ -1,7 +1,24 @@
 {
   "Version": 1,
   "WorkspaceRootPath": "C:\\Agartha_Project\\demo2\\AMMS\\",
-  "Documents": [],
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{2E39F5A6-84C4-28CD-F3B9-4E2A1F7E1B42}|Common\\AMMS.Infrastructure\\AMMS.Infrastructure.csproj|c:\\agartha_project\\demo2\\amms\\common\\amms.infrastructure\\authentication\\authenticationextensions.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2E39F5A6-84C4-28CD-F3B9-4E2A1F7E1B42}|Common\\AMMS.Infrastructure\\AMMS.Infrastructure.csproj|solutionrelative:common\\amms.infrastructure\\authentication\\authenticationextensions.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2E39F5A6-84C4-28CD-F3B9-4E2A1F7E1B42}|Common\\AMMS.Infrastructure\\AMMS.Infrastructure.csproj|c:\\agartha_project\\demo2\\amms\\common\\amms.infrastructure\\logging\\ammsgraylogschemaenricher.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2E39F5A6-84C4-28CD-F3B9-4E2A1F7E1B42}|Common\\AMMS.Infrastructure\\AMMS.Infrastructure.csproj|solutionrelative:common\\amms.infrastructure\\logging\\ammsgraylogschemaenricher.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{70478290-7EC4-C532-B156-CAB8D7D72EDB}|Hosts\\AMMS.Api\\AMMS.Api.csproj|c:\\agartha_project\\demo2\\amms\\hosts\\amms.api\\controllers\\assetmanagementcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{70478290-7EC4-C532-B156-CAB8D7D72EDB}|Hosts\\AMMS.Api\\AMMS.Api.csproj|solutionrelative:hosts\\amms.api\\controllers\\assetmanagementcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{70478290-7EC4-C532-B156-CAB8D7D72EDB}|Hosts\\AMMS.Api\\AMMS.Api.csproj|c:\\agartha_project\\demo2\\amms\\hosts\\amms.api\\controllers\\apibasecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{70478290-7EC4-C532-B156-CAB8D7D72EDB}|Hosts\\AMMS.Api\\AMMS.Api.csproj|solutionrelative:hosts\\amms.api\\controllers\\apibasecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
   "DocumentGroupContainers": [
     {
       "Orientation": 0,
@@ -9,11 +26,60 @@
       "DocumentGroups": [
         {
           "DockedWidth": 215,
-          "SelectedChildIndex": -1,
+          "SelectedChildIndex": 4,
           "Children": [
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "ApiBaseController.cs",
+              "DocumentMoniker": "C:\\Agartha_Project\\demo2\\AMMS\\Hosts\\AMMS.Api\\Controllers\\ApiBaseController.cs",
+              "RelativeDocumentMoniker": "Hosts\\AMMS.Api\\Controllers\\ApiBaseController.cs",
+              "ToolTip": "C:\\Agartha_Project\\demo2\\AMMS\\Hosts\\AMMS.Api\\Controllers\\ApiBaseController.cs",
+              "RelativeToolTip": "Hosts\\AMMS.Api\\Controllers\\ApiBaseController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAEAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-06-25T13:09:50.262Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "AmmsGraylogSchemaEnricher.cs",
+              "DocumentMoniker": "C:\\Agartha_Project\\demo2\\AMMS\\Common\\AMMS.Infrastructure\\Logging\\AmmsGraylogSchemaEnricher.cs",
+              "RelativeDocumentMoniker": "Common\\AMMS.Infrastructure\\Logging\\AmmsGraylogSchemaEnricher.cs",
+              "ToolTip": "C:\\Agartha_Project\\demo2\\AMMS\\Common\\AMMS.Infrastructure\\Logging\\AmmsGraylogSchemaEnricher.cs",
+              "RelativeToolTip": "Common\\AMMS.Infrastructure\\Logging\\AmmsGraylogSchemaEnricher.cs",
+              "ViewState": "AgIAAHwAAAAAAAAAAAAcwJMAAABWAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-06-25T13:08:23.644Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "AssetManagementController.cs",
+              "DocumentMoniker": "C:\\Agartha_Project\\demo2\\AMMS\\Hosts\\AMMS.Api\\Controllers\\AssetManagementController.cs",
+              "RelativeDocumentMoniker": "Hosts\\AMMS.Api\\Controllers\\AssetManagementController.cs",
+              "ToolTip": "C:\\Agartha_Project\\demo2\\AMMS\\Hosts\\AMMS.Api\\Controllers\\AssetManagementController.cs",
+              "RelativeToolTip": "Hosts\\AMMS.Api\\Controllers\\AssetManagementController.cs",
+              "ViewState": "AgIAAAUAAAAAAAAAAAAmwBoAAAAEAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-06-25T13:03:49.904Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "AuthenticationExtensions.cs",
+              "DocumentMoniker": "C:\\Agartha_Project\\demo2\\AMMS\\Common\\AMMS.Infrastructure\\Authentication\\AuthenticationExtensions.cs",
+              "RelativeDocumentMoniker": "Common\\AMMS.Infrastructure\\Authentication\\AuthenticationExtensions.cs",
+              "ToolTip": "C:\\Agartha_Project\\demo2\\AMMS\\Common\\AMMS.Infrastructure\\Authentication\\AuthenticationExtensions.cs",
+              "RelativeToolTip": "Common\\AMMS.Infrastructure\\Authentication\\AuthenticationExtensions.cs",
+              "ViewState": "AgIAAAwAAAAAAAAAAADgvyUAAAA0AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-06-25T13:03:49.922Z",
+              "EditorCaption": ""
             }
           ]
         }

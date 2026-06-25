@@ -1,12 +1,14 @@
 ﻿using AMMS.Core.Exceptions;
 using AMMS.Core.Localization;
 using AMMS.Infrastructure.Validation;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AMMS.Api.Controllers
 {
 
     [ApiController]
+    [Authorize]
     public abstract class ApiBaseController : ControllerBase
     {
         protected void EnsureValidRequest(object? model = null)
