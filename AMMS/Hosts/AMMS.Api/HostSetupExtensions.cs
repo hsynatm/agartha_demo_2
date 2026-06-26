@@ -7,6 +7,8 @@ using FaultManagement.Application;
 using FaultManagement.Infrastructure;
 using MaintenanceManagement.Application;
 using MaintenanceManagement.Infrastructure;
+using UserManagement.Application;
+using UserManagement.Infrastructure;
 
 namespace AMMS.Api;
 
@@ -25,6 +27,8 @@ internal static class HostSetupExtensions
         services.AddFaultManagementInfrastructure(connectionString);
         services.AddMaintenanceManagementApplication();
         services.AddMaintenanceManagementInfrastructure(connectionString);
+        services.AddUserManagementApplication();
+        services.AddUserManagementInfrastructure(connectionString, configuration);
         return services;
     }
 

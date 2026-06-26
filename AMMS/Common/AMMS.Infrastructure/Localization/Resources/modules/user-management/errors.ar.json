@@ -1,0 +1,12 @@
+{
+  "errors.kullanici.not_found": "لم يتم العثور على المستخدم.",
+  "errors.kullanici.duplicate_username": "اسم المستخدم هذا مسجل بالفعل.",
+  "errors.kullanici.invalid_roles": "يجب تحديد دور واحد أو مجموعة أدوار واحدة على الأقل.",
+  "errors.kullanici.keycloak_sync_failed": "تعذرت مزامنة المستخدم مع Keycloak.",
+  "errors.kullanici.invalid_email": "عنوان البريد الإلكتروني غير صالح.",
+  "errors.kullanici.invalid_username": "اسم المستخدم غير صالح.",
+  "errors.rol.not_found": "لم يتم العثور على الدور.",
+  "errors.rol.duplicate_code": "رمز الدور هذا مسجل بالفعل.",
+  "errors.rol_grubu.not_found": "لم يتم العثور على مجموعة الأدوار.",
+  "errors.rol_grubu.duplicate_code": "رمز مجموعة الأدوار هذا مسجل بالفعل."
+}

@@ -1,9 +1,10 @@
-using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using System.Security.Claims;
 
 namespace AMMS.Infrastructure.Authentication;
 
@@ -30,6 +31,7 @@ public static class AuthenticationExtensions
             {
                 options.Authority = authOptions.Authority;
                 options.RequireHttpsMetadata = authOptions.RequireHttpsMetadata;
+                options.MapInboundClaims = false;
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuer = true,
@@ -50,9 +52,54 @@ public static class AuthenticationExtensions
                         if (!string.IsNullOrWhiteSpace(authorizedParty)
                             && !string.Equals(authorizedParty, authOptions.SpaClientId, StringComparison.Ordinal))
                         {
+                            AuthorizationFailureContext.Set(
+                                context.HttpContext,
+                                new AuthorizationFailureSnapshot(
+                                    "Token authorized party is not allowed.",
+                                    KeycloakClaims.GetKeycloakUserId(context.Principal)));
                             context.Fail("Token authorized party is not allowed.");
                         }
 
+                        return Task.CompletedTask;
+                    },
+                    OnAuthenticationFailed = context =>
+                    {
+                        if (AuthorizationFailureContext.Get(context.HttpContext) is not null)
+                        {
+                            return Task.CompletedTask;
+                        }
+
+                        AuthorizationFailureContext.Set(
+                            context.HttpContext,
+                            new AuthorizationFailureSnapshot(
+                                context.Exception?.Message ?? "JWT authentication failed.",
+                                KeycloakClaims.GetKeycloakUserId(context.Principal)));
+                        return Task.CompletedTask;
+                    },
+                    OnChallenge = context =>
+                    {
+                        if (AuthorizationFailureContext.Get(context.HttpContext) is not null)
+                        {
+                            return Task.CompletedTask;
+                        }
+
+                        AuthorizationFailureContext.Set(
+                            context.HttpContext,
+                            new AuthorizationFailureSnapshot("Authentication is required."));
+                        return Task.CompletedTask;
+                    },
+                    OnForbidden = context =>
+                    {
+                        if (AuthorizationFailureContext.Get(context.HttpContext) is not null)
+                        {
+                            return Task.CompletedTask;
+                        }
+
+                        AuthorizationFailureContext.Set(
+                            context.HttpContext,
+                            new AuthorizationFailureSnapshot(
+                                "Access token is valid but the user is not allowed to access this resource.",
+                                KeycloakClaims.GetKeycloakUserId(context.HttpContext.User)));
                         return Task.CompletedTask;
                     }
                 };
@@ -60,11 +107,11 @@ public static class AuthenticationExtensions
 
         services.AddAuthorization(options =>
         {
-            options.FallbackPolicy = new Microsoft.AspNetCore.Authorization.AuthorizationPolicyBuilder()
+            options.FallbackPolicy = new AuthorizationPolicyBuilder()
                 .RequireAuthenticatedUser()
                 .Build();
         });
-
+        services.AddScoped<IAuthorizationHandler, AmmsPermissionAuthorizationHandler>();
         services.AddTransient<IClaimsTransformation, KeycloakClaimsTransformation>();
 
         return services;

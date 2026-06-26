@@ -1,0 +1,12 @@
+{
+  "errors.kullanici.not_found": "User not found.",
+  "errors.kullanici.duplicate_username": "This username is already registered.",
+  "errors.kullanici.invalid_roles": "At least one role or role group is required.",
+  "errors.kullanici.keycloak_sync_failed": "User could not be synchronized with Keycloak.",
+  "errors.kullanici.invalid_email": "Invalid email address.",
+  "errors.kullanici.invalid_username": "Invalid username.",
+  "errors.rol.not_found": "Role not found.",
+  "errors.rol.duplicate_code": "This role code is already registered.",
+  "errors.rol_grubu.not_found": "Role group not found.",
+  "errors.rol_grubu.duplicate_code": "This role group code is already registered."
+}

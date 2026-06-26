@@ -1,4 +1,4 @@
-using AMMS.Core.Interfaces;
+using AMMS.Infrastructure.Authentication;
 using AMMS.Shared.Constants;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
@@ -6,6 +6,7 @@ using Microsoft.Extensions.Hosting;
 using Serilog.Core;
 using Serilog.Events;
 using System.Globalization;
+using System.Security.Claims;
 
 namespace AMMS.Infrastructure.Logging;
 
@@ -147,14 +148,29 @@ public sealed class AmmsGraylogSchemaEnricher : ILogEventEnricher
 
     private static string ResolveTenantId(HttpContext? httpContext, LogEvent logEvent)
     {
-        var organizationService = httpContext?.RequestServices.GetService(typeof(ICurrentOrganizationService)) as ICurrentOrganizationService;
-        var tenantId = organizationService?.CurrentOrganization?.OrganizationId;
-        if (!string.IsNullOrWhiteSpace(tenantId))
+        var fromEvent = GetScalarString(logEvent, LogPropertyNames.TenantId, GraylogSchemaDefaults.String);
+        if (!string.Equals(fromEvent, GraylogSchemaDefaults.String, StringComparison.Ordinal))
         {
-            return tenantId;
+            return fromEvent;
         }
 
-        return GetScalarString(logEvent, LogPropertyNames.TenantId, GraylogSchemaDefaults.String);
+        try
+        {
+            if (httpContext?.User.Identity?.IsAuthenticated == true)
+            {
+                var tenantId = httpContext.User.FindFirstValue(AmmsAuthenticationOptions.DefaultOrganizationClaimType);
+                if (!string.IsNullOrWhiteSpace(tenantId))
+                {
+                    return tenantId;
+                }
+            }
+        }
+        catch (ObjectDisposedException)
+        {
+            // Request scope may already be disposed when async sinks flush logs.
+        }
+
+        return GraylogSchemaDefaults.String;
     }
 
     private static string ResolveSourceContext(LogEvent logEvent)

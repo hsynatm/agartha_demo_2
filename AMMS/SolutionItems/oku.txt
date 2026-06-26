@@ -29,6 +29,13 @@ Add-Migration 2026_06_19_4 -Context MaintenanceManagementDbContext  -OutputDir P
 Update-Database -Context MaintenanceManagementDbContext
 
 
+-- 5
+Add-Migration 2026_06_26_1 -Context UserManagementDbContext  -OutputDir Persistence\Migrations
+Update-Database -Context UserManagementDbContext
+
+
+
+
 
 ////////// Graylog (dev / prod) //////
 

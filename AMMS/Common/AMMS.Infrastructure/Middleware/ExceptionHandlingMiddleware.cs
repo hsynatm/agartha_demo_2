@@ -1,4 +1,5 @@
-﻿using AMMS.Infrastructure.Localization;
+﻿using AMMS.Core.Exceptions;
+using AMMS.Infrastructure.Localization;
 using AMMS.Infrastructure.Logging;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -19,13 +20,20 @@ namespace AMMS.Infrastructure.Middleware
 
         private readonly RequestDelegate _next;
         private readonly ILogger<ExceptionHandlingMiddleware> _logger;
+        private readonly AuthorizationFailureLogger _authorizationFailureLogger;
         private readonly IHostEnvironment _environment;
         private readonly JsonStringLocalizer _localizer;
 
-        public ExceptionHandlingMiddleware(RequestDelegate next,ILogger<ExceptionHandlingMiddleware> logger,IHostEnvironment environment,JsonStringLocalizer localizer)
+        public ExceptionHandlingMiddleware(
+            RequestDelegate next,
+            ILogger<ExceptionHandlingMiddleware> logger,
+            AuthorizationFailureLogger authorizationFailureLogger,
+            IHostEnvironment environment,
+            JsonStringLocalizer localizer)
         {
             _next = next;
             _logger = logger;
+            _authorizationFailureLogger = authorizationFailureLogger;
             _environment = environment;
             _localizer = localizer;
         }
@@ -87,6 +95,17 @@ namespace AMMS.Infrastructure.Middleware
                 mapped.Detail,
                 mapped.StatusCode);
 
+            if (IsAuthorizationFailure(mapped.StatusCode, exception))
+            {
+                _authorizationFailureLogger.Log(
+                    context,
+                    mapped.StatusCode,
+                    mapped.ErrorCode,
+                    mapped.Detail,
+                    exception);
+                return;
+            }
+
             const string messageTemplate = "Request failed.";
 
             if (mapped.StatusCode >= StatusCodes.Status500InternalServerError)
@@ -98,6 +117,10 @@ namespace AMMS.Infrastructure.Middleware
                 _logger.LogWarning(exception, messageTemplate);
             }
         }
+
+        private static bool IsAuthorizationFailure(int statusCode, Exception? exception) =>
+            statusCode is StatusCodes.Status401Unauthorized or StatusCodes.Status403Forbidden
+            || exception is AmmsException.Unauthorized or AmmsException.Forbidden or UnauthorizedAccessException;
 
         private static string GetCulture(HttpContext context) =>
             context.Items[CultureConstants.HttpContextItemKey] as string ?? CultureConstants.DefaultCulture;

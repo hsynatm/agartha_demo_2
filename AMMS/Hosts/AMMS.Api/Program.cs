@@ -4,6 +4,7 @@ using AMMS.Api.Swagger;
 using AMMS.Infrastructure;
 using AMMS.Infrastructure.Logging;
 using Serilog;
+using UserManagement.Infrastructure.Middleware;
 
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
@@ -37,6 +38,7 @@ try
     app.UseAmmsPipeline();
     app.UseCors("Spa");
     app.UseAuthentication();
+    app.UseAppUserResolution();
     app.UseAuthorization();
     app.MapControllers();
     app.MapHealthChecks("/health").AllowAnonymous();

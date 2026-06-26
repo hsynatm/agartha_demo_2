@@ -9,13 +9,6 @@
   "resetPasswordAllowed": true,
   "editUsernameAllowed": false,
   "bruteForceProtected": false,
-  "roles": {
-    "realm": [
-      { "name": "admin", "description": "Administrator" },
-      { "name": "operator", "description": "Operator" },
-      { "name": "viewer", "description": "Viewer" }
-    ]
-  },
   "clients": [
     {
       "clientId": "amms-spa",
@@ -67,46 +60,54 @@
           }
         },
         {
-          "name": "realm roles",
+          "name": "audience-mapper",
           "protocol": "openid-connect",
-          "protocolMapper": "oidc-usermodel-realm-role-mapper",
+          "protocolMapper": "oidc-audience-mapper",
           "consentRequired": false,
           "config": {
-            "claim.name": "roles",
-            "jsonType.label": "String",
-            "multivalued": "true",
-            "id.token.claim": "true",
-            "access.token.claim": "true",
-            "userinfo.token.claim": "true"
+            "included.client.audience": "amms-spa",
+            "id.token.claim": "false",
+            "access.token.claim": "true"
           }
         }
+      ]
+    },
+    {
+      "clientId": "amms-api",
+      "name": "AMMS API",
+      "enabled": true,
+      "publicClient": false,
+      "secret": "amms-api-secret-dev",
+      "protocol": "openid-connect",
+      "standardFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": true,
+      "authorizationServicesEnabled": false,
+      "fullScopeAllowed": true,
+      "defaultClientScopes": [
+        "web-origins",
+        "acr",
+        "profile",
+        "email"
+      ],
+      "optionalClientScopes": [
+        "address",
+        "phone",
+        "offline_access",
+        "microprofile-jwt"
       ]
     }
   ],
   "users": [
     {
-      "username": "test",
-      "email": "test@amms.local",
+      "username": "service-account-amms-api",
       "enabled": true,
-      "emailVerified": true,
-      "firstName": "Test",
-      "lastName": "User",
-      "credentials": [
-        {
-          "type": "password",
-          "value": "Test123!",
-          "temporary": false
-        }
-      ],
-      "realmRoles": [
-        "operator"
-      ],
-      "attributes": {
-        "organization_id": [
-          "1"
-        ],
-        "organization_name": [
-          "Test Organization"
+      "serviceAccountClientId": "amms-api",
+      "clientRoles": {
+        "realm-management": [
+          "manage-users",
+          "view-users",
+          "query-users"
         ]
       }
     }

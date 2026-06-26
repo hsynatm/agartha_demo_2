@@ -10,7 +10,9 @@ public sealed class AmmsAuthenticationOptions
 
     public bool RequireHttpsMetadata { get; set; } = true;
 
-    public string OrganizationClaimType { get; set; } = "organization_id";
+    public string OrganizationClaimType { get; set; } = DefaultOrganizationClaimType;
+
+    public const string DefaultOrganizationClaimType = "organization_id";
 
     public string OrganizationNameClaimType { get; set; } = "organization_name";
 

@@ -1,10 +1,11 @@
-﻿using AMMS.Core.Interfaces;
+﻿using AMMS.Infrastructure.Authentication;
 using AMMS.Shared.Constants;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
 using Serilog.Events;
+using System.Security.Claims;
 
 namespace AMMS.Infrastructure.Logging
 {
@@ -73,10 +74,12 @@ namespace AMMS.Infrastructure.Logging
                     diagnosticContext.Set(LogPropertyNames.Host, httpContext.Request.Host.Value ?? GraylogSchemaDefaults.String);
                     diagnosticContext.Set(LogPropertyNames.Scheme, httpContext.Request.Scheme ?? GraylogSchemaDefaults.String);
 
-                    var organizationService = httpContext.RequestServices.GetService<ICurrentOrganizationService>();
+                    var tenantId = httpContext.User.Identity?.IsAuthenticated == true
+                        ? httpContext.User.FindFirstValue(AmmsAuthenticationOptions.DefaultOrganizationClaimType)
+                        : null;
                     diagnosticContext.Set(
                         LogPropertyNames.TenantId,
-                        organizationService?.CurrentOrganization?.OrganizationId?.ToString() ?? GraylogSchemaDefaults.String);
+                        tenantId ?? GraylogSchemaDefaults.String);
                 };
             });
 

@@ -20,6 +20,7 @@ namespace AMMS.Infrastructure
             services.AddAmmsCors(configuration);
             services.AddScoped<ICurrentUserService, CurrentUserService>();
             services.AddScoped<ICurrentOrganizationService, CurrentOrganizationService>();
+            services.AddScoped<AuthorizationFailureLogger>();
             services.AddSingleton<JsonStringLocalizer>();
             return services;
         }

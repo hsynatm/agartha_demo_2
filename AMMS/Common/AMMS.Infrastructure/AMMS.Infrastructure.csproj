@@ -78,6 +78,18 @@
       <LogicalName>amms.loc.modules.asset-management.errors.ar</LogicalName>
       <WithCulture>false</WithCulture>
     </EmbeddedResource>
+    <EmbeddedResource Include="Localization\Resources\modules\user-management\errors.tr.json">
+      <LogicalName>amms.loc.modules.user-management.errors.tr</LogicalName>
+      <WithCulture>false</WithCulture>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Localization\Resources\modules\user-management\errors.en.json">
+      <LogicalName>amms.loc.modules.user-management.errors.en</LogicalName>
+      <WithCulture>false</WithCulture>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Localization\Resources\modules\user-management\errors.ar.json">
+      <LogicalName>amms.loc.modules.user-management.errors.ar</LogicalName>
+      <WithCulture>false</WithCulture>
+    </EmbeddedResource>
   </ItemGroup>
 
 </Project>

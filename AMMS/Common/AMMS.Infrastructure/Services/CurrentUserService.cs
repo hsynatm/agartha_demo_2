@@ -1,4 +1,6 @@
-﻿using AMMS.Core.Interfaces;
+﻿using AMMS.Core.Http;
+using AMMS.Core.Interfaces;
+using AMMS.Infrastructure.Authentication;
 using AMMS.Shared.Models;
 using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
@@ -31,24 +33,27 @@ namespace AMMS.Infrastructure.Services
                     return null;
                 }
 
-                var userId = principal.FindFirstValue(ClaimTypes.NameIdentifier)
-                    ?? principal.FindFirstValue("sub");
+                var keycloakUserId = KeycloakClaims.GetKeycloakUserId(principal);
 
-                if (string.IsNullOrEmpty(userId))
+                if (string.IsNullOrEmpty(keycloakUserId))
                 {
                     return null;
                 }
 
+                var httpContext = _httpContextAccessor?.HttpContext;
+                var appUserId = httpContext?.Items[HttpContextUserKeys.AppUserId] as Guid?;
+                var appUsername = httpContext?.Items[HttpContextUserKeys.AppUsername] as string;
+
                 return new CurrentUser
                 {
-                    UserId = userId,
-                    UserName = principal.Identity?.Name
+                    UserId = appUserId?.ToString() ?? keycloakUserId,
+                    KeycloakUserId = keycloakUserId,
+                    UserName = appUsername
+                        ?? principal.Identity?.Name
                         ?? principal.FindFirstValue("preferred_username")
                         ?? string.Empty,
                     Email = principal.FindFirstValue(ClaimTypes.Email),
-                    Roles = principal.FindAll(ClaimTypes.Role)
-                        .Select(claim => claim.Value)
-                        .ToList()
+                    Roles = []
                 };
             }
         }
