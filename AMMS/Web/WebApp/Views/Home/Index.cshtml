@@ -6,46 +6,149 @@
 
     <div class="col-3" style="border:1px solid red">
         <label style="text-align:center;width:100%;color:red">LOGIN</label>
-        <input type="text" id="username" name="username" placeholder="User Name" style="width:100%;margin:5px"><br />
-        <input type="text" id="password" name="password" placeholder="Password" style="width:100%;margin:5px"><br />
-        <button type="button" class="btn btn-danger" id="btnLogin" style="width:95%;margin:10px" onclick="login()">LOGIN</button>
+        <input type="text" id="username" name="username" placeholder="User Name" style="width:100%;margin:5px" value="test54"><br />
+        <input type="text" id="password" name="password" placeholder="Password" value="1234"  style="width:100%;margin:5px"><br />
+        <button type="button" class="btn btn-danger" id="btnLogin" style="width:95%;margin:10px" >LOGIN</button>
+        <div id="loginTokenOutput" class="p-2 mt-2 small" style="word-break:break-all;display:none"></div>
     </div>
 
 
-    <div class="col-3" style="border:1px solid blue;margin-left:10px" ;>
+    <div class="col-3" style="border:1px solid blue;margin-left:10px">
         <label style="text-align:center;width:100%;color:blue">CREATE USER</label>
         <input type="text" id="newusername" name="newusername" placeholder="New User Name" style="width:100%;margin:5px"><br />
-        <input type="text" id="newpassword" name="newpassword" placeholder="New Password" style="width:100%;margin:5px"><br />
-        <button type="button" class="btn btn-primary" id="btnCreateUser" style="width:95%;margin:10px" onclick="createUser()">CRETAE USER </button>
+        <input type="password" id="newpassword" name="newpassword" placeholder="New Password" style="width:100%;margin:5px"><br />
+        <button type="button" class="btn btn-primary" id="btnCreateUser" style="width:95%;margin:10px">CREATE USER</button>
     </div>
 
-    
 
-    <div class="col-3" style="border:1px solid green;margin-left:10px" ;>
+    <div class="col-3" style="border:1px solid green;margin-left:10px">
         <label style="text-align:center;width:100%;color:green">SORGULA ASSET</label>
-        <input type="text" id="assetId" name="assetId" placeholder="ASSET ID" style="width:100%;margin:5px"><br />
-        <button type="button" class="btn btn-outline-success" id="btnSorgula" style="width:95%;margin:10px" onclick="sorgulaAsset()">SORGULA </button>
+        <input type="text" id="assetId" name="assetId" placeholder="ASSET ID" style="width:100%;margin:5px" value="5a9546e8-a371-4fac-9d3a-5cc9ee90bf39"><br />
+        <button type="button" class="btn btn-outline-success" id="btnSorgula" style="width:95%;margin:10px">SORGULA</button>
+        <div id="assetSorgulaOutput" class="p-2 mt-2 small" style="word-break:break-all;display:none"></div>
     </div>
-
 
 </div>
 
+<div class="row mt-4">
+    <div class="col-12">
+        <pre id="resultOutput" class="border rounded p-3 bg-light" style="min-height:80px"></pre>
+    </div>
+</div>
 
-<script type="text/javascript">
+@section Scripts {
+    <script>
+        (function () {
+            const urls = {
+                login: '@Url.Action("Login", "Home")',
+                createUser: '@Url.Action("CreateUser", "Home")',
+                sorgulaAsset: '@Url.Action("SorgulaAsset", "Home")'
+            };
 
+            const $result = $('#resultOutput');
+            const $loginTokenOutput = $('#loginTokenOutput');
+            const $assetSorgulaOutput = $('#assetSorgulaOutput');
+            let accessToken = null;
+            let refreshToken = null;
 
-    function login(){
-        alert("login");
-    }
+            function showLoginTokens(data) {
+                if (!data?.success) {
+                    accessToken = null;
+                    refreshToken = null;
+                    $loginTokenOutput
+                        .css('display', 'block')
+                        .css('color', 'red')
+                        .html('<strong>Login failed</strong><br>' + (data?.message ?? data?.detail ?? 'Unknown error'));
+                    return;
+                }
 
-        
-    function createUser(){
-        alert("createuser");
-    }
+                accessToken = data.accessToken;
+                refreshToken = data.refreshToken;
 
-           
-    function sorgulaAsset(){
-        alert("sorgula");
-    }
+                $loginTokenOutput
+                    .css('display', 'block')
+                    .css('color', 'inherit')
+                    .html(
+                        '<strong>Access Token</strong><br>' + (data.accessToken ?? '-') + '<br><br>' +
+                        '<strong>Refresh Token</strong><br>' + (data.refreshToken ?? '-')
+                    );
+            }
 
-</script>
+            function showLoginError(xhr) {
+                const message = xhr.responseJSON ?? xhr.responseText ?? xhr.statusText;
+                showLoginTokens({
+                    success: false,
+                    message: typeof message === 'string' ? message : JSON.stringify(message)
+                });
+            }
+
+            function showAssetResult(data, isError) {
+                $assetSorgulaOutput
+                    .css('display', 'block')
+                    .css('color', isError ? 'red' : 'inherit')
+                    .text(typeof data === 'string' ? data : JSON.stringify(data, null, 2));
+            }
+
+            function showAssetError(xhr) {
+                const message = xhr.responseJSON ?? xhr.responseText ?? xhr.statusText;
+                showAssetResult(message, true);
+            }
+            function showResult(label, data) {
+                $result.text(label + '\n' + JSON.stringify(data, null, 2));
+            }
+
+            function showError(label, xhr) {
+                const message = xhr.responseJSON ?? xhr.responseText ?? xhr.statusText;
+                $result.text(label + ' ERROR\n' + JSON.stringify(message, null, 2));
+            }
+
+            $('#btnLogin').on('click', function () {
+                $loginTokenOutput.hide().empty();
+
+                $.post(urls.login, {
+                    pUserName: $('#username').val(),
+                    password: $('#password').val()
+                })
+                    .done(function (data) { showLoginTokens(data); })
+                    .fail(function (xhr) { showLoginError(xhr); });
+            });
+
+            $('#btnCreateUser').on('click', function () {
+                $.post(urls.createUser, {
+                    pname: $('#newusername').val(),
+                    password: $('#newpassword').val()
+                })
+                    .done(function (data) { showResult('CreateUser', data); })
+                    .fail(function (xhr) { showError('CreateUser', xhr); });
+            });
+
+            $('#btnSorgula').on('click', function () {
+                $assetSorgulaOutput.hide().empty();
+
+                if (!accessToken) {
+                    showAssetResult('Önce LOGIN yapın. API isteklerinde access token kullanılır.', true);
+                    return;
+                }
+
+                $.ajax({
+                    url: urls.sorgulaAsset,
+                    type: 'GET',
+                    data: { id: $('#assetId').val() },
+                    headers: {
+                        Authorization: 'Bearer ' + accessToken,
+                        'X-Refresh-Token': refreshToken ?? ''
+                    }
+                })
+                    .done(function (data) {
+                        if (data?.tokensUpdated) {
+                            accessToken = data.accessToken;
+                            refreshToken = data.refreshToken;
+                        }
+
+                        showAssetResult(data?.result ?? data, false);
+                    })
+                    .fail(function (xhr) { showAssetError(xhr); });
+            });
+        })();
+    </script>
+}

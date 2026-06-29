@@ -3,6 +3,7 @@ using AMMS.Infrastructure.Localization;
 using AMMS.Infrastructure.Logging;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System.Text.Json;
@@ -20,20 +21,17 @@ namespace AMMS.Infrastructure.Middleware
 
         private readonly RequestDelegate _next;
         private readonly ILogger<ExceptionHandlingMiddleware> _logger;
-        private readonly AuthorizationFailureLogger _authorizationFailureLogger;
         private readonly IHostEnvironment _environment;
         private readonly JsonStringLocalizer _localizer;
 
         public ExceptionHandlingMiddleware(
             RequestDelegate next,
             ILogger<ExceptionHandlingMiddleware> logger,
-            AuthorizationFailureLogger authorizationFailureLogger,
             IHostEnvironment environment,
             JsonStringLocalizer localizer)
         {
             _next = next;
             _logger = logger;
-            _authorizationFailureLogger = authorizationFailureLogger;
             _environment = environment;
             _localizer = localizer;
         }
@@ -97,12 +95,9 @@ namespace AMMS.Infrastructure.Middleware
 
             if (IsAuthorizationFailure(mapped.StatusCode, exception))
             {
-                _authorizationFailureLogger.Log(
-                    context,
-                    mapped.StatusCode,
-                    mapped.ErrorCode,
-                    mapped.Detail,
-                    exception);
+                context.RequestServices
+                    .GetRequiredService<AuthorizationFailureLogger>()
+                    .Log(context, mapped.StatusCode, mapped.ErrorCode, mapped.Detail, exception);
                 return;
             }
 

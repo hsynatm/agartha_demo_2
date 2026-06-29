@@ -3,12 +3,16 @@
   "WorkspaceRootPath": "C:\\Agartha_Project\\demo2\\AMMS\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{D765E5EF-B91C-4090-B615-7F0D154D3D48}|Web\\WebApp\\WebApp.csproj|c:\\agartha_project\\demo2\\amms\\web\\webapp\\views\\home\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{D765E5EF-B91C-4090-B615-7F0D154D3D48}|Web\\WebApp\\WebApp.csproj|solutionrelative:web\\webapp\\views\\home\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{D765E5EF-B91C-4090-B615-7F0D154D3D48}|Web\\WebApp\\WebApp.csproj|c:\\agartha_project\\demo2\\amms\\web\\webapp\\controllers\\homecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{D765E5EF-B91C-4090-B615-7F0D154D3D48}|Web\\WebApp\\WebApp.csproj|solutionrelative:web\\webapp\\controllers\\homecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{70478290-7EC4-C532-B156-CAB8D7D72EDB}|Hosts\\AMMS.Api\\AMMS.Api.csproj|c:\\agartha_project\\demo2\\amms\\hosts\\amms.api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{70478290-7EC4-C532-B156-CAB8D7D72EDB}|Hosts\\AMMS.Api\\AMMS.Api.csproj|solutionrelative:hosts\\amms.api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D765E5EF-B91C-4090-B615-7F0D154D3D48}|Web\\WebApp\\WebApp.csproj|c:\\agartha_project\\demo2\\amms\\web\\webapp\\views\\home\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{D765E5EF-B91C-4090-B615-7F0D154D3D48}|Web\\WebApp\\WebApp.csproj|solutionrelative:web\\webapp\\views\\home\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     }
   ],
   "DocumentGroupContainers": [
@@ -18,30 +22,47 @@
       "DocumentGroups": [
         {
           "DockedWidth": 215,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 3,
           "Children": [
             {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
+            },
+            {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Agartha_Project\\demo2\\AMMS\\Hosts\\AMMS.Api\\Program.cs",
+              "RelativeDocumentMoniker": "Hosts\\AMMS.Api\\Program.cs",
+              "ToolTip": "C:\\Agartha_Project\\demo2\\AMMS\\Hosts\\AMMS.Api\\Program.cs",
+              "RelativeToolTip": "Hosts\\AMMS.Api\\Program.cs",
+              "ViewState": "AgIAACEAAAAAAAAAAAASwBMAAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-06-29T07:39:37.041Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
               "Title": "Index.cshtml",
               "DocumentMoniker": "C:\\Agartha_Project\\demo2\\AMMS\\Web\\WebApp\\Views\\Home\\Index.cshtml",
               "RelativeDocumentMoniker": "Web\\WebApp\\Views\\Home\\Index.cshtml",
               "ToolTip": "C:\\Agartha_Project\\demo2\\AMMS\\Web\\WebApp\\Views\\Home\\Index.cshtml",
               "RelativeToolTip": "Web\\WebApp\\Views\\Home\\Index.cshtml",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAACIAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAEsAAAAAAAAAAAAAADAAAAAjAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
               "WhenOpened": "2026-06-29T05:58:07.847Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 0,
               "Title": "HomeController.cs",
               "DocumentMoniker": "C:\\Agartha_Project\\demo2\\AMMS\\Web\\WebApp\\Controllers\\HomeController.cs",
               "RelativeDocumentMoniker": "Web\\WebApp\\Controllers\\HomeController.cs",
               "ToolTip": "C:\\Agartha_Project\\demo2\\AMMS\\Web\\WebApp\\Controllers\\HomeController.cs",
               "RelativeToolTip": "Web\\WebApp\\Controllers\\HomeController.cs",
-              "ViewState": "AgIAAAsAAAAAAAAAAAAAwCwAAAAYAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAOgAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-06-29T05:57:10.461Z",
               "EditorCaption": ""
