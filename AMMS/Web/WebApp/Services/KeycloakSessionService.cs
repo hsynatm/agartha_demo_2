@@ -1,12 +1,9 @@
 using System.Net.Http.Headers;
-using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace WebApp.Services;
 
-/// <summary>
-/// Revokes Keycloak user sessions via Admin API before a new login (single active session policy).
-/// </summary>
+
 public sealed class KeycloakSessionService
 {
     private readonly IHttpClientFactory _httpClientFactory;
@@ -43,10 +40,9 @@ public sealed class KeycloakSessionService
         using var response = await httpClient.SendAsync(request, cancellationToken);
 
         // 404 = user yok veya zaten oturum yok; login devam edebilir.
-        if (response.StatusCode is System.Net.HttpStatusCode.NotFound)
-        {
+        if (response.StatusCode is System.Net.HttpStatusCode.NotFound)       
             return;
-        }
+        
 
         response.EnsureSuccessStatusCode();
     }
@@ -77,10 +73,7 @@ public sealed class KeycloakSessionService
         return tokenResponse.AccessToken;
     }
 
-    private async Task<string?> FindUserIdByUsernameAsync(
-        string username,
-        string adminToken,
-        CancellationToken cancellationToken)
+    private async Task<string?> FindUserIdByUsernameAsync(string username,string adminToken,CancellationToken cancellationToken)
     {
         var baseUrl = _configuration["KeycloakAdmin:BaseUrl"] ?? "http://localhost:8080";
         var realm = _configuration["KeycloakAdmin:Realm"] ?? "amms";
@@ -91,13 +84,51 @@ public sealed class KeycloakSessionService
 
         var httpClient = _httpClientFactory.CreateClient();
         using var response = await httpClient.SendAsync(request, cancellationToken);
-        if (!response.IsSuccessStatusCode)
-        {
-            return null;
-        }
+
+        if (!response.IsSuccessStatusCode)       
+            return null;        
 
         var users = await response.Content.ReadFromJsonAsync<List<KeycloakUserLookup>>(cancellationToken) ?? [];
         return users.FirstOrDefault()?.Id;
+    }
+
+    /// <summary>
+    /// RFC 7662 introspection — refresh kullanmaz, SSO idle sayacını sıfırlamaz.
+    /// </summary>
+    public async Task<bool> IsAccessTokenActiveAsync(string accessToken, CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(accessToken))
+        {
+            return false;
+        }
+
+        var authority = _configuration["Keycloak:Authority"] ?? "http://localhost:8080/realms/amms";
+        var clientId = _configuration["KeycloakAdmin:ClientId"] ?? "amms-api";
+        var clientSecret = _configuration["KeycloakAdmin:ClientSecret"];
+        if (string.IsNullOrWhiteSpace(clientSecret))
+        {
+            return false;
+        }
+
+        var introspectionUrl = $"{authority.TrimEnd('/')}/protocol/openid-connect/token/introspect";
+        using var content = new FormUrlEncodedContent(new Dictionary<string, string>
+        {
+            ["token"] = accessToken,
+            ["client_id"] = clientId,
+            ["client_secret"] = clientSecret
+        });
+
+        var httpClient = _httpClientFactory.CreateClient();
+        using var response = await httpClient.PostAsync(introspectionUrl, content, cancellationToken);
+        if (!response.IsSuccessStatusCode)
+        {
+            return false;
+        }
+
+        await using var stream = await response.Content.ReadAsStreamAsync(cancellationToken);
+        using var document = await System.Text.Json.JsonDocument.ParseAsync(stream, cancellationToken: cancellationToken);
+        return document.RootElement.TryGetProperty("active", out var activeElement)
+               && activeElement.GetBoolean();
     }
 
     private sealed class KeycloakTokenResponse

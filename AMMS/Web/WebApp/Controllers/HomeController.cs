@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using System.Net.Http.Headers;
+using System.Text;
 using System.Text.Json;
 using WebApp.Models;
 using WebApp.Services;
@@ -10,28 +11,48 @@ namespace WebApp.Controllers
     public class HomeController : Controller
     {
         private const string SessionTerminatedCode = "SESSION_TERMINATED";
-
-        private const string SessionTerminatedMessage =
-            "Başka bir cihazda oturum açtığınız için mevcut oturumunuz sonlandırıldı.";
+        private const string SessionIdleExpiredCode = "SESSION_IDLE_EXPIRED";
+        private const string SessionIdleExpiredMessage = "Uzun süre işlem yapmadığınız için oturumunuz sonlandı. Lütfen tekrar giriş yapın.";
 
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly IConfiguration _configuration;
         private readonly KeycloakSessionService _keycloakSessionService;
         private readonly string baseUrlApi = "http://localhost:5121/api/v1/";
+        private string GetClientId() => _configuration["Keycloak:ClientId"] ?? "amms-spa";
 
-        public HomeController(
-            IHttpClientFactory httpClientFactory,
-            IConfiguration configuration,
-            KeycloakSessionService keycloakSessionService)
+        public HomeController(IHttpClientFactory httpClientFactory, IConfiguration configuration, KeycloakSessionService keycloakSessionService)
         {
             _httpClientFactory = httpClientFactory;
             _configuration = configuration;
             _keycloakSessionService = keycloakSessionService;
         }
 
+
         public IActionResult Index()
         {
+            var idleMinutes = _configuration.GetValue("Session:IdleTimeoutMinutes", 5);
+            var graceMinutes = _configuration.GetValue("Session:IdleGraceMinutes", 2);
+            ViewData["SessionIdleMs"] = (idleMinutes + graceMinutes) * 60_000;
+            ViewData["SessionCheckIntervalMs"] = _configuration.GetValue("Session:CheckIntervalSeconds", 30) * 1_000;
             return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CheckSession([FromHeader(Name = "Authorization")] string? authorization, CancellationToken cancellationToken)
+        {
+            var accessToken = ExtractBearerToken(authorization);
+            if (accessToken is null)
+            {
+                return SessionEndedResult(SessionIdleExpiredCode, SessionIdleExpiredMessage);
+            }
+
+            var active = await _keycloakSessionService.IsAccessTokenActiveAsync(accessToken, cancellationToken);
+            if (!active)
+            {
+                return SessionEndedResult(SessionIdleExpiredCode, SessionIdleExpiredMessage);
+            }
+
+            return Json(new { success = true, active = true });
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
@@ -83,30 +104,59 @@ namespace WebApp.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> SorgulaAsset( string id,[FromHeader(Name = "Authorization")] string? authorization,[FromHeader(Name = "X-Refresh-Token")] string? refreshToken,CancellationToken cancellationToken)
+        public Task<IActionResult> SorgulaAsset(string id, [FromHeader(Name = "Authorization")] string? authorization, [FromHeader(Name = "X-Refresh-Token")] string? refreshToken, CancellationToken cancellationToken)
         {
             if (string.IsNullOrWhiteSpace(id))
             {
-                return BadRequest(new { success = false, message = "Asset id is required." });
+                return Task.FromResult<IActionResult>(BadRequest(new { success = false, message = "Asset id is required." }));
             }
 
             var accessToken = ExtractBearerToken(authorization);
             if (accessToken is null)
             {
-                return Unauthorized(new { success = false, message = "Access token is required. Login first." });
+                return Task.FromResult<IActionResult>(Unauthorized(new { success = false, message = "Access token is required. Login first." }));
             }
 
-            var (statusCode, responseBody) = await CallAssetApiAsync(id, accessToken, cancellationToken);
+            return ForwardAuthorizedApiAsync(
+                accessToken,
+                refreshToken,
+                token => CallAssetApiAsync(id, token, cancellationToken),
+                "Asset query failed.",
+                cancellationToken);
+        }
+
+        [HttpPost]
+        public Task<IActionResult> CreateUser(string name, string password, [FromHeader(Name = "Authorization")] string? authorization, [FromHeader(Name = "X-Refresh-Token")] string? refreshToken, CancellationToken cancellationToken)
+        {
+            if (string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(password))
+            {
+                return Task.FromResult<IActionResult>(BadRequest(new { success = false, message = "Name and password are required." }));
+            }
+
+            var accessToken = ExtractBearerToken(authorization);
+            if (accessToken is null)
+            {
+                return Task.FromResult<IActionResult>(Unauthorized(new { success = false, message = "Access token is required. Login first." }));
+            }
+
+            var createUserJson = BuildCreateUserJson(name, password);
+
+            return ForwardAuthorizedApiAsync(
+                accessToken,
+                refreshToken,
+                token => CallCreateUserApiAsync(createUserJson, token, cancellationToken),
+                "Create user failed.",
+                cancellationToken);
+        }
+
+        private async Task<IActionResult> ForwardAuthorizedApiAsync(string accessToken, string? refreshToken, Func<string, Task<(int StatusCode, string Body)>> callApi, string failureMessage, CancellationToken cancellationToken)
+        {
+            var (statusCode, responseBody) = await callApi(accessToken);
             var tokensUpdated = false;
 
-            if (statusCode == StatusCodes.Status401Unauthorized && IsSessionTerminated(responseBody))
+            if (statusCode == StatusCodes.Status401Unauthorized && IsSessionEnded(responseBody))
             {
-                return new ContentResult
-                {
-                    StatusCode = StatusCodes.Status401Unauthorized,
-                    Content = responseBody,
-                    ContentType = "application/json"
-                };
+                return SessionEndedContent(responseBody);
             }
 
             if (statusCode == StatusCodes.Status401Unauthorized && !string.IsNullOrWhiteSpace(refreshToken))
@@ -114,31 +164,26 @@ namespace WebApp.Controllers
                 var newTokens = await RefreshTokensAsync(refreshToken, cancellationToken);
                 if (newTokens is null)
                 {
-                    return SessionTerminatedResult();
+                    return SessionEndedResult(SessionIdleExpiredCode, SessionIdleExpiredMessage);
                 }
 
                 accessToken = newTokens.AccessToken;
                 refreshToken = newTokens.RefreshToken ?? refreshToken;
                 tokensUpdated = true;
-                (statusCode, responseBody) = await CallAssetApiAsync(id, accessToken, cancellationToken);
+                (statusCode, responseBody) = await callApi(accessToken);
 
-                if (statusCode == StatusCodes.Status401Unauthorized && IsSessionTerminated(responseBody))
+                if (statusCode == StatusCodes.Status401Unauthorized && IsSessionEnded(responseBody))
                 {
-                    return new ContentResult
-                {
-                    StatusCode = StatusCodes.Status401Unauthorized,
-                    Content = responseBody,
-                    ContentType = "application/json"
-                };
+                    return SessionEndedContent(responseBody);
                 }
             }
 
-            if (statusCode != StatusCodes.Status200OK)
+            if (statusCode is not StatusCodes.Status200OK and not StatusCodes.Status201Created)
             {
                 return StatusCode(statusCode, new
                 {
                     success = false,
-                    message = "Asset query failed.",
+                    message = failureMessage,
                     statusCode,
                     detail = ParseJsonOrString(responseBody)
                 });
@@ -154,20 +199,7 @@ namespace WebApp.Controllers
             });
         }
 
-        [HttpPost]
-        public IActionResult CreateUser(string pname, string password)
-        {
-            var url = baseUrlApi + "user-management/Create";
-
-            return Json(new
-            {
-                action = nameof(CreateUser),
-                userName = pname,
-                requestUrl = url
-            });
-        }
-
-        private async Task<(int StatusCode, string Body)> CallAssetApiAsync(string id,string accessToken, CancellationToken cancellationToken)
+        private async Task<(int StatusCode, string Body)> CallAssetApiAsync(string id, string accessToken, CancellationToken cancellationToken)
         {
             var apiBaseUrl = _configuration["Api:BaseUrl"] ?? baseUrlApi;
             var url = $"{apiBaseUrl.TrimEnd('/')}/asset-management/getbyid/{id}";
@@ -176,11 +208,46 @@ namespace WebApp.Controllers
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
             request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
+            return await SendApiRequestAsync(request, cancellationToken);
+        }
+
+        private async Task<(int StatusCode, string Body)> CallCreateUserApiAsync(string jsonBody, string accessToken, CancellationToken cancellationToken)
+        {
+            var apiBaseUrl = _configuration["Api:BaseUrl"] ?? baseUrlApi;
+            var url = $"{apiBaseUrl.TrimEnd('/')}/user-management/Create";
+
+            using var request = new HttpRequestMessage(HttpMethod.Post, url);
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+            request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            request.Content = new StringContent(jsonBody, Encoding.UTF8, "application/json");
+
+            return await SendApiRequestAsync(request, cancellationToken);
+        }
+
+        private async Task<(int StatusCode, string Body)> SendApiRequestAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+        {
             var httpClient = _httpClientFactory.CreateClient();
             using var response = await httpClient.SendAsync(request, cancellationToken);
             var body = await response.Content.ReadAsStringAsync(cancellationToken);
             return ((int)response.StatusCode, body);
         }
+
+        private static string BuildCreateUserJson(string username, string password)
+        {
+            return JsonSerializer.Serialize(new
+            {
+                username,
+                password,
+                email = $"{username}@gmail.com",
+                firstName = "string",
+                lastName = "string",
+                organizationId = "string",
+                organizationName = "string",
+                roles = new[] { "test_rol1" },
+                roleGroups = new[] { "UserManagement" }
+            });
+        }
+
 
         private async Task<TokenPair?> RefreshTokensAsync(string refreshToken, CancellationToken cancellationToken)
         {
@@ -194,7 +261,7 @@ namespace WebApp.Controllers
             return ok ? ParseTokenResponse(body) : null;
         }
 
-        private async Task<(bool Ok, string Body, int StatusCode)> RequestKeycloakTokenAsync(Dictionary<string, string> formData, CancellationToken cancellationToken)
+        private async Task<(bool Ok, string Body, int StatusCode)> RequestKeycloakTokenAsync( Dictionary<string, string> formData, CancellationToken cancellationToken)
         {
             var authority = _configuration["Keycloak:Authority"] ?? "http://localhost:8080/realms/amms";
             var tokenUrl = $"{authority.TrimEnd('/')}/protocol/openid-connect/token";
@@ -211,7 +278,6 @@ namespace WebApp.Controllers
             return (response.IsSuccessStatusCode, body, (int)response.StatusCode);
         }
 
-        private string GetClientId() => _configuration["Keycloak:ClientId"] ?? "amms-spa";
 
         private static TokenPair? ParseTokenResponse(string responseBody)
         {
@@ -244,19 +310,18 @@ namespace WebApp.Controllers
             return authorization["Bearer ".Length..].Trim();
         }
 
-        private ContentResult SessionTerminatedResult() =>
+        private static ContentResult SessionEndedResult(string code, string message) =>
+            SessionEndedContent(JsonSerializer.Serialize(new { code, message }));
+
+        private static ContentResult SessionEndedContent(string responseBody) =>
             new()
             {
                 StatusCode = StatusCodes.Status401Unauthorized,
-                ContentType = "application/json",
-                Content = JsonSerializer.Serialize(new
-                {
-                    code = SessionTerminatedCode,
-                    message = SessionTerminatedMessage
-                })
+                Content = responseBody,
+                ContentType = "application/json"
             };
 
-        private static bool IsSessionTerminated(string responseBody)
+        private static bool IsSessionEnded(string responseBody)
         {
             if (string.IsNullOrWhiteSpace(responseBody))
             {
@@ -266,8 +331,14 @@ namespace WebApp.Controllers
             try
             {
                 using var document = JsonDocument.Parse(responseBody);
-                return document.RootElement.TryGetProperty("code", out var codeElement)
-                       && string.Equals(codeElement.GetString(), SessionTerminatedCode, StringComparison.Ordinal);
+                if (!document.RootElement.TryGetProperty("code", out var codeElement))
+                {
+                    return false;
+                }
+
+                var code = codeElement.GetString();
+                return string.Equals(code, SessionTerminatedCode, StringComparison.Ordinal)
+                       || string.Equals(code, SessionIdleExpiredCode, StringComparison.Ordinal);
             }
             catch (JsonException)
             {

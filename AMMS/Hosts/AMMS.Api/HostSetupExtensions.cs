@@ -14,8 +14,10 @@ namespace AMMS.Api;
 
 internal static class HostSetupExtensions
 {
-    public static bool IsApiDocumentationEnabled(this IHostEnvironment environment) =>
-        environment.IsDevelopment() || environment.IsEnvironment("Test");
+    public static bool IsApiDocumentationEnabled(this IHostEnvironment environment, IConfiguration configuration) =>
+        environment.IsDevelopment()
+        || environment.IsEnvironment("Test")
+        || configuration.GetValue("ApiDocumentation:Enabled", false);
 
     public static IServiceCollection AddAmmsModules(this IServiceCollection services, string connectionString, IConfiguration configuration)
     {
@@ -34,7 +36,7 @@ internal static class HostSetupExtensions
 
     public static WebApplication UseAmmsApiDocumentation(this WebApplication app)
     {
-        if (!app.Environment.IsApiDocumentationEnabled())
+        if (!app.Environment.IsApiDocumentationEnabled(app.Configuration))
         {
             return app;
         }

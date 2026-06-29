@@ -18,6 +18,7 @@
         <input type="text" id="newusername" name="newusername" placeholder="New User Name" style="width:100%;margin:5px"><br />
         <input type="password" id="newpassword" name="newpassword" placeholder="New Password" style="width:100%;margin:5px"><br />
         <button type="button" class="btn btn-primary" id="btnCreateUser" style="width:95%;margin:10px">CREATE USER</button>
+        <div id="createUserOutput" class="p-2 mt-2 small" style="word-break:break-all;display:none"></div>
     </div>
 
 
@@ -43,14 +44,59 @@
                 login: '@Url.Action("Login", "Home")',
                 home: '@Url.Action("Index", "Home")',
                 createUser: '@Url.Action("CreateUser", "Home")',
-                sorgulaAsset: '@Url.Action("SorgulaAsset", "Home")'
+                sorgulaAsset: '@Url.Action("SorgulaAsset", "Home")',
+                checkSession: '@Url.Action("CheckSession", "Home")'
             };
+
+            const sessionIdleMs = @ViewData["SessionIdleMs"];
+            const sessionCheckIntervalMs = @ViewData["SessionCheckIntervalMs"];
 
             const $result = $('#resultOutput');
             const $loginTokenOutput = $('#loginTokenOutput');
             const $assetSorgulaOutput = $('#assetSorgulaOutput');
+            const $createUserOutput = $('#createUserOutput');
             let accessToken = null;
             let refreshToken = null;
+            let lastActivityAt = 0;
+            let idleCheckTimer = null;
+
+            function markActivity() {
+                lastActivityAt = Date.now();
+            }
+
+            function startIdleWatch() {
+                stopIdleWatch();
+                markActivity();
+                idleCheckTimer = setInterval(checkIdleSession, sessionCheckIntervalMs);
+            }
+
+            function stopIdleWatch() {
+                if (idleCheckTimer) {
+                    clearInterval(idleCheckTimer);
+                    idleCheckTimer = null;
+                }
+            }
+
+            function checkIdleSession() {
+                if (!accessToken) {
+                    return;
+                }
+
+                if (Date.now() - lastActivityAt < sessionIdleMs) {
+                    return;
+                }
+
+                $.ajax({
+                    url: urls.checkSession,
+                    type: 'POST',
+                    headers: { Authorization: 'Bearer ' + accessToken }
+                })
+                    .fail(function (xhr) {
+                        if (tryHandleSessionEnded(xhr)) {
+                            stopIdleWatch();
+                        }
+                    });
+            }
 
             function showLoginTokens(data) {
                 if (!data?.success) {
@@ -65,6 +111,7 @@
 
                 accessToken = data.accessToken;
                 refreshToken = data.refreshToken;
+                startIdleWatch();
 
                 $loginTokenOutput
                     .css('display', 'block')
@@ -83,6 +130,28 @@
                 });
             }
 
+            function showCreateUserResult(data, isError) {
+                $createUserOutput
+                    .css('display', 'block')
+                    .css('color', isError ? 'red' : 'inherit')
+                    .text(typeof data === 'string' ? data : JSON.stringify(data, null, 2));
+            }
+
+            function showCreateUserError(xhr) {
+                if (tryHandleSessionEnded(xhr)) {
+                    return;
+                }
+
+                const message = xhr.responseJSON ?? xhr.responseText ?? xhr.statusText;
+                showCreateUserResult(message, true);
+            }
+
+            function applyTokenUpdate(data) {
+                if (data?.tokensUpdated) {
+                    accessToken = data.accessToken;
+                    refreshToken = data.refreshToken;
+                }
+            }
             function showAssetResult(data, isError) {
                 $assetSorgulaOutput
                     .css('display', 'block')
@@ -93,19 +162,28 @@
             function clearTokens() {
                 accessToken = null;
                 refreshToken = null;
+                stopIdleWatch();
                 $loginTokenOutput.hide().empty();
             }
 
-            function handleSessionTerminated(payload) {
+            function handleSessionEnded(payload) {
+                if (payload?.code === 'SESSION_TERMINATED'
+                    && Date.now() - lastActivityAt >= sessionIdleMs) {
+                    payload = {
+                        code: 'SESSION_IDLE_EXPIRED',
+                        message: 'Uzun süre işlem yapmadığınız için oturumunuz sonlandı. Lütfen tekrar giriş yapın.'
+                    };
+                }
+
                 clearTokens();
-                alert(payload?.message ?? 'Oturumunuz sonlandırıldı.');
+                alert(payload?.message ?? 'Oturumunuz sonlandı. Lütfen tekrar giriş yapın.');
                 window.location.href = urls.home;
             }
 
-            function tryHandleSessionTerminated(xhr) {
+            function tryHandleSessionEnded(xhr) {
                 const payload = xhr.responseJSON;
-                if (payload?.code === 'SESSION_TERMINATED') {
-                    handleSessionTerminated(payload);
+                if (payload?.code === 'SESSION_TERMINATED' || payload?.code === 'SESSION_IDLE_EXPIRED') {
+                    handleSessionEnded(payload);
                     return true;
                 }
 
@@ -113,7 +191,7 @@
             }
 
             function showAssetError(xhr) {
-                if (tryHandleSessionTerminated(xhr)) {
+                if (tryHandleSessionEnded(xhr)) {
                     return;
                 }
 
@@ -129,7 +207,10 @@
                 $result.text(label + ' ERROR\n' + JSON.stringify(message, null, 2));
             }
 
+            $(document).on('click keydown scroll', markActivity);
+
             $('#btnLogin').on('click', function () {
+                markActivity();
                 $loginTokenOutput.hide().empty();
 
                 $.post(urls.login, {
@@ -141,15 +222,35 @@
             });
 
             $('#btnCreateUser').on('click', function () {
-                $.post(urls.createUser, {
-                    pname: $('#newusername').val(),
-                    password: $('#newpassword').val()
+                markActivity();
+                $createUserOutput.hide().empty();
+
+                if (!accessToken) {
+                    showCreateUserResult('Önce LOGIN yapın.', true);
+                    return;
+                }
+
+                $.ajax({
+                    url: urls.createUser,
+                    type: 'POST',
+                    data: {
+                        name: $('#newusername').val(),
+                        password: $('#newpassword').val()
+                    },
+                    headers: {
+                        Authorization: 'Bearer ' + accessToken,
+                        'X-Refresh-Token': refreshToken ?? ''
+                    }
                 })
-                    .done(function (data) { showResult('CreateUser', data); })
-                    .fail(function (xhr) { showError('CreateUser', xhr); });
+                    .done(function (data) {
+                        applyTokenUpdate(data);
+                        showCreateUserResult(data?.result ?? data, false);
+                    })
+                    .fail(function (xhr) { showCreateUserError(xhr); });
             });
 
             $('#btnSorgula').on('click', function () {
+                markActivity();
                 $assetSorgulaOutput.hide().empty();
 
                 if (!accessToken) {
@@ -167,11 +268,7 @@
                     }
                 })
                     .done(function (data) {
-                        if (data?.tokensUpdated) {
-                            accessToken = data.accessToken;
-                            refreshToken = data.refreshToken;
-                        }
-
+                        applyTokenUpdate(data);
                         showAssetResult(data?.result ?? data, false);
                     })
                     .fail(function (xhr) { showAssetError(xhr); });

@@ -21,7 +21,7 @@ try
         options.SuppressModelStateInvalidFilter = true; //model valid olmasa bile,controllere git,kendim kontrol edeceğim
     }).AddAmmsJsonOptions();
 
-    if (builder.Environment.IsApiDocumentationEnabled())
+    if (builder.Environment.IsApiDocumentationEnabled(builder.Configuration))
     {
         builder.Services.AddAmmsSwagger();
     }
