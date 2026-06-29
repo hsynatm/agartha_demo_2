@@ -1,4 +1,5 @@
 ﻿using AMMS.Core.Exceptions;
+using AMMS.Infrastructure.Authentication;
 using AMMS.Infrastructure.Localization;
 using AMMS.Infrastructure.Logging;
 using Microsoft.AspNetCore.Http;
@@ -65,7 +66,9 @@ namespace AMMS.Infrastructure.Middleware
 
         private async Task WriteHttpErrorIfNeededAsync(HttpContext context)
         {
-            if (context.Response.HasStarted || context.Response.ContentLength > 0)
+            if (SessionTerminatedContext.IsTerminated(context)
+                || context.Response.HasStarted
+                || context.Response.ContentLength > 0)
             {
                 return;
             }

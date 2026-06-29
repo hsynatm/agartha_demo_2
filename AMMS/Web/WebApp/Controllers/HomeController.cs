@@ -3,19 +3,30 @@ using System.Diagnostics;
 using System.Net.Http.Headers;
 using System.Text.Json;
 using WebApp.Models;
+using WebApp.Services;
 
 namespace WebApp.Controllers
 {
     public class HomeController : Controller
     {
+        private const string SessionTerminatedCode = "SESSION_TERMINATED";
+
+        private const string SessionTerminatedMessage =
+            "Başka bir cihazda oturum açtığınız için mevcut oturumunuz sonlandırıldı.";
+
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly IConfiguration _configuration;
+        private readonly KeycloakSessionService _keycloakSessionService;
         private readonly string baseUrlApi = "http://localhost:5121/api/v1/";
 
-        public HomeController(IHttpClientFactory httpClientFactory, IConfiguration configuration)
+        public HomeController(
+            IHttpClientFactory httpClientFactory,
+            IConfiguration configuration,
+            KeycloakSessionService keycloakSessionService)
         {
             _httpClientFactory = httpClientFactory;
             _configuration = configuration;
+            _keycloakSessionService = keycloakSessionService;
         }
 
         public IActionResult Index()
@@ -36,6 +47,8 @@ namespace WebApp.Controllers
             {
                 return BadRequest(new { success = false, message = "Username and password are required." });
             }
+
+            await _keycloakSessionService.RevokeAllSessionsByUsernameAsync(pUserName, cancellationToken);
 
             var (ok, body, statusCode) = await RequestKeycloakTokenAsync(new Dictionary<string, string>
             {
@@ -86,17 +99,38 @@ namespace WebApp.Controllers
             var (statusCode, responseBody) = await CallAssetApiAsync(id, accessToken, cancellationToken);
             var tokensUpdated = false;
 
+            if (statusCode == StatusCodes.Status401Unauthorized && IsSessionTerminated(responseBody))
+            {
+                return new ContentResult
+                {
+                    StatusCode = StatusCodes.Status401Unauthorized,
+                    Content = responseBody,
+                    ContentType = "application/json"
+                };
+            }
+
             if (statusCode == StatusCodes.Status401Unauthorized && !string.IsNullOrWhiteSpace(refreshToken))
             {
-                var newTokens = await RefreshTokensAsync(refreshToken, cancellationToken);                if (newTokens is null)
-                
-                    return Unauthorized(new { success = false, message = "Access token expired and refresh failed. Login again." });
-                
+                var newTokens = await RefreshTokensAsync(refreshToken, cancellationToken);
+                if (newTokens is null)
+                {
+                    return SessionTerminatedResult();
+                }
 
                 accessToken = newTokens.AccessToken;
                 refreshToken = newTokens.RefreshToken ?? refreshToken;
                 tokensUpdated = true;
                 (statusCode, responseBody) = await CallAssetApiAsync(id, accessToken, cancellationToken);
+
+                if (statusCode == StatusCodes.Status401Unauthorized && IsSessionTerminated(responseBody))
+                {
+                    return new ContentResult
+                {
+                    StatusCode = StatusCodes.Status401Unauthorized,
+                    Content = responseBody,
+                    ContentType = "application/json"
+                };
+                }
             }
 
             if (statusCode != StatusCodes.Status200OK)
@@ -208,6 +242,37 @@ namespace WebApp.Controllers
             }
 
             return authorization["Bearer ".Length..].Trim();
+        }
+
+        private ContentResult SessionTerminatedResult() =>
+            new()
+            {
+                StatusCode = StatusCodes.Status401Unauthorized,
+                ContentType = "application/json",
+                Content = JsonSerializer.Serialize(new
+                {
+                    code = SessionTerminatedCode,
+                    message = SessionTerminatedMessage
+                })
+            };
+
+        private static bool IsSessionTerminated(string responseBody)
+        {
+            if (string.IsNullOrWhiteSpace(responseBody))
+            {
+                return false;
+            }
+
+            try
+            {
+                using var document = JsonDocument.Parse(responseBody);
+                return document.RootElement.TryGetProperty("code", out var codeElement)
+                       && string.Equals(codeElement.GetString(), SessionTerminatedCode, StringComparison.Ordinal);
+            }
+            catch (JsonException)
+            {
+                return false;
+            }
         }
 
         private static object ParseJsonOrString(string value)

@@ -7,8 +7,8 @@
       "RelativeMoniker": "D:0:0:{D765E5EF-B91C-4090-B615-7F0D154D3D48}|Web\\WebApp\\WebApp.csproj|solutionrelative:web\\webapp\\controllers\\homecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{70478290-7EC4-C532-B156-CAB8D7D72EDB}|Hosts\\AMMS.Api\\AMMS.Api.csproj|c:\\agartha_project\\demo2\\amms\\hosts\\amms.api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{70478290-7EC4-C532-B156-CAB8D7D72EDB}|Hosts\\AMMS.Api\\AMMS.Api.csproj|solutionrelative:hosts\\amms.api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{D765E5EF-B91C-4090-B615-7F0D154D3D48}|Web\\WebApp\\WebApp.csproj|c:\\agartha_project\\demo2\\amms\\web\\webapp\\services\\keycloaksessionservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D765E5EF-B91C-4090-B615-7F0D154D3D48}|Web\\WebApp\\WebApp.csproj|solutionrelative:web\\webapp\\services\\keycloaksessionservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{D765E5EF-B91C-4090-B615-7F0D154D3D48}|Web\\WebApp\\WebApp.csproj|c:\\agartha_project\\demo2\\amms\\web\\webapp\\views\\home\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
@@ -31,14 +31,14 @@
             {
               "$type": "Document",
               "DocumentIndex": 1,
-              "Title": "Program.cs",
-              "DocumentMoniker": "C:\\Agartha_Project\\demo2\\AMMS\\Hosts\\AMMS.Api\\Program.cs",
-              "RelativeDocumentMoniker": "Hosts\\AMMS.Api\\Program.cs",
-              "ToolTip": "C:\\Agartha_Project\\demo2\\AMMS\\Hosts\\AMMS.Api\\Program.cs",
-              "RelativeToolTip": "Hosts\\AMMS.Api\\Program.cs",
-              "ViewState": "AgIAACEAAAAAAAAAAAASwBMAAAAFAAAAAAAAAA==",
+              "Title": "KeycloakSessionService.cs",
+              "DocumentMoniker": "C:\\Agartha_Project\\demo2\\AMMS\\Web\\WebApp\\Services\\KeycloakSessionService.cs",
+              "RelativeDocumentMoniker": "Web\\WebApp\\Services\\KeycloakSessionService.cs",
+              "ToolTip": "C:\\Agartha_Project\\demo2\\AMMS\\Web\\WebApp\\Services\\KeycloakSessionService.cs",
+              "RelativeToolTip": "Web\\WebApp\\Services\\KeycloakSessionService.cs",
+              "ViewState": "AgIAAAoAAAAAAAAAAAASwB8AAAATAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-06-29T07:39:37.041Z",
+              "WhenOpened": "2026-06-29T10:24:09.507Z",
               "EditorCaption": ""
             },
             {
@@ -49,7 +49,7 @@
               "RelativeDocumentMoniker": "Web\\WebApp\\Views\\Home\\Index.cshtml",
               "ToolTip": "C:\\Agartha_Project\\demo2\\AMMS\\Web\\WebApp\\Views\\Home\\Index.cshtml",
               "RelativeToolTip": "Web\\WebApp\\Views\\Home\\Index.cshtml",
-              "ViewState": "AgIAAEsAAAAAAAAAAAAAADAAAAAjAAAAAAAAAA==",
+              "ViewState": "AgIAACcAAAAAAAAAAAAwwEEAAAAWAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
               "WhenOpened": "2026-06-29T05:58:07.847Z",
               "EditorCaption": ""
@@ -62,7 +62,7 @@
               "RelativeDocumentMoniker": "Web\\WebApp\\Controllers\\HomeController.cs",
               "ToolTip": "C:\\Agartha_Project\\demo2\\AMMS\\Web\\WebApp\\Controllers\\HomeController.cs",
               "RelativeToolTip": "Web\\WebApp\\Controllers\\HomeController.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAOgAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAIUAAAAAAAAAAAASwIoAAAARAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-06-29T05:57:10.461Z",
               "EditorCaption": ""

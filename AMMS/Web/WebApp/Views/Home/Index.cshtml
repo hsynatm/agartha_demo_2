@@ -41,6 +41,7 @@
         (function () {
             const urls = {
                 login: '@Url.Action("Login", "Home")',
+                home: '@Url.Action("Index", "Home")',
                 createUser: '@Url.Action("CreateUser", "Home")',
                 sorgulaAsset: '@Url.Action("SorgulaAsset", "Home")'
             };
@@ -89,7 +90,33 @@
                     .text(typeof data === 'string' ? data : JSON.stringify(data, null, 2));
             }
 
+            function clearTokens() {
+                accessToken = null;
+                refreshToken = null;
+                $loginTokenOutput.hide().empty();
+            }
+
+            function handleSessionTerminated(payload) {
+                clearTokens();
+                alert(payload?.message ?? 'Oturumunuz sonlandırıldı.');
+                window.location.href = urls.home;
+            }
+
+            function tryHandleSessionTerminated(xhr) {
+                const payload = xhr.responseJSON;
+                if (payload?.code === 'SESSION_TERMINATED') {
+                    handleSessionTerminated(payload);
+                    return true;
+                }
+
+                return false;
+            }
+
             function showAssetError(xhr) {
+                if (tryHandleSessionTerminated(xhr)) {
+                    return;
+                }
+
                 const message = xhr.responseJSON ?? xhr.responseText ?? xhr.statusText;
                 showAssetResult(message, true);
             }

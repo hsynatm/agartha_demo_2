@@ -17,4 +17,19 @@ public sealed class AmmsAuthenticationOptions
     public string OrganizationNameClaimType { get; set; } = "organization_name";
 
     public string SpaClientId { get; set; } = "amms-spa";
+
+    /// <summary>
+    /// When true, each request validates the access token session via Keycloak introspection (with short cache).
+    /// </summary>
+    public bool EnableTokenIntrospection { get; set; } = true;
+
+    /// <summary>
+    /// Cache duration for active introspection results. 0 = always ask Keycloak.
+    /// Default 5 seconds balances revoke detection vs Keycloak load.
+    /// </summary>
+    public int IntrospectionCacheSeconds { get; set; } = 5;
+
+    public string IntrospectionClientId { get; set; } = "amms-api";
+
+    public string IntrospectionClientSecret { get; set; } = string.Empty;
 }
