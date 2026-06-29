@@ -33,6 +33,7 @@
     <File Path="SolutionItems/oku.txt" />
     <File Path="SolutionItems/setup-graylog-tcp-input.ps1" />
   </Folder>
-  <Folder Name="/Web/" />
-  <Project Path="Web/WebApp/WebApp.csproj" Id="d765e5ef-b91c-4090-b615-7f0d154d3d48" />
+  <Folder Name="/Web/">
+    <Project Path="Web/WebApp/WebApp.csproj" Id="d765e5ef-b91c-4090-b615-7f0d154d3d48" />
+  </Folder>
 </Solution>
