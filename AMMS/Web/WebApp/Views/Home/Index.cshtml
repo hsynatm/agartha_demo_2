@@ -1,0 +1,51 @@
+﻿@{
+    ViewData["Title"] = "Home";
+}
+
+<div class="row">
+
+    <div class="col-3" style="border:1px solid red">
+        <label style="text-align:center;width:100%;color:red">LOGIN</label>
+        <input type="text" id="username" name="username" placeholder="User Name" style="width:100%;margin:5px"><br />
+        <input type="text" id="password" name="password" placeholder="Password" style="width:100%;margin:5px"><br />
+        <button type="button" class="btn btn-danger" id="btnLogin" style="width:95%;margin:10px" onclick="login()">LOGIN</button>
+    </div>
+
+
+    <div class="col-3" style="border:1px solid blue;margin-left:10px" ;>
+        <label style="text-align:center;width:100%;color:blue">CREATE USER</label>
+        <input type="text" id="newusername" name="newusername" placeholder="New User Name" style="width:100%;margin:5px"><br />
+        <input type="text" id="newpassword" name="newpassword" placeholder="New Password" style="width:100%;margin:5px"><br />
+        <button type="button" class="btn btn-primary" id="btnCreateUser" style="width:95%;margin:10px" onclick="createUser()">CRETAE USER </button>
+    </div>
+
+    
+
+    <div class="col-3" style="border:1px solid green;margin-left:10px" ;>
+        <label style="text-align:center;width:100%;color:green">SORGULA ASSET</label>
+        <input type="text" id="assetId" name="assetId" placeholder="ASSET ID" style="width:100%;margin:5px"><br />
+        <button type="button" class="btn btn-outline-success" id="btnSorgula" style="width:95%;margin:10px" onclick="sorgulaAsset()">SORGULA </button>
+    </div>
+
+
+</div>
+
+
+<script type="text/javascript">
+
+
+    function login(){
+        alert("login");
+    }
+
+        
+    function createUser(){
+        alert("createuser");
+    }
+
+           
+    function sorgulaAsset(){
+        alert("sorgula");
+    }
+
+</script>
