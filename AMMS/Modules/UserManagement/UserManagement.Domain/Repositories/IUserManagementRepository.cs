@@ -13,6 +13,15 @@ public interface IUserManagementRepository : IRepository<AppUser>
 
     Task<AppUser?> GetByKeycloakUserIdAsync(string keycloakUserId, CancellationToken cancellationToken = default);
 
+    Task<AppUser?> ResolveActiveUserAsync(
+        string? keycloakUserId,
+        string? username,
+        CancellationToken cancellationToken = default);
+
+    Task<IReadOnlyList<AppUser>> GetUsersPendingKeycloakSyncAsync(CancellationToken cancellationToken = default);
+
+    Task<IReadOnlyList<AppUser>> GetActiveUsersForKeycloakBootstrapAsync(CancellationToken cancellationToken = default);
+
     Task<AppUser?> GetByIdWithAssignmentsAsync(Guid id, CancellationToken cancellationToken = default);
 
     Task<bool> UsernameExistsAsync(string username, Guid? excludeUserId = null, CancellationToken cancellationToken = default);

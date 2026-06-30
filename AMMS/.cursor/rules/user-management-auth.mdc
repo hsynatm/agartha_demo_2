@@ -1,0 +1,38 @@
+---
+description: UserManagement DB is source of truth for users and roles; Keycloak is identity-only
+alwaysApply: true
+---
+
+# User & Role Architecture (AMMS)
+
+## Source of truth
+
+- **Users, roles, role groups**: PostgreSQL `UserManagement` schema (`Users`, `Roles`, `RoleGroups`, junction tables)
+- **Passwords**: Keycloak only (not stored in PostgreSQL after migration removed `PasswordHash`)
+- **Authorization**: Always resolve from DB via `KeycloakUserId` / `AppUserResolutionMiddleware` + `UserAuthorizationService`
+
+## Keycloak role
+
+- Identity provider only: login, tokens, `organization_id` / `organization_name` claims
+- Do **not** manage AMMS roles in Keycloak realm roles
+- Sync via `IKeycloakUserSyncService` when users are created/updated/deleted through API
+
+## Login flow
+
+1. Client (WebApp/SPA) obtains token from Keycloak (`amms-spa`, password grant or PKCE)
+2. API validates JWT/introspection
+3. Middleware maps Keycloak `sub` → `AppUser` in PostgreSQL
+4. `[AmmsAuthorize]` checks role/role-group codes from PostgreSQL
+
+## Bootstrap (fresh install)
+
+- `KeycloakUserBootstrapRunner` syncs active users to Keycloak on API startup when `KeycloakBootstrap:Enabled` is true
+- **Keycloak password = username** (`KeycloakUserPassword.FromUsername`) for bootstrap and API Create/Update user sync
+- Dev: `ResetPasswordOnReconcile: true` resets existing Keycloak passwords to username on API start
+- Never document or seed test users only in Keycloak realm JSON — they must exist in UserManagement DB first
+
+## When adding auth-related features
+
+- Read/write roles in UserManagement module, not Keycloak Admin API for roles
+- New users: `UserManagementService.CreateAsync` → DB then Keycloak sync
+- WebApp test UI login credentials must match a DB user synced to Keycloak

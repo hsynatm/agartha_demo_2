@@ -12,4 +12,8 @@ public interface IKeycloakUserSyncService
     Task UpdateUserAsync(AppUser user, string? newPassword, CancellationToken cancellationToken = default);
 
     Task DeleteUserAsync(string keycloakUserId, CancellationToken cancellationToken = default);
+
+    Task<bool> UserExistsAsync(string keycloakUserId, CancellationToken cancellationToken = default);
+
+    Task<string?> FindUserIdByUsernameAsync(string username, CancellationToken cancellationToken = default);
 }

@@ -88,10 +88,12 @@ public sealed class AmmsPermissionAuthorizationHandler : AuthorizationHandler<Am
             return;
         }
 
+        var username = context.User.FindFirstValue("preferred_username");
         var authorized = await _authorizationService.IsAuthorizedAsync(
             keycloakUserId,
             requirement.Roles,
             requirement.RoleGroups,
+            username,
             _httpContextAccessor.HttpContext?.RequestAborted ?? CancellationToken.None);
 
         if (authorized)

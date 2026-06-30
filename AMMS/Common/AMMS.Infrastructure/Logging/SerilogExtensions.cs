@@ -14,11 +14,6 @@ namespace AMMS.Infrastructure.Logging
     {
         public static WebApplicationBuilder AddSerilogLogging(this WebApplicationBuilder builder)
         {
-            if (builder.Environment.IsDevelopment())
-            {
-                EnableSerilogSelfLog(builder);
-            }
-
             builder.Host.UseSerilog((context, services, loggerConfiguration) =>
             {
                 loggerConfiguration
@@ -32,25 +27,6 @@ namespace AMMS.Infrastructure.Logging
             });
 
             return builder;
-        }
-
-        private static void EnableSerilogSelfLog(WebApplicationBuilder builder)
-        {
-            var logsDirectory = Path.Combine(builder.Environment.ContentRootPath, "Logs");
-            Directory.CreateDirectory(logsDirectory);
-            var selfLogPath = Path.Combine(logsDirectory, "serilog-selflog.txt");
-
-            Serilog.Debugging.SelfLog.Enable(message =>
-            {
-                try
-                {
-                    File.AppendAllText(selfLogPath, message + Environment.NewLine);
-                }
-                catch
-                {
-                    // SelfLog must never throw.
-                }
-            });
         }
 
         public static WebApplication UseAmmsRequestLogging(this WebApplication app)

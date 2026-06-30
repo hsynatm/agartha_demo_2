@@ -16,6 +16,7 @@ namespace AMMS.Infrastructure
         {
             services.AddHttpContextAccessor();
             services.AddSingleton<AmmsGraylogSchemaEnricher>();
+            services.AddSingleton<GraylogInputBootstrap>();
             services.AddAmmsAuthentication(configuration);
             services.AddAmmsCors(configuration);
             services.AddScoped<ICurrentUserService, CurrentUserService>();

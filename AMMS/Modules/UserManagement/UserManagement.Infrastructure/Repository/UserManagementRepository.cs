@@ -52,6 +52,46 @@ public class UserManagementRepository : EfRepository<AppUser>, IUserManagementRe
             .AsNoTracking()
             .FirstOrDefaultAsync(user => user.KeycloakUserId == keycloakUserId, cancellationToken);
 
+    public async Task<AppUser?> ResolveActiveUserAsync(
+        string? keycloakUserId,
+        string? username,
+        CancellationToken cancellationToken = default)
+    {
+        if (!string.IsNullOrWhiteSpace(keycloakUserId))
+        {
+            var byKeycloakId = await _context.Users
+                .AsNoTracking()
+                .FirstOrDefaultAsync(
+                    user => user.KeycloakUserId == keycloakUserId && user.IsActive,
+                    cancellationToken);
+
+            if (byKeycloakId is not null)
+            {
+                return byKeycloakId;
+            }
+        }
+
+        if (string.IsNullOrWhiteSpace(username))
+        {
+            return null;
+        }
+
+        return await _context.Users
+            .AsNoTracking()
+            .FirstOrDefaultAsync(user => user.Username == username && user.IsActive, cancellationToken);
+    }
+
+    public async Task<IReadOnlyList<AppUser>> GetUsersPendingKeycloakSyncAsync(CancellationToken cancellationToken = default) =>
+        await _context.Users
+            .Where(user => user.KeycloakUserId == null || user.KeycloakUserId == string.Empty)
+            .ToListAsync(cancellationToken);
+
+    public async Task<IReadOnlyList<AppUser>> GetActiveUsersForKeycloakBootstrapAsync(CancellationToken cancellationToken = default) =>
+        await _context.Users
+            .Where(user => user.IsActive)
+            .OrderBy(user => user.Username)
+            .ToListAsync(cancellationToken);
+
     public async Task<AppUser?> GetByIdWithAssignmentsAsync(Guid id, CancellationToken cancellationToken = default) =>
         await _context.Users
             .AsNoTracking()

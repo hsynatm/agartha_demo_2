@@ -12,20 +12,24 @@ public sealed class UserAuthorizationService : IUserAuthorizationService
         _users = users;
     }
 
-    public async Task<Guid?> ResolveAppUserIdAsync(string keycloakUserId, CancellationToken cancellationToken = default)
+    public async Task<Guid?> ResolveAppUserIdAsync(
+        string keycloakUserId,
+        string? username = null,
+        CancellationToken cancellationToken = default)
     {
-        var user = await _users.GetByKeycloakUserIdAsync(keycloakUserId, cancellationToken);
-        return user is { IsActive: true } ? user.Id : null;
+        var user = await _users.ResolveActiveUserAsync(keycloakUserId, username, cancellationToken);
+        return user?.Id;
     }
 
     public async Task<bool> IsAuthorizedAsync(
         string keycloakUserId,
         IReadOnlyCollection<string> requiredRoles,
         IReadOnlyCollection<string> requiredRoleGroups,
+        string? username = null,
         CancellationToken cancellationToken = default)
     {
-        var user = await _users.GetByKeycloakUserIdAsync(keycloakUserId, cancellationToken);
-        if (user is not { IsActive: true })
+        var user = await _users.ResolveActiveUserAsync(keycloakUserId, username, cancellationToken);
+        if (user is null)
         {
             return false;
         }

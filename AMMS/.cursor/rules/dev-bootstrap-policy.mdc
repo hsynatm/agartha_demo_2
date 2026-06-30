@@ -1,0 +1,39 @@
+---
+description: Dev infra bootstrap runs on AMMS.Api startup; user only runs docker compose up
+alwaysApply: true
+---
+
+# Dev Bootstrap Policy (AMMS)
+
+## User expectation
+
+After `docker compose up -d` in `SolutionItems`, the user should **not** need to run PowerShell setup scripts manually. **AMMS.Api startup (F5 / first run)** handles dev bootstrap.
+
+## Automatic on API startup (Development)
+
+| Concern | Component | Config |
+|---------|-----------|--------|
+| Keycloak user sync (DB → Keycloak) | `KeycloakUserBootstrapRunner` | `KeycloakBootstrap:Enabled` |
+| Default admin user in DB | `AdminUserBootstrapRunner` | `KeycloakBootstrap:EnsureAdminUser` |
+| Keycloak password | username = password | `KeycloakUserPassword` |
+| Graylog GELF TCP input | `GraylogInputBootstrap` | `Graylog:EnsureInputOnStartup` |
+
+Both bootstraps use **retry** (Graylog/Keycloak may still be starting after compose).
+
+## Still manual (one-time / unavoidable)
+
+- **Graylog 6 preflight/setup wizard** on first install (temporary password from `docker logs graylog`)
+- **EF migrations** (`Update-Database`) when schema changes
+- **VS F5** for AMMS.Api (never `dotnet run` from Cursor)
+
+## When adding new dev infra dependencies
+
+- Prefer API startup bootstrap with retry + idempotent checks
+- Do not add required manual scripts unless documented as optional fallback
+- Production: bootstrap flags default **off** (`EnsureInputOnStartup: false`, `KeycloakBootstrap:Enabled: false`)
+
+## Do not
+
+- Require `setup-graylog-tcp-input.ps1` for normal dev flow
+- Require manual Keycloak user creation for DB users
+- Start AMMS.Api from Cursor (`dotnet run` forbidden by project rules)

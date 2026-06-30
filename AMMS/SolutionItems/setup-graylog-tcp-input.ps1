@@ -1,5 +1,6 @@
 # Creates the GELF TCP input required by AMMS.Api (Serilog transportType=Tcp).
-# Run after a fresh Graylog setup or when only GELF UDP AMMS exists.
+# OPTIONAL: AMMS.Api creates this automatically on startup (GraylogInputBootstrap).
+# Use only if API bootstrap failed or Graylog was reset without restarting the API.
 # Usage: .\setup-graylog-tcp-input.ps1 [-GraylogUrl http://localhost:9000] [-Username admin] [-Password admin]
 
 param(

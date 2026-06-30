@@ -1,17 +1,18 @@
+name: InfAmms
 
 services:
-
   mongodb:
     image: mongo:7
     container_name: graylog-mongodb
     restart: unless-stopped
     networks:
-      - graylog
+      - amms
     volumes:
       - mongodb_data:/data/db
 
   datanode:
-    image: graylog/graylog-datanode:6.1
+    # Graylog publishes no :latest tag; 7.1 tracks the current stable 7.1.x line (docker compose pull).
+    image: graylog/graylog-datanode:7.1
     container_name: graylog-datanode
     hostname: datanode
     restart: unless-stopped
@@ -33,12 +34,12 @@ services:
       - "9200:9200"
       - "9300:9300"
     networks:
-      - graylog
+      - amms
     volumes:
       - graylog_datanode_data:/var/lib/graylog-datanode
 
   graylog:
-    image: graylog/graylog:6.1
+    image: graylog/graylog:7.1
     container_name: graylog
     hostname: server
     restart: unless-stopped
@@ -49,7 +50,7 @@ services:
     environment:
       GRAYLOG_NODE_ID_FILE: /usr/share/graylog/data/node-id
       GRAYLOG_PASSWORD_SECRET: amms-graylog-secret-key-2026
-      GRAYLOG_ROOT_PASSWORD_SHA2: 8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918       
+      GRAYLOG_ROOT_PASSWORD_SHA2: 8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918
       GRAYLOG_HTTP_BIND_ADDRESS: 0.0.0.0:9000
       GRAYLOG_HTTP_EXTERNAL_URI: http://localhost:9000/
       GRAYLOG_MONGODB_URI: mongodb://mongodb:27017/graylog
@@ -58,12 +59,28 @@ services:
       - "12201:12201/udp"
       - "12201:12201/tcp"
     networks:
-      - graylog
+      - amms
     volumes:
       - graylog_data:/usr/share/graylog/data
 
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.0
+    container_name: amms-keycloak
+    restart: unless-stopped
+    command: start-dev --import-realm
+    environment:
+      KC_HTTP_PORT: 8080
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: admin
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./keycloak/amms-realm.json:/opt/keycloak/data/import/amms-realm.json:ro
+    networks:
+      - amms
+
 networks:
-  graylog:
+  amms:
     driver: bridge
 
 volumes:

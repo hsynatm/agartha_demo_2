@@ -22,6 +22,7 @@ public static class DependencyInjection
         IConfiguration configuration)
     {
         services.Configure<KeycloakAdminOptions>(configuration.GetSection(KeycloakAdminOptions.SectionName));
+        services.Configure<KeycloakBootstrapOptions>(configuration.GetSection(KeycloakBootstrapOptions.SectionName));
         services.AddDbContext<UserManagementDbContext>((serviceProvider, options) =>
         {
             options.UseNpgsql(connectionString);
@@ -33,6 +34,8 @@ public static class DependencyInjection
         services.AddScoped<IRoleGroupRepository, RoleGroupRepository>();
         services.AddScoped<IUserManagementUnitOfWork, UserManagementUnitOfWork>();
         services.AddHttpClient<IKeycloakUserSyncService, KeycloakUserSyncService>();
+        services.AddSingleton<AdminUserBootstrapRunner>();
+        services.AddSingleton<KeycloakUserBootstrapRunner>();
 
         return services;
     }

@@ -44,7 +44,7 @@ public sealed class KeycloakUserSyncService : IKeycloakUserSyncService
         using var response = await _httpClient.SendAsync(request, cancellationToken);
         if (response.StatusCode == HttpStatusCode.Conflict)
         {
-            var existingUserId = await FindUserIdByUsernameAsync(user.Username, token, cancellationToken);
+            var existingUserId = await FindUserIdByUsernameInternalAsync(user.Username, token, cancellationToken);
             if (string.IsNullOrWhiteSpace(existingUserId))
             {
                 throw CreateKeycloakException("create", user.Username, response.StatusCode, "User already exists in Keycloak.");
@@ -76,7 +76,7 @@ public sealed class KeycloakUserSyncService : IKeycloakUserSyncService
         if (string.IsNullOrWhiteSpace(user.KeycloakUserId))
         {
             var tokenForLookup = await GetAdminTokenAsync(cancellationToken);
-            user.KeycloakUserId = await FindUserIdByUsernameAsync(user.Username, tokenForLookup, cancellationToken);
+            user.KeycloakUserId = await FindUserIdByUsernameInternalAsync(user.Username, tokenForLookup, cancellationToken);
             if (string.IsNullOrWhiteSpace(user.KeycloakUserId))
             {
                 throw new InvalidOperationException("User is not linked to Keycloak.");
@@ -118,6 +118,24 @@ public sealed class KeycloakUserSyncService : IKeycloakUserSyncService
         throw await CreateKeycloakExceptionAsync("delete", keycloakUserId, response, cancellationToken);
     }
 
+    public async Task<bool> UserExistsAsync(string keycloakUserId, CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(keycloakUserId))
+        {
+            return false;
+        }
+
+        var token = await GetAdminTokenAsync(cancellationToken);
+        using var request = new HttpRequestMessage(HttpMethod.Get, AdminUserUrl(keycloakUserId));
+        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        using var response = await _httpClient.SendAsync(request, cancellationToken);
+        return response.IsSuccessStatusCode;
+    }
+
+    public Task<string?> FindUserIdByUsernameAsync(string username, CancellationToken cancellationToken = default) =>
+        FindUserIdByUsernameInternalAsync(username, cancellationToken);
+
     private async Task<string> GetAdminTokenAsync(CancellationToken cancellationToken)
     {
         var tokenUrl = $"{_options.BaseUrl.TrimEnd('/')}/realms/{_options.Realm}/protocol/openid-connect/token";
@@ -142,7 +160,15 @@ public sealed class KeycloakUserSyncService : IKeycloakUserSyncService
         return tokenResponse.AccessToken;
     }
 
-    private async Task<string?> FindUserIdByUsernameAsync(
+    private async Task<string?> FindUserIdByUsernameInternalAsync(
+        string username,
+        CancellationToken cancellationToken)
+    {
+        var token = await GetAdminTokenAsync(cancellationToken);
+        return await FindUserIdByUsernameInternalAsync(username, token, cancellationToken);
+    }
+
+    private async Task<string?> FindUserIdByUsernameInternalAsync(
         string username,
         string token,
         CancellationToken cancellationToken)

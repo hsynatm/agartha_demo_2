@@ -4,6 +4,7 @@ using AMMS.Api.Swagger;
 using AMMS.Infrastructure;
 using AMMS.Infrastructure.Logging;
 using Serilog;
+using UserManagement.Infrastructure.Keycloak;
 using UserManagement.Infrastructure.Middleware;
 
 Log.Logger = new LoggerConfiguration()
@@ -35,9 +36,18 @@ try
     var app = builder.Build();
 
     Log.Information(
-        "AMMS API started. Environment={Environment} GraylogEnabled={GraylogEnabled}",
+        "AMMS API starting. Environment={Environment} KeycloakBootstrap={KeycloakBootstrap}",
         app.Environment.EnvironmentName,
-        builder.Configuration.GetValue("Graylog:Enabled", true));
+        builder.Configuration.GetValue("KeycloakBootstrap:Enabled", false));
+
+    await app.RunUserManagementBootstrapAsync();
+
+    using (var scope = app.Services.CreateScope())
+    {
+        await scope.ServiceProvider.GetRequiredService<GraylogInputBootstrap>().RunAsync();
+    }
+
+    Log.Information("Graylog test event from AMMS.Api startup.");
 
     app.UseAmmsApiDocumentation();
     app.UseAmmsPipeline();

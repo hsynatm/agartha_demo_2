@@ -30,7 +30,7 @@ Update-Database -Context MaintenanceManagementDbContext
 
 
 -- 5
-Add-Migration 2026_06_26_1 -Context UserManagementDbContext  -OutputDir Persistence\Migrations
+Add-Migration 2026_06_30_1 -Context UserManagementDbContext  -OutputDir Persistence\Migrations
 Update-Database -Context UserManagementDbContext
 
 
@@ -41,15 +41,33 @@ Update-Database -Context UserManagementDbContext
 
 ## Onemli mimari not (Graylog 6+)
 
-Graylog 6, ayri OpenSearch container'i ile calismaz.
+Graylog imajlari: graylog/graylog:7.1 + graylog/graylog-datanode:7.1
+  (:latest tag YOK — Graylog bilerek vermiyor; 7.1 = guncel stable 7.1.x)
+Yeni patch icin: docker compose pull && docker compose up -d
+Major surum (or. 7.2) ciktiginda compose'daki 7.1 -> yeni minor tag guncelle
+
+Graylog 6+, ayri OpenSearch container'i ile calismaz.
 "Graylog Data Node" (graylog-datanode) gerekir.
 Preflight ekraninda "No data nodes found" hatasi = datanode eksik veya henuz yapilandirilmamis.
 
-## Stack baslatma
+## Stack baslatma (Graylog + Keycloak) — TEK MANUEL ADIM
 
 cd SolutionItems
 docker compose down -v
 docker compose up -d
+
+Docker Desktop'ta proje adi: InfAmms (docker-compose.yml name: InfAmms)
+
+Disinda script calistirmaya GEREK YOK:
+- GELF TCP input -> AMMS.Api startup (GraylogInputBootstrap)
+- Keycloak kullanicilar -> AMMS.Api startup (KeycloakUserBootstrapRunner)
+- admin kullanicisi yoksa DB'ye eklenir -> sonra Keycloak'a sync (admin/admin)
+- Keycloak sifre = username (KeycloakUserPassword)
+
+Sizin yapacaginiz:
+1. docker compose up -d
+2. Graylog ilk kurulum wizard (sadece ilk sefer, asagida)
+3. AMMS.Api F5 (VS)
 
 UI: http://localhost:9000
 
@@ -104,17 +122,17 @@ docker compose up -d
 docker logs graylog | findstr "Initial configuration"
 (yeni gecici sifre ile tekrar setup yap)
 
-GELF UDP/TCP port: 12201 (Serilog Tcp on 127.0.0.1 onerilir; Windows Docker icin Udp yerine Tcp)
+GELF UDP/TCP port: 12201 (Serilog Tcp on 127.0.0.1)
 
-Graylog input: hem GELF UDP AMMS hem GELF TCP AMMS olmali.
-  Serilog transportType=Tcp kullandigi icin GELF TCP AMMS zorunludur.
-  TCP input eksikse: cd SolutionItems && .\setup-graylog-tcp-input.ps1
+GELF TCP input (GELF TCP AMMS):
+  AMMS.Api acilisinda otomatik olusturulur (Graylog:EnsureInputOnStartup=true, Development).
+  setup-graylog-tcp-input.ps1 artik zorunlu degil (yedek/manuel).
 
 ## Log seviye stratejisi (HBYP)
 
 Development -> Graylog:
   Information, Warning, Error, Fatal
-  Debug Graylog'a gitmez (Console/File'da kalir)
+  Debug yalnizca VS Output (Console)'da kalir
 
 Production -> Graylog:
   Warning, Error, Fatal
@@ -189,16 +207,23 @@ Audit (dev):
 
 ////////// Keycloak SSO //////
 
-## Mimari
+## Mimari (ONEMLI)
 
-- Keycloak: login + token uretimi (Docker)
-- SPA: Authorization Code + PKCE ile token alir
-- AMMS.Api: JWT Bearer ile token dogrular (yeni API projesi YOK)
+- **Kullanicilar ve roller**: PostgreSQL `UserManagement` semasi (kaynak: veritabani)
+- **Keycloak**: Sadece kimlik dogrulama (sifre, token). Rolleri TUTMAZ.
+- **Yetkilendirme**: Token'daki Keycloak sub -> DB'deki AppUser -> Roles / RoleGroups (PostgreSQL)
+- Yeni kullanici: API uzerinden olusturulur -> DB'ye yazilir -> Keycloak'a sync edilir
+- Migration seed `admin` kullanicisi DB'de vardir; ilk API acilisinda Keycloak'a bootstrap sync yapilir
 
-## Keycloak baslatma
+## Keycloak (docker-compose.yml icinde)
+
+Keycloak, Graylog ile ayni compose dosyasinda calisir. Ayri compose gerekmez.
 
 cd SolutionItems
-docker compose -f docker-compose.keycloak.yml up -d
+docker compose down -v
+docker compose up -d
+
+Docker Desktop'ta proje adi: InfAmms (docker-compose.yml name: InfAmms)
 
 ## ONEMLI: Iki farkli kullanici turu var
 
@@ -208,24 +233,30 @@ URL: http://localhost:8080/admin
   Username: admin
   Password: admin
 
-Bu bilgi docker-compose.keycloak.yml icinde tanimli (KC_BOOTSTRAP_ADMIN_USERNAME / PASSWORD).
+Bu bilgi docker-compose.yml icinde tanimli (KC_BOOTSTRAP_ADMIN_USERNAME / PASSWORD).
 Keycloak ilk acilista master realm admin kullanicisini otomatik olusturur.
 
 Admin Console'a test kullanicisi ile GIRILMEZ.
 
-### 2) AMMS test kullanicisi (API / SPA login)
+### 2) AMMS uygulama kullanicisi (API / WebApp login)
 
-Realm: amms (SolutionItems/keycloak/amms-realm.json import)
-  Username: test
-  Password: Test123!
-  Role: operator
-  organization_id: 1
+Kaynak: PostgreSQL UserManagement.Users (migration seed + API ile eklenenler)
+Keycloak'ta elle kullanici OLUSTURMAYIN; API bootstrap veya Create User sync eder.
 
-Bu kullanici API token almak icindir (Postman veya SPA login).
-Admin Console icin degildir.
+Development varsayilan (bootstrap sonrasi):
+  Username: test54
+  Password: test54  (Keycloak sifresi = username)
+  Roller: DB'den (UserRoles / UserRoleGroups)
 
-Realm secimi: Admin Console'da sol ustten "amms" realm'ine gecerek
-test kullanicisini Users menusunden gorebilirsiniz (admin ile giris sonrasi).
+Login akisi:
+  1. WebApp -> Keycloak password grant (token)
+  2. API -> token dogrulama + DB'den AppUser ve roller
+
+Ilk kurulum:
+  1. docker compose up -d keycloak
+  2. Update-Database -Context UserManagementDbContext
+  3. AMMS.Api'yi VS'den F5 ile baslat (bootstrap admin'i Keycloak'a yazar)
+  4. WebApp login: admin / Admin123!
 
 ## API konfigurasyonu
 
@@ -243,8 +274,8 @@ Content-Type: application/x-www-form-urlencoded
 
 grant_type=password
 client_id=amms-spa
-username=test
-password=Test123!
+username=admin
+password=admin
 
 Yanittaki access_token ile API cagrisi:
   Authorization: Bearer {access_token}

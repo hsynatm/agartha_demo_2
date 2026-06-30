@@ -94,7 +94,10 @@ public class UserManagementService : IUserManagementService
 
         try
         {
-            entity.KeycloakUserId = await _keycloakUserSyncService.CreateUserAsync(entity, request.Password, cancellationToken);
+            entity.KeycloakUserId = await _keycloakUserSyncService.CreateUserAsync(
+                entity,
+                KeycloakUserPassword.FromUsername(entity.Username),
+                cancellationToken);
             _unitOfWork.Users.Update(entity);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
         }
@@ -135,7 +138,10 @@ public class UserManagementService : IUserManagementService
         {
             try
             {
-                await _keycloakUserSyncService.UpdateUserAsync(entity, request.Password, cancellationToken);
+                await _keycloakUserSyncService.UpdateUserAsync(
+                    entity,
+                    KeycloakUserPassword.FromUsername(entity.Username),
+                    cancellationToken);
             }
             catch (InvalidOperationException ex)
             {

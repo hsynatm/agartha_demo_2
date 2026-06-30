@@ -69,7 +69,7 @@ namespace WebApp.Controllers
                 return BadRequest(new { success = false, message = "Username and password are required." });
             }
 
-            await _keycloakSessionService.RevokeAllSessionsByUsernameAsync(pUserName, cancellationToken);
+            await TryRevokeSessionsBeforeLoginAsync(pUserName, cancellationToken);
 
             var (ok, body, statusCode) = await RequestKeycloakTokenAsync(new Dictionary<string, string>
             {
@@ -84,7 +84,7 @@ namespace WebApp.Controllers
                 return StatusCode(statusCode, new
                 {
                     success = false,
-                    message = "Keycloak token request failed.",
+                    message = BuildLoginFailureMessage(body),
                     detail = body
                 });
             }
@@ -361,6 +361,29 @@ namespace WebApp.Controllers
             {
                 return value;
             }
+        }
+
+        private async Task TryRevokeSessionsBeforeLoginAsync(string username, CancellationToken cancellationToken)
+        {
+            try
+            {
+                await _keycloakSessionService.RevokeAllSessionsByUsernameAsync(username, cancellationToken);
+            }
+            catch (Exception)
+            {
+                // Login should not fail when admin session revoke is unavailable.
+            }
+        }
+
+        private static string BuildLoginFailureMessage(string keycloakBody)
+        {
+            if (keycloakBody.Contains("invalid_grant", StringComparison.OrdinalIgnoreCase)
+                && keycloakBody.Contains("Invalid user credentials", StringComparison.OrdinalIgnoreCase))
+            {
+                return "Keycloak kullanici adi veya sifre hatali. Keycloak sifresi kullanici adi ile aynidir.";
+            }
+
+            return "Keycloak token request failed.";
         }
 
         private sealed record TokenPair(string AccessToken, string? RefreshToken);
