@@ -10,10 +10,6 @@ namespace WebApp.Controllers
 {
     public class HomeController : Controller
     {
-        private const string SessionTerminatedCode = "SESSION_TERMINATED";
-        private const string SessionIdleExpiredCode = "SESSION_IDLE_EXPIRED";
-        private const string SessionIdleExpiredMessage = "Uzun süre işlem yapmadığınız için oturumunuz sonlandı. Lütfen tekrar giriş yapın.";
-
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly IConfiguration _configuration;
         private readonly KeycloakSessionService _keycloakSessionService;
@@ -43,13 +39,14 @@ namespace WebApp.Controllers
             var accessToken = ExtractBearerToken(authorization);
             if (accessToken is null)
             {
-                return SessionEndedResult(SessionIdleExpiredCode, SessionIdleExpiredMessage);
+                return SessionEndedResult(SessionEndReasonResolver.SessionIdleExpiredCode, SessionEndReasonResolver.SessionIdleExpiredMessage);
             }
 
             var active = await _keycloakSessionService.IsAccessTokenActiveAsync(accessToken, cancellationToken);
             if (!active)
             {
-                return SessionEndedResult(SessionIdleExpiredCode, SessionIdleExpiredMessage);
+                var (code, message) = SessionEndReasonResolver.ResolveInactiveToken(accessToken);
+                return SessionEndedResult(code, message);
             }
 
             return Json(new { success = true, active = true });
@@ -164,7 +161,8 @@ namespace WebApp.Controllers
                 var newTokens = await RefreshTokensAsync(refreshToken, cancellationToken);
                 if (newTokens is null)
                 {
-                    return SessionEndedResult(SessionIdleExpiredCode, SessionIdleExpiredMessage);
+                    var (code, message) = SessionEndReasonResolver.ResolveInactiveToken(accessToken);
+                    return SessionEndedResult(code, message);
                 }
 
                 accessToken = newTokens.AccessToken;
@@ -337,8 +335,8 @@ namespace WebApp.Controllers
                 }
 
                 var code = codeElement.GetString();
-                return string.Equals(code, SessionTerminatedCode, StringComparison.Ordinal)
-                       || string.Equals(code, SessionIdleExpiredCode, StringComparison.Ordinal);
+                return string.Equals(code, SessionEndReasonResolver.SessionTerminatedCode, StringComparison.Ordinal)
+                       || string.Equals(code, SessionEndReasonResolver.SessionIdleExpiredCode, StringComparison.Ordinal);
             }
             catch (JsonException)
             {

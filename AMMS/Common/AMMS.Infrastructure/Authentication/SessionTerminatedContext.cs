@@ -8,7 +8,7 @@ public static class SessionTerminatedContext
 
     public const string ErrorCode = "SESSION_TERMINATED";
 
-    public const string Message = "Başka bir cihazda oturum açtığınız için mevcut oturumunuz sonlandırıldı.";
+    public const string Message = "Başka bir bilgisayarda oturum açtığınız için mevcut oturumunuz sonlandırıldı.";
 
     public static bool IsTerminated(HttpContext? context) =>
         context?.Items[HttpContextItemKey] is true;

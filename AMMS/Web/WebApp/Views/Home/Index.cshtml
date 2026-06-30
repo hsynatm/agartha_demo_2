@@ -168,14 +168,6 @@
             }
 
             function handleSessionEnded(payload) {
-                if (payload?.code === 'SESSION_TERMINATED'
-                    && Date.now() - lastActivityAt >= sessionIdleMs) {
-                    payload = {
-                        code: 'SESSION_IDLE_EXPIRED',
-                        message: 'Uzun süre işlem yapmadığınız için oturumunuz sonlandı. Lütfen tekrar giriş yapın.'
-                    };
-                }
-
                 clearTokens();
                 alert(payload?.message ?? 'Oturumunuz sonlandı. Lütfen tekrar giriş yapın.');
                 window.location.href = urls.home;
