@@ -9,8 +9,8 @@ namespace AMMS.Infrastructure
     {
         /// <summary>
         /// AMMS HTTP pipeline'ını doğru sırayla kaydeder:
-        /// CorrelationId → Culture → LogContext → RequestLogging → ExceptionHandling
-        /// ExceptionHandling controller'a yakın olmalı; request log yanıt yazıldıktan sonra düşer.
+        /// CorrelationId → Culture → LogContext → RequestLogging
+        /// ExceptionHandling, Program.cs içinde auth sonrası eklenmeli (controller'a yakın).
         /// </summary>
         public static WebApplication UseAmmsPipeline(this WebApplication app)
         {
@@ -18,6 +18,11 @@ namespace AMMS.Infrastructure
             app.UseMiddleware<CultureMiddleware>();
             app.UseMiddleware<LogContextMiddleware>();
             app.UseAmmsRequestLogging();
+            return app;
+        }
+
+        public static WebApplication UseAmmsExceptionHandling(this WebApplication app)
+        {
             app.UseMiddleware<ExceptionHandlingMiddleware>();
             return app;
         }

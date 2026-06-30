@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using System.Runtime.ExceptionServices;
 using System.Text.Json;
 
 namespace AMMS.Infrastructure.Middleware
@@ -25,11 +26,7 @@ namespace AMMS.Infrastructure.Middleware
         private readonly IHostEnvironment _environment;
         private readonly JsonStringLocalizer _localizer;
 
-        public ExceptionHandlingMiddleware(
-            RequestDelegate next,
-            ILogger<ExceptionHandlingMiddleware> logger,
-            IHostEnvironment environment,
-            JsonStringLocalizer localizer)
+        public ExceptionHandlingMiddleware(RequestDelegate next, ILogger<ExceptionHandlingMiddleware> logger, IHostEnvironment environment, JsonStringLocalizer localizer)
         {
             _next = next;
             _logger = logger;
@@ -54,7 +51,8 @@ namespace AMMS.Infrastructure.Middleware
         {
             if (context.Response.HasStarted)
             {
-                throw exception;
+                ExceptionDispatchInfo.Capture(exception).Throw();
+                return;
             }
 
             var culture = GetCulture(context);
@@ -66,15 +64,25 @@ namespace AMMS.Infrastructure.Middleware
 
         private async Task WriteHttpErrorIfNeededAsync(HttpContext context)
         {
-            if (SessionTerminatedContext.IsTerminated(context)
-                || context.Response.HasStarted
-                || context.Response.ContentLength > 0)
+            if (context.Response.StatusCode is < StatusCodes.Status400BadRequest)
             {
                 return;
             }
 
-            if (context.Response.StatusCode is < StatusCodes.Status400BadRequest)
+            if (SessionTerminatedContext.IsTerminated(context))
             {
+                context.RequestServices
+                    .GetRequiredService<RequestFailureLogger>()
+                    .LogSessionTerminated(
+                        context,
+                        SessionTerminatedContext.ErrorCode,
+                        SessionTerminatedContext.Message);
+                return;
+            }
+
+            if (context.Response.HasStarted || context.Response.ContentLength > 0)
+            {
+                LogExistingHttpError(context);
                 return;
             }
 
@@ -84,17 +92,31 @@ namespace AMMS.Infrastructure.Middleware
             await WriteProblemDetailsAsync(context, mapped.StatusCode, CreateProblemDetails(context, mapped, culture));
         }
 
+        private void LogExistingHttpError(HttpContext context)
+        {
+            if (context.Response.StatusCode is < StatusCodes.Status400BadRequest)
+            {
+                return;
+            }
+
+            var culture = GetCulture(context);
+            var mapped = MapHttpStatus(context.Response.StatusCode, _localizer, culture);
+            var failure = AuthorizationFailureContext.Get(context);
+
+            if (IsAuthorizationFailure(mapped.StatusCode, exception: null) && failure is not null)
+            {
+                context.RequestServices
+                    .GetRequiredService<AuthorizationFailureLogger>()
+                    .Log(context, mapped.StatusCode, mapped.ErrorCode, failure.Reason);
+                return;
+            }
+
+            LogRequestFailed(context, mapped, exception: null);
+        }
+
         private void LogRequestFailed(HttpContext context, MappedException mapped, Exception? exception)
         {
             context.Response.StatusCode = mapped.StatusCode;
-
-            AmmsLogSchemaContext.SetFromMapped(
-                context,
-                mapped.ErrorCode,
-                mapped.LocalizationKey,
-                mapped.Title,
-                mapped.Detail,
-                mapped.StatusCode);
 
             if (IsAuthorizationFailure(mapped.StatusCode, exception))
             {
@@ -104,16 +126,16 @@ namespace AMMS.Infrastructure.Middleware
                 return;
             }
 
-            const string messageTemplate = "Request failed.";
-
-            if (mapped.StatusCode >= StatusCodes.Status500InternalServerError)
-            {
-                _logger.LogError(exception, messageTemplate);
-            }
-            else
-            {
-                _logger.LogWarning(exception, messageTemplate);
-            }
+            context.RequestServices
+                .GetRequiredService<RequestFailureLogger>()
+                .Log(
+                    context,
+                    mapped.StatusCode,
+                    mapped.ErrorCode,
+                    mapped.LocalizationKey,
+                    mapped.Title,
+                    mapped.Detail,
+                    exception);
         }
 
         private static bool IsAuthorizationFailure(int statusCode, Exception? exception) =>
@@ -165,9 +187,15 @@ namespace AMMS.Infrastructure.Middleware
 
         private static async Task WriteProblemDetailsAsync(HttpContext context, int statusCode, ProblemDetails problemDetails)
         {
+            if (context.Response.HasStarted)
+            {
+                return;
+            }
+
             context.Response.Clear();
             context.Response.StatusCode = statusCode;
             context.Response.ContentType = "application/problem+json";
+
             await context.Response.WriteAsync(JsonSerializer.Serialize(problemDetails, JsonOptions));
         }
     }

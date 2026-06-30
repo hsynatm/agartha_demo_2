@@ -54,6 +54,10 @@
 
         public const string Host = "Host";
 
+        public const string RequestHost = "RequestHost";
+
+        public const string MachineName = "MachineName";
+
         public const string Scheme = "Scheme";
 
         public const string StringLevel = "stringLevel";

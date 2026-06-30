@@ -34,12 +34,18 @@ try
 
     var app = builder.Build();
 
+    Log.Information(
+        "AMMS API started. Environment={Environment} GraylogEnabled={GraylogEnabled}",
+        app.Environment.EnvironmentName,
+        builder.Configuration.GetValue("Graylog:Enabled", true));
+
     app.UseAmmsApiDocumentation();
     app.UseAmmsPipeline();
     app.UseCors("Spa");
     app.UseAuthentication();
     app.UseAppUserResolution();
     app.UseAuthorization();
+    app.UseAmmsExceptionHandling();
     app.MapControllers();
     app.MapHealthChecks("/health").AllowAnonymous();
 

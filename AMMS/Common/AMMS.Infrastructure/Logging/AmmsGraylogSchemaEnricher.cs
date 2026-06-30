@@ -27,6 +27,18 @@ public sealed class AmmsGraylogSchemaEnricher : ILogEventEnricher
 
     public void Enrich(LogEvent logEvent, ILogEventPropertyFactory propertyFactory)
     {
+        try
+        {
+            EnrichCore(logEvent, propertyFactory);
+        }
+        catch (Exception ex)
+        {
+            SetProperty(logEvent, propertyFactory, LogPropertyNames.ExceptionMessage, ex.Message);
+        }
+    }
+
+    private void EnrichCore(LogEvent logEvent, ILogEventPropertyFactory propertyFactory)
+    {
         var httpContext = _httpContextAccessor.HttpContext;
         var schema = AmmsLogSchemaContext.Get(httpContext);
 
@@ -38,7 +50,7 @@ public sealed class AmmsGraylogSchemaEnricher : ILogEventEnricher
         var requestMethod = httpContext?.Request.Method ?? GetScalarString(logEvent, LogPropertyNames.RequestMethod, GraylogSchemaDefaults.String);
         var requestPath = httpContext?.Request.Path.Value ?? GetScalarString(logEvent, LogPropertyNames.RequestPath, GraylogSchemaDefaults.String);
         var moduleName = ApiModuleNameResolver.ResolveFromPath(requestPath) ?? GetScalarString(logEvent, LogPropertyNames.ModuleName, GraylogSchemaDefaults.String);
-        var host = httpContext?.Request.Host.Value ?? GraylogSchemaDefaults.String;
+        var requestHost = httpContext?.Request.Host.Value ?? GraylogSchemaDefaults.String;
         var scheme = httpContext?.Request.Scheme ?? GraylogSchemaDefaults.String;
         var statusCode = ResolveStatusCode(logEvent, httpContext, schema);
         var elapsed = ResolveElapsed(logEvent, schema);
@@ -51,12 +63,6 @@ public sealed class AmmsGraylogSchemaEnricher : ILogEventEnricher
         var detail = ResolveString(logEvent, LogPropertyNames.Detail, schema.Detail);
         var connectionId = httpContext?.Features.Get<IHttpConnectionFeature>()?.ConnectionId ?? GraylogSchemaDefaults.String;
         var requestId = traceId;
-        var stringLevel = logEvent.Level.ToString();
-        var message = logEvent.RenderMessage(CultureInfo.InvariantCulture);
-        if (string.IsNullOrWhiteSpace(message))
-        {
-            message = GraylogSchemaDefaults.String;
-        }
 
         SetProperty(logEvent, propertyFactory, LogPropertyNames.Application, application);
         SetProperty(logEvent, propertyFactory, LogPropertyNames.EnvironmentName, environmentName);
@@ -66,7 +72,7 @@ public sealed class AmmsGraylogSchemaEnricher : ILogEventEnricher
         SetProperty(logEvent, propertyFactory, LogPropertyNames.RequestMethod, requestMethod);
         SetProperty(logEvent, propertyFactory, LogPropertyNames.RequestPath, requestPath);
         SetProperty(logEvent, propertyFactory, LogPropertyNames.ModuleName, moduleName);
-        SetProperty(logEvent, propertyFactory, LogPropertyNames.Host, host);
+        SetProperty(logEvent, propertyFactory, LogPropertyNames.RequestHost, requestHost);
         SetProperty(logEvent, propertyFactory, LogPropertyNames.Scheme, scheme);
         SetProperty(logEvent, propertyFactory, LogPropertyNames.StatusCode, statusCode);
         SetProperty(logEvent, propertyFactory, LogPropertyNames.Elapsed, elapsed);
@@ -77,10 +83,7 @@ public sealed class AmmsGraylogSchemaEnricher : ILogEventEnricher
         SetProperty(logEvent, propertyFactory, LogPropertyNames.LocalizationKey, localizationKey);
         SetProperty(logEvent, propertyFactory, LogPropertyNames.Title, title);
         SetProperty(logEvent, propertyFactory, LogPropertyNames.Detail, detail);
-        SetProperty(logEvent, propertyFactory, LogPropertyNames.StringLevel, stringLevel);
-        SetProperty(logEvent, propertyFactory, LogPropertyNames.Message, message);
-        SetProperty(logEvent, propertyFactory, LogPropertyNames.Source, _source);
-        SetProperty(logEvent, propertyFactory, LogPropertyNames.Timestamp, logEvent.Timestamp.UtcDateTime.ToString("O"));
+        SetProperty(logEvent, propertyFactory, LogPropertyNames.MachineName, _source);
         SetProperty(logEvent, propertyFactory, LogPropertyNames.ConnectionId, connectionId);
         SetProperty(logEvent, propertyFactory, LogPropertyNames.RequestId, requestId);
 

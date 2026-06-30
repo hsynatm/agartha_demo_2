@@ -1,6 +1,7 @@
 ﻿using AMMS.Infrastructure.Authentication;
 using AMMS.Shared.Constants;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
@@ -13,16 +14,43 @@ namespace AMMS.Infrastructure.Logging
     {
         public static WebApplicationBuilder AddSerilogLogging(this WebApplicationBuilder builder)
         {
+            if (builder.Environment.IsDevelopment())
+            {
+                EnableSerilogSelfLog(builder);
+            }
+
             builder.Host.UseSerilog((context, services, loggerConfiguration) =>
             {
                 loggerConfiguration
                     .ReadFrom.Configuration(context.Configuration)
                     .ReadFrom.Services(services)
                     .Enrich.FromLogContext()
-                    .Enrich.With(services.GetRequiredService<AmmsGraylogSchemaEnricher>());
+                    .Enrich.WithProperty(LogPropertyNames.Application, context.HostingEnvironment.ApplicationName)
+                    .Enrich.WithProperty(LogPropertyNames.EnvironmentName, context.HostingEnvironment.EnvironmentName)
+                    .Enrich.With(services.GetRequiredService<AmmsGraylogSchemaEnricher>())
+                    .AddAmmsGraylog(context.Configuration, context.HostingEnvironment);
             });
 
             return builder;
+        }
+
+        private static void EnableSerilogSelfLog(WebApplicationBuilder builder)
+        {
+            var logsDirectory = Path.Combine(builder.Environment.ContentRootPath, "Logs");
+            Directory.CreateDirectory(logsDirectory);
+            var selfLogPath = Path.Combine(logsDirectory, "serilog-selflog.txt");
+
+            Serilog.Debugging.SelfLog.Enable(message =>
+            {
+                try
+                {
+                    File.AppendAllText(selfLogPath, message + Environment.NewLine);
+                }
+                catch
+                {
+                    // SelfLog must never throw.
+                }
+            });
         }
 
         public static WebApplication UseAmmsRequestLogging(this WebApplication app)
@@ -71,7 +99,7 @@ namespace AMMS.Infrastructure.Logging
                     diagnosticContext.Set(LogPropertyNames.CorrelationId, CorrelationIdResolver.Resolve(httpContext) ?? GraylogSchemaDefaults.String);
                     diagnosticContext.Set(LogPropertyNames.TraceId, httpContext.TraceIdentifier);
                     diagnosticContext.Set(LogPropertyNames.ClientIp, httpContext.Connection.RemoteIpAddress?.ToString() ?? GraylogSchemaDefaults.String);
-                    diagnosticContext.Set(LogPropertyNames.Host, httpContext.Request.Host.Value ?? GraylogSchemaDefaults.String);
+                    diagnosticContext.Set(LogPropertyNames.RequestHost, httpContext.Request.Host.Value ?? GraylogSchemaDefaults.String);
                     diagnosticContext.Set(LogPropertyNames.Scheme, httpContext.Request.Scheme ?? GraylogSchemaDefaults.String);
 
                     var tenantId = httpContext.User.Identity?.IsAuthenticated == true

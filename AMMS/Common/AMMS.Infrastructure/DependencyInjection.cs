@@ -21,6 +21,7 @@ namespace AMMS.Infrastructure
             services.AddScoped<ICurrentUserService, CurrentUserService>();
             services.AddScoped<ICurrentOrganizationService, CurrentOrganizationService>();
             services.AddScoped<AuthorizationFailureLogger>();
+            services.AddScoped<RequestFailureLogger>();
             services.AddSingleton<JsonStringLocalizer>();
             return services;
         }
