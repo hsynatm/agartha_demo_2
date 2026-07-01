@@ -5,6 +5,7 @@
   "errors.kullanici.keycloak_sync_failed": "تعذرت مزامنة المستخدم مع Keycloak.",
   "errors.kullanici.invalid_email": "عنوان البريد الإلكتروني غير صالح.",
   "errors.kullanici.invalid_username": "اسم المستخدم غير صالح.",
+  "errors.kullanici.invalid_password": "كلمة المرور غير صالحة.",
   "errors.rol.not_found": "لم يتم العثور على الدور.",
   "errors.rol.duplicate_code": "رمز الدور هذا مسجل بالفعل.",
   "errors.rol_grubu.not_found": "لم يتم العثور على مجموعة الأدوار.",

@@ -5,6 +5,7 @@
   "errors.kullanici.keycloak_sync_failed": "User could not be synchronized with Keycloak.",
   "errors.kullanici.invalid_email": "Invalid email address.",
   "errors.kullanici.invalid_username": "Invalid username.",
+  "errors.kullanici.invalid_password": "Invalid password.",
   "errors.rol.not_found": "Role not found.",
   "errors.rol.duplicate_code": "This role code is already registered.",
   "errors.rol_grubu.not_found": "Role group not found.",

@@ -64,7 +64,8 @@ public class UserManagementService : IUserManagementService
     public async Task<UserDto> CreateAsync(CreateUserDto request, CancellationToken cancellationToken = default)
     {
         var normalizedUsername = request.Username.Trim();
-        EnsureValidUserInput(normalizedUsername, request.Email.Trim());
+        var password = request.Password.Trim();
+        EnsureValidUserInput(normalizedUsername, request.Email.Trim(), password);
 
         var existingUser = await _unitOfWork.Users.GetByUsernameIncludingDeletedAsync(normalizedUsername, cancellationToken);
         if (existingUser is { IsDeleted: false })
@@ -96,7 +97,7 @@ public class UserManagementService : IUserManagementService
         {
             entity.KeycloakUserId = await _keycloakUserSyncService.CreateUserAsync(
                 entity,
-                KeycloakUserPassword.FromUsername(entity.Username),
+                password,
                 cancellationToken);
             _unitOfWork.Users.Update(entity);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
@@ -138,9 +139,13 @@ public class UserManagementService : IUserManagementService
         {
             try
             {
+                var newPassword = string.IsNullOrWhiteSpace(request.Password)
+                    ? null
+                    : request.Password.Trim();
+
                 await _keycloakUserSyncService.UpdateUserAsync(
                     entity,
-                    KeycloakUserPassword.FromUsername(entity.Username),
+                    newPassword,
                     cancellationToken);
             }
             catch (InvalidOperationException ex)
@@ -216,7 +221,7 @@ public class UserManagementService : IUserManagementService
         return (roleIds, roleGroupIds);
     }
 
-    private static void EnsureValidUserInput(string username, string email)
+    private static void EnsureValidUserInput(string username, string email, string? password = null)
     {
         if (!UserInputValidator.TryValidateUsername(username, out var usernameError))
         {
@@ -232,6 +237,15 @@ public class UserManagementService : IUserManagementService
                 LocalizationKeys.Modules.UserManagement.InvalidEmail,
                 messageArgs: new { Detail = emailError },
                 errorCode: LocalizationKeys.Modules.UserManagement.ErrorCodes.InvalidEmail);
+        }
+
+        if (password is not null
+            && !UserInputValidator.TryValidatePassword(password, out var passwordError))
+        {
+            throw new AmmsException.Business(
+                LocalizationKeys.Modules.UserManagement.InvalidPassword,
+                messageArgs: new { Detail = passwordError },
+                errorCode: LocalizationKeys.Modules.UserManagement.ErrorCodes.InvalidPassword);
         }
     }
 

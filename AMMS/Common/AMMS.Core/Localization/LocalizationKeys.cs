@@ -84,6 +84,7 @@
                 public const string KeycloakSyncFailed = "errors.kullanici.keycloak_sync_failed";
                 public const string InvalidEmail = "errors.kullanici.invalid_email";
                 public const string InvalidUsername = "errors.kullanici.invalid_username";
+                public const string InvalidPassword = "errors.kullanici.invalid_password";
                 public const string RoleNotFound = "errors.rol.not_found";
                 public const string DuplicateRoleCode = "errors.rol.duplicate_code";
                 public const string RoleGroupNotFound = "errors.rol_grubu.not_found";
@@ -97,6 +98,7 @@
                     public const string KeycloakSyncFailed = "USER_KEYCLOAK_SYNC_FAILED";
                     public const string InvalidEmail = "USER_INVALID_EMAIL";
                     public const string InvalidUsername = "USER_INVALID_USERNAME";
+                    public const string InvalidPassword = "USER_INVALID_PASSWORD";
                     public const string RoleNotFound = "ROLE_NOT_FOUND";
                     public const string DuplicateRoleCode = "ROLE_DUPLICATE_CODE";
                     public const string RoleGroupNotFound = "ROLE_GROUP_NOT_FOUND";

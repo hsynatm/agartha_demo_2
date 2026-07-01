@@ -1,8 +1,8 @@
 namespace UserManagement.Application.Services;
 
 /// <summary>
-/// Keycloak identity password policy: password equals username.
-/// Roles remain in PostgreSQL; this applies to Keycloak login only.
+/// Default Keycloak password for startup bootstrap when a DB user has no Keycloak account yet.
+/// API Create/Update flows use the password supplied by the client instead.
 /// </summary>
 public static class KeycloakUserPassword
 {

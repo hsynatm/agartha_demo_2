@@ -5,6 +5,7 @@
   "errors.kullanici.keycloak_sync_failed": "Kullanıcı Keycloak ile senkronize edilemedi.",
   "errors.kullanici.invalid_email": "Geçersiz e-posta adresi.",
   "errors.kullanici.invalid_username": "Geçersiz kullanıcı adı.",
+  "errors.kullanici.invalid_password": "Geçersiz şifre.",
   "errors.rol.not_found": "Rol bulunamadı.",
   "errors.rol.duplicate_code": "Bu rol kodu zaten kayıtlı.",
   "errors.rol_grubu.not_found": "Rol grubu bulunamadı.",

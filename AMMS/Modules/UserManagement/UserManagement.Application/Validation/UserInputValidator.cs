@@ -39,4 +39,16 @@ public static class UserInputValidator
         error = null;
         return true;
     }
+
+    public static bool TryValidatePassword(string password, out string? error)
+    {
+        if (string.IsNullOrWhiteSpace(password))
+        {
+            error = "Password is required.";
+            return false;
+        }
+
+        error = null;
+        return true;
+    }
 }
