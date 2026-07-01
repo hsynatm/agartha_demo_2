@@ -10,8 +10,7 @@ public class RoleGroupRepository : EfRepository<RoleGroup>, IRoleGroupRepository
 {
     private readonly UserManagementDbContext _context;
 
-    public RoleGroupRepository(UserManagementDbContext context)
-        : base(context)
+    public RoleGroupRepository(UserManagementDbContext context): base(context)
     {
         _context = context;
     }
@@ -37,10 +36,7 @@ public class RoleGroupRepository : EfRepository<RoleGroup>, IRoleGroupRepository
         return await query.AnyAsync(cancellationToken);
     }
 
-    public async Task ReplaceRoleAssignmentsAsync(
-        Guid roleGroupId,
-        IReadOnlyCollection<Guid> roleIds,
-        CancellationToken cancellationToken = default)
+    public async Task ReplaceRoleAssignmentsAsync(Guid roleGroupId,IReadOnlyCollection<Guid> roleIds,CancellationToken cancellationToken = default)
     {
         var existing = await _context.RoleGroupRoles
             .Where(roleGroupRole => roleGroupRole.RoleGroupId == roleGroupId)

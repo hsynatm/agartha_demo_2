@@ -24,13 +24,7 @@ public static class AmmsLogSchemaContext
 {
     public const string HttpContextItemKey = "Amms.LogSchema";
 
-    public static void SetFromMapped(
-        HttpContext context,
-        string errorCode,
-        string localizationKey,
-        string title,
-        string detail,
-        int statusCode)
+    public static void SetFromMapped(HttpContext context,string errorCode,string localizationKey,string title,string detail,int statusCode)
     {
         var current = Get(context);
         context.Items[HttpContextItemKey] = current with
@@ -43,10 +37,7 @@ public static class AmmsLogSchemaContext
         };
     }
 
-    public static void SetFromRequest(
-        HttpContext context,
-        int statusCode,
-        double elapsedMilliseconds)
+    public static void SetFromRequest(HttpContext context,int statusCode,double elapsedMilliseconds)
     {
         var elapsed = elapsedMilliseconds;
         var current = Get(context);
@@ -81,6 +72,5 @@ public static class AmmsLogSchemaContext
         return new AmmsLogSchemaSnapshot();
     }
 
-    private static string? NullIfEmpty(string? value) =>
-        string.IsNullOrWhiteSpace(value) ? null : value;
+    private static string? NullIfEmpty(string? value) =>string.IsNullOrWhiteSpace(value) ? null : value;
 }

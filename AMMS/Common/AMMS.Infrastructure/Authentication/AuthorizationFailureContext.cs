@@ -22,6 +22,5 @@ public static class AuthorizationFailureContext
         context.Items[HttpContextItemKey] = snapshot;
     }
 
-    public static AuthorizationFailureSnapshot? Get(HttpContext? context) =>
-        context?.Items[HttpContextItemKey] as AuthorizationFailureSnapshot;
+    public static AuthorizationFailureSnapshot? Get(HttpContext? context) =>context?.Items[HttpContextItemKey] as AuthorizationFailureSnapshot;
 }

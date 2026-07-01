@@ -12,9 +12,7 @@ namespace AMMS.Infrastructure.Services
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly AmmsAuthenticationOptions _options;
 
-        public CurrentOrganizationService(
-            IHttpContextAccessor httpContextAccessor,
-            IOptions<AmmsAuthenticationOptions> options)
+        public CurrentOrganizationService(IHttpContextAccessor httpContextAccessor,IOptions<AmmsAuthenticationOptions> options)
         {
             _httpContextAccessor = httpContextAccessor;
             _options = options.Value;

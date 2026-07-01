@@ -10,11 +10,6 @@ public sealed class KeycloakBootstrapOptions
     public bool Enabled { get; set; }
 
     /// <summary>
-    /// When true, existing Keycloak accounts get password reset to username on API startup (dev only).
-    /// </summary>
-    public bool ResetPasswordOnReconcile { get; set; }
-
-    /// <summary>
     /// When true, creates the default admin user in UserManagement.Users if missing (password = username via Keycloak sync).
     /// </summary>
     public bool EnsureAdminUser { get; set; } = true;

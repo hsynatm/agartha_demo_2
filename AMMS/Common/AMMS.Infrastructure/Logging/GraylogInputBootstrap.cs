@@ -29,11 +29,7 @@ public sealed class GraylogInputBootstrap
     private readonly ILogger<GraylogInputBootstrap> _logger;
     private readonly IHttpClientFactory _httpClientFactory;
 
-    public GraylogInputBootstrap(
-        IConfiguration configuration,
-        IHostEnvironment environment,
-        ILogger<GraylogInputBootstrap> logger,
-        IHttpClientFactory httpClientFactory)
+    public GraylogInputBootstrap(IConfiguration configuration,IHostEnvironment environment,ILogger<GraylogInputBootstrap> logger,IHttpClientFactory httpClientFactory)
     {
         _configuration = configuration;
         _environment = environment;
@@ -120,11 +116,7 @@ public sealed class GraylogInputBootstrap
         }
     }
 
-    private async Task<bool> InputExistsAsync(
-        HttpClient client,
-        string graylogUrl,
-        AuthenticationHeaderValue authHeader,
-        CancellationToken cancellationToken)
+    private async Task<bool> InputExistsAsync(HttpClient client,string graylogUrl,AuthenticationHeaderValue authHeader,CancellationToken cancellationToken)
     {
         using var request = new HttpRequestMessage(HttpMethod.Get, $"{graylogUrl.TrimEnd('/')}/api/system/inputs");
         request.Headers.Authorization = authHeader;
@@ -156,12 +148,7 @@ public sealed class GraylogInputBootstrap
         return false;
     }
 
-    private static async Task CreateInputAsync(
-        HttpClient client,
-        string graylogUrl,
-        AuthenticationHeaderValue authHeader,
-        int port,
-        CancellationToken cancellationToken)
+    private static async Task CreateInputAsync(HttpClient client,string graylogUrl,AuthenticationHeaderValue authHeader,int port,CancellationToken cancellationToken)
     {
         var payload = new
         {

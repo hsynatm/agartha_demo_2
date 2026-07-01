@@ -26,9 +26,10 @@ alwaysApply: true
 
 ## Bootstrap (fresh install)
 
-- `KeycloakUserBootstrapRunner` syncs active users to Keycloak on API startup when `KeycloakBootstrap:Enabled` is true
-- **Keycloak password = username** (`KeycloakUserPassword.FromUsername`) for bootstrap and API Create/Update user sync
-- Dev: `ResetPasswordOnReconcile: true` resets existing Keycloak passwords to username on API start
+- `KeycloakUserBootstrapRunner` syncs active DB users to Keycloak on API startup when `KeycloakBootstrap:Enabled` is true
+- **Existing Keycloak user**: link/repair `KeycloakUserId` only — **do not reset password**
+- **Missing in Keycloak**: create account with password = username (`KeycloakUserPassword.FromUsername`)
+- **API/Web CreateUser**: DB + Keycloak with the **password from the request**
 - Never document or seed test users only in Keycloak realm JSON — they must exist in UserManagement DB first
 
 ## When adding auth-related features

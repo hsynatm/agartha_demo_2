@@ -11,8 +11,5 @@ public interface IRoleGroupRepository : IRepository<RoleGroup>
 
     Task<bool> CodeExistsAsync(string code, Guid? excludeRoleGroupId = null, CancellationToken cancellationToken = default);
 
-    Task ReplaceRoleAssignmentsAsync(
-        Guid roleGroupId,
-        IReadOnlyCollection<Guid> roleIds,
-        CancellationToken cancellationToken = default);
+    Task ReplaceRoleAssignmentsAsync(Guid roleGroupId,IReadOnlyCollection<Guid> roleIds,CancellationToken cancellationToken = default);
 }

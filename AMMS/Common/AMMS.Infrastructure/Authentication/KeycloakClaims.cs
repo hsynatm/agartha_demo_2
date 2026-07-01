@@ -6,17 +6,11 @@ namespace AMMS.Infrastructure.Authentication;
 
 public static class KeycloakClaims
 {
-    /// <summary>
-    /// Keycloak user id from JWT. <c>sub</c> is often mapped to <see cref="ClaimTypes.NameIdentifier"/> by the JWT handler.
-    /// </summary>
-    public static string? GetKeycloakUserId(ClaimsPrincipal? principal) =>
-        principal?.FindFirstValue(ClaimTypes.NameIdentifier)
-        ?? principal?.FindFirstValue("sub");
+
+    public static string? GetKeycloakUserId(ClaimsPrincipal? principal) => principal?.FindFirstValue(ClaimTypes.NameIdentifier) ?? principal?.FindFirstValue("sub");
 }
 
-/// <summary>
-/// Normalizes Keycloak token claims used by AMMS. Authorization roles are resolved from PostgreSQL, not JWT.
-/// </summary>
+
 public sealed class KeycloakClaimsTransformation : IClaimsTransformation
 {
     private readonly AmmsAuthenticationOptions _options;

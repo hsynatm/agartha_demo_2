@@ -16,10 +16,7 @@ public sealed class KeycloakTokenIntrospectionService
     private readonly AmmsAuthenticationOptions _options;
     private readonly IMemoryCache _cache;
 
-    public KeycloakTokenIntrospectionService(
-        IHttpClientFactory httpClientFactory,
-        IOptions<AmmsAuthenticationOptions> options,
-        IMemoryCache cache)
+    public KeycloakTokenIntrospectionService(IHttpClientFactory httpClientFactory,IOptions<AmmsAuthenticationOptions> options,IMemoryCache cache)
     {
         _httpClientFactory = httpClientFactory;
         _options = options.Value;

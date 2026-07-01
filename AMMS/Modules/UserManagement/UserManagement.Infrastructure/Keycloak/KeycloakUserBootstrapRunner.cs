@@ -22,10 +22,7 @@ public sealed class KeycloakUserBootstrapRunner
     private readonly KeycloakBootstrapOptions _options;
     private readonly ILogger<KeycloakUserBootstrapRunner> _logger;
 
-    public KeycloakUserBootstrapRunner(
-        IServiceScopeFactory scopeFactory,
-        IOptions<KeycloakBootstrapOptions> options,
-        ILogger<KeycloakUserBootstrapRunner> logger)
+    public KeycloakUserBootstrapRunner(IServiceScopeFactory scopeFactory,IOptions<KeycloakBootstrapOptions> options,ILogger<KeycloakUserBootstrapRunner> logger)
     {
         _scopeFactory = scopeFactory;
         _options = options.Value;
@@ -41,7 +38,7 @@ public sealed class KeycloakUserBootstrapRunner
         }
 
         _logger.LogInformation(
-            "KeycloakBootstrap started. Reconciling UserManagement.Users with Keycloak (password = username).");
+            "KeycloakBootstrap started. Reconciling UserManagement.Users with Keycloak (create missing only; existing passwords unchanged).");
 
         foreach (var delay in RetryDelays)
         {
@@ -109,14 +106,6 @@ public sealed class KeycloakUserBootstrapRunner
                 {
                     var previousId = user.KeycloakUserId;
                     user.KeycloakUserId = keycloakUserId;
-
-                    if (_options.ResetPasswordOnReconcile)
-                    {
-                        await keycloakSync.UpdateUserAsync(user, keycloakPassword, cancellationToken);
-                        _logger.LogInformation(
-                            "Reset Keycloak password for {Username} to username (dev).",
-                            user.Username);
-                    }
 
                     if (!string.Equals(previousId, keycloakUserId, StringComparison.Ordinal))
                     {

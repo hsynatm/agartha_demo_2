@@ -109,11 +109,7 @@ public sealed class AmmsPermissionAuthorizationHandler : AuthorizationHandler<Am
             requirement.RoleGroups);
     }
 
-    private void SetFailureContext(
-        string reason,
-        string? keycloakUserId = null,
-        IReadOnlyCollection<string>? requiredRoles = null,
-        IReadOnlyCollection<string>? requiredRoleGroups = null)
+    private void SetFailureContext(string reason,string? keycloakUserId = null,IReadOnlyCollection<string>? requiredRoles = null,IReadOnlyCollection<string>? requiredRoleGroups = null)
     {
         AuthorizationFailureContext.Set(
             _httpContextAccessor.HttpContext,
@@ -124,6 +120,5 @@ public sealed class AmmsPermissionAuthorizationHandler : AuthorizationHandler<Am
                 JoinCodes(requiredRoleGroups)));
     }
 
-    private static string? JoinCodes(IReadOnlyCollection<string>? codes) =>
-        codes is null or { Count: 0 } ? null : string.Join(", ", codes);
+    private static string? JoinCodes(IReadOnlyCollection<string>? codes) => codes is null or { Count: 0 } ? null : string.Join(", ", codes);
 }

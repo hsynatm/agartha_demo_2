@@ -10,6 +10,5 @@ public static class SessionTerminatedContext
 
     public const string Message = "Başka bir bilgisayarda oturum açtığınız için mevcut oturumunuz sonlandırıldı.";
 
-    public static bool IsTerminated(HttpContext? context) =>
-        context?.Items[HttpContextItemKey] is true;
+    public static bool IsTerminated(HttpContext? context) => context?.Items[HttpContextItemKey] is true;
 }

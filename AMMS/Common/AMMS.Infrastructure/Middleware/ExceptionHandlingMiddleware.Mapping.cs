@@ -92,10 +92,7 @@ namespace AMMS.Infrastructure.Middleware
                 null);
         }
 
-        private static MappedException MapValidation(
-            AmmsException.Validation validationException,
-            JsonStringLocalizer localizer,
-            string culture)
+        private static MappedException MapValidation(AmmsException.Validation validationException,JsonStringLocalizer localizer,string culture)
         {
             return new MappedException(
                 StatusCodes.Status400BadRequest,
@@ -107,12 +104,7 @@ namespace AMMS.Infrastructure.Middleware
                 LocalizeValidationErrors(validationException.Details, localizer, culture));
         }
 
-        private static MappedException MapAmmsException(
-            int statusCode,
-            AmmsException exception,
-            string titleKey,
-            JsonStringLocalizer localizer,
-            string culture)
+        private static MappedException MapAmmsException(int statusCode,AmmsException exception,string titleKey,JsonStringLocalizer localizer,string culture)
         {
             return new MappedException(
                 statusCode,
@@ -124,13 +116,7 @@ namespace AMMS.Infrastructure.Middleware
                 exception.Details);
         }
 
-        private static MappedException MapSystemException(
-            int statusCode,
-            string errorCode,
-            string detailKey,
-            string titleKey,
-            JsonStringLocalizer localizer,
-            string culture)
+        private static MappedException MapSystemException(int statusCode,string errorCode,string detailKey,string titleKey,JsonStringLocalizer localizer,string culture)
         {
             return new MappedException(
                 statusCode,
@@ -142,11 +128,7 @@ namespace AMMS.Infrastructure.Middleware
                 null);
         }
 
-        private static MappedException MapUnhandled(
-            Exception exception,
-            IHostEnvironment environment,
-            JsonStringLocalizer localizer,
-            string culture)
+        private static MappedException MapUnhandled(Exception exception,IHostEnvironment environment,JsonStringLocalizer localizer,string culture)
         {
             var detail = environment.IsDevelopment()
                 ? exception.Message
@@ -162,10 +144,7 @@ namespace AMMS.Infrastructure.Middleware
                 environment.IsDevelopment() ? exception.StackTrace : null);
         }
 
-        private static object? LocalizeValidationErrors(
-            object? errors,
-            JsonStringLocalizer localizer,
-            string culture)
+        private static object? LocalizeValidationErrors(object? errors,JsonStringLocalizer localizer,string culture)
         {
             if (errors is not IReadOnlyDictionary<string, LocalizationKeys.LocalizationError[]> keyedErrors)
             {

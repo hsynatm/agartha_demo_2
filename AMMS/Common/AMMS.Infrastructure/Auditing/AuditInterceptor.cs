@@ -19,14 +19,7 @@ namespace AMMS.Infrastructure.Auditing
 
         private readonly Dictionary<DbContextId, List<AuditEntry>> _pendingEntriesByContext = new();
 
-        public AuditInterceptor(
-            AuditDbContext auditDbContext,
-            ICurrentUserService currentUserService,
-            ICurrentOrganizationService currentOrganizationService,
-            IHttpContextAccessor httpContextAccessor,
-            ILogger<AuditInterceptor> logger,
-            IHostEnvironment hostEnvironment,
-            string moduleName)
+        public AuditInterceptor(AuditDbContext auditDbContext,ICurrentUserService currentUserService,ICurrentOrganizationService currentOrganizationService,IHttpContextAccessor httpContextAccessor,ILogger<AuditInterceptor> logger,IHostEnvironment hostEnvironment,string moduleName)
         {
             _auditDbContext = auditDbContext;
             _currentUserService = currentUserService;
@@ -47,10 +40,7 @@ namespace AMMS.Infrastructure.Auditing
             return base.SavingChanges(eventData, result);
         }
 
-        public override ValueTask<InterceptionResult<int>> SavingChangesAsync(
-            DbContextEventData eventData,
-            InterceptionResult<int> result,
-            CancellationToken cancellationToken = default)
+        public override ValueTask<InterceptionResult<int>> SavingChangesAsync(DbContextEventData eventData,InterceptionResult<int> result,CancellationToken cancellationToken = default)
         {
             if (eventData.Context is not null)
             {
@@ -66,19 +56,13 @@ namespace AMMS.Infrastructure.Auditing
             return base.SavedChanges(eventData, result);
         }
 
-        public override async ValueTask<int> SavedChangesAsync(
-            SaveChangesCompletedEventData eventData,
-            int result,
-            CancellationToken cancellationToken = default)
+        public override async ValueTask<int> SavedChangesAsync(SaveChangesCompletedEventData eventData,int result,CancellationToken cancellationToken = default)
         {
             await PersistPendingEntriesAsync(eventData.Context, result, cancellationToken);
             return await base.SavedChangesAsync(eventData, result, cancellationToken);
         }
 
-        private async Task PersistPendingEntriesAsync(
-            DbContext? context,
-            int result,
-            CancellationToken cancellationToken)
+        private async Task PersistPendingEntriesAsync(DbContext? context,int result,CancellationToken cancellationToken)
         {
             if (context is null)
             {

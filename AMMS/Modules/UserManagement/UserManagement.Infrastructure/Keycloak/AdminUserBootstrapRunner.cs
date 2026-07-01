@@ -18,10 +18,7 @@ public sealed class AdminUserBootstrapRunner
     private readonly KeycloakBootstrapOptions _options;
     private readonly ILogger<AdminUserBootstrapRunner> _logger;
 
-    public AdminUserBootstrapRunner(
-        IServiceScopeFactory scopeFactory,
-        IOptions<KeycloakBootstrapOptions> options,
-        ILogger<AdminUserBootstrapRunner> logger)
+    public AdminUserBootstrapRunner(IServiceScopeFactory scopeFactory,IOptions<KeycloakBootstrapOptions> options,ILogger<AdminUserBootstrapRunner> logger)
     {
         _scopeFactory = scopeFactory;
         _options = options.Value;

@@ -21,9 +21,7 @@ public class UserManagementRepository : EfRepository<AppUser>, IUserManagementRe
             .AsNoTracking()
             .FirstOrDefaultAsync(user => user.Username == username, cancellationToken);
 
-    public async Task<AppUser?> GetByUsernameIncludingDeletedAsync(
-        string username,
-        CancellationToken cancellationToken = default) =>
+    public async Task<AppUser?> GetByUsernameIncludingDeletedAsync(string username,CancellationToken cancellationToken = default) =>
         await _context.Users
             .IgnoreQueryFilters()
             .AsNoTracking()
@@ -52,10 +50,7 @@ public class UserManagementRepository : EfRepository<AppUser>, IUserManagementRe
             .AsNoTracking()
             .FirstOrDefaultAsync(user => user.KeycloakUserId == keycloakUserId, cancellationToken);
 
-    public async Task<AppUser?> ResolveActiveUserAsync(
-        string? keycloakUserId,
-        string? username,
-        CancellationToken cancellationToken = default)
+    public async Task<AppUser?> ResolveActiveUserAsync(string? keycloakUserId,string? username,CancellationToken cancellationToken = default)
     {
         if (!string.IsNullOrWhiteSpace(keycloakUserId))
         {
@@ -101,10 +96,7 @@ public class UserManagementRepository : EfRepository<AppUser>, IUserManagementRe
             .ThenInclude(userRoleGroup => userRoleGroup.RoleGroup)
             .FirstOrDefaultAsync(user => user.Id == id, cancellationToken);
 
-    public async Task<bool> UsernameExistsAsync(
-        string username,
-        Guid? excludeUserId = null,
-        CancellationToken cancellationToken = default)
+    public async Task<bool> UsernameExistsAsync(string username,Guid? excludeUserId = null,CancellationToken cancellationToken = default)
     {
         var query = _context.Users.AsNoTracking().Where(user => user.Username == username);
 
@@ -145,11 +137,7 @@ public class UserManagementRepository : EfRepository<AppUser>, IUserManagementRe
             .Distinct()
             .ToListAsync(cancellationToken);
 
-    public async Task ReplaceRoleAssignmentsAsync(
-        Guid userId,
-        IReadOnlyCollection<Guid> roleIds,
-        IReadOnlyCollection<Guid> roleGroupIds,
-        CancellationToken cancellationToken = default)
+    public async Task ReplaceRoleAssignmentsAsync(Guid userId,IReadOnlyCollection<Guid> roleIds,IReadOnlyCollection<Guid> roleGroupIds,CancellationToken cancellationToken = default)
     {
         var existingRoles = await _context.UserRoles
             .Where(userRole => userRole.UserId == userId)

@@ -6,12 +6,7 @@ namespace UserManagement.Infrastructure.Persistence;
 
 public sealed class UserManagementUnitOfWork : EfUnitOfWork<UserManagementDbContext>, IUserManagementUnitOfWork
 {
-    public UserManagementUnitOfWork(
-        UserManagementDbContext context,
-        IUserManagementRepository users,
-        IRoleRepository roles,
-        IRoleGroupRepository roleGroups)
-        : base(context)
+    public UserManagementUnitOfWork(UserManagementDbContext context,IUserManagementRepository users,IRoleRepository roles,IRoleGroupRepository roleGroups): base(context)
     {
         Users = users;
         Roles = roles;

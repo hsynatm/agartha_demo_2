@@ -16,8 +16,7 @@ public sealed class EmptyStringToGuidJsonConverter : JsonConverter<Guid>
         };
     }
 
-    public override void Write(Utf8JsonWriter writer, Guid value, JsonSerializerOptions options) =>
-        writer.WriteStringValue(value);
+    public override void Write(Utf8JsonWriter writer, Guid value, JsonSerializerOptions options) => writer.WriteStringValue(value);
 
     private static Guid ParseGuid(string? value)
     {
@@ -69,8 +68,7 @@ public sealed class EmptyStringToDateTimeJsonConverter : JsonConverter<DateTime>
         };
     }
 
-    public override void Write(Utf8JsonWriter writer, DateTime value, JsonSerializerOptions options) =>
-        writer.WriteStringValue(value);
+    public override void Write(Utf8JsonWriter writer, DateTime value, JsonSerializerOptions options) => writer.WriteStringValue(value);
 
     private static DateTime ParseDateTime(string? value)
     {
@@ -106,6 +104,5 @@ public sealed class EmptyStringToNullableDateTimeJsonConverter : JsonConverter<D
         writer.WriteStringValue(value.Value);
     }
 
-    private static DateTime? ParseNullableDateTime(string? value) =>
-        string.IsNullOrWhiteSpace(value) ? null : DateTime.TryParse(value, out var dateTime) ? dateTime : null;
+    private static DateTime? ParseNullableDateTime(string? value) => string.IsNullOrWhiteSpace(value) ? null : DateTime.TryParse(value, out var dateTime) ? dateTime : null;
 }

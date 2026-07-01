@@ -13,10 +13,7 @@ public interface IUserManagementRepository : IRepository<AppUser>
 
     Task<AppUser?> GetByKeycloakUserIdAsync(string keycloakUserId, CancellationToken cancellationToken = default);
 
-    Task<AppUser?> ResolveActiveUserAsync(
-        string? keycloakUserId,
-        string? username,
-        CancellationToken cancellationToken = default);
+    Task<AppUser?> ResolveActiveUserAsync(string? keycloakUserId,string? username,CancellationToken cancellationToken = default);
 
     Task<IReadOnlyList<AppUser>> GetUsersPendingKeycloakSyncAsync(CancellationToken cancellationToken = default);
 
@@ -30,9 +27,5 @@ public interface IUserManagementRepository : IRepository<AppUser>
 
     Task<IReadOnlyList<string>> GetUserRoleGroupCodesAsync(Guid userId, CancellationToken cancellationToken = default);
 
-    Task ReplaceRoleAssignmentsAsync(
-        Guid userId,
-        IReadOnlyCollection<Guid> roleIds,
-        IReadOnlyCollection<Guid> roleGroupIds,
-        CancellationToken cancellationToken = default);
+    Task ReplaceRoleAssignmentsAsync(Guid userId,IReadOnlyCollection<Guid> roleIds,IReadOnlyCollection<Guid> roleGroupIds,CancellationToken cancellationToken = default);
 }

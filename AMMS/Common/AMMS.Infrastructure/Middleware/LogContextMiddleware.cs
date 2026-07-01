@@ -21,10 +21,7 @@ namespace AMMS.Infrastructure.Middleware
             _environmentName = hostEnvironment.EnvironmentName;
         }
 
-        public async Task InvokeAsync(
-            HttpContext context,
-            ICurrentUserService currentUserService,
-            ICurrentOrganizationService currentOrganizationService)
+        public async Task InvokeAsync(HttpContext context,ICurrentUserService currentUserService,ICurrentOrganizationService currentOrganizationService)
         {
             var traceId = context.TraceIdentifier;
             var clientIp = context.Connection.RemoteIpAddress?.ToString();

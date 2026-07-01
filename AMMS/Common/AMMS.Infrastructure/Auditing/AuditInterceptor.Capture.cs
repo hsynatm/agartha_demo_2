@@ -20,8 +20,8 @@ namespace AMMS.Infrastructure.Auditing
 		private static readonly string[] SoftDeleteAuditPropertyNames =
 		[
 			nameof(BaseEntity.IsDeleted),
-		nameof(BaseEntity.UpdatedAt),
-		nameof(BaseEntity.UpdatedBy)
+			nameof(BaseEntity.UpdatedAt),
+			nameof(BaseEntity.UpdatedBy)
 		];
 
 		private List<AuditEntry> CaptureEntries(DbContext context)
@@ -125,9 +125,7 @@ namespace AMMS.Infrastructure.Auditing
 				&& !ValuesEqual(isDeletedProperty.OriginalValue, isDeletedProperty.CurrentValue);
 		}
 
-		private static (string? OldValues, string? NewValues, string? ChangedColumns) BuildValueSnapshots(
-			EntityEntry entry,
-			Audit.OperationType operationType)
+		private static (string? OldValues, string? NewValues, string? ChangedColumns) BuildValueSnapshots(EntityEntry entry,Audit.OperationType operationType)
 		{
 			if (operationType == Audit.OperationType.Delete && entry.State == EntityState.Modified)
 			{
@@ -145,8 +143,7 @@ namespace AMMS.Infrastructure.Auditing
 			};
 		}
 
-		private static (string? OldValues, string? NewValues, string? ChangedColumns) BuildSoftDeleteSnapshots(
-			EntityEntry entry)
+		private static (string? OldValues, string? NewValues, string? ChangedColumns) BuildSoftDeleteSnapshots(EntityEntry entry)
 		{
 			var changedProperties = entry.Properties
 				.Where(property => SoftDeleteAuditPropertyNames.Contains(property.Metadata.Name))
@@ -176,8 +173,7 @@ namespace AMMS.Infrastructure.Auditing
 				JsonSerializer.Serialize(changedColumnNames, JsonOptions));
 		}
 
-		private static (string? OldValues, string? NewValues, string? ChangedColumns) BuildUpdateSnapshots(
-			IReadOnlyList<PropertyEntry> auditableProperties)
+		private static (string? OldValues, string? NewValues, string? ChangedColumns) BuildUpdateSnapshots(IReadOnlyList<PropertyEntry> auditableProperties)
 		{
 			var changedProperties = auditableProperties
 				.Where(p => p.IsModified && !ValuesEqual(p.OriginalValue, p.CurrentValue))

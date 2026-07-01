@@ -16,10 +16,7 @@ public static class DependencyInjection
     public const string SchemaName = "UserManagement";
     public const string ModuleName = "UserManagement";
 
-    public static IServiceCollection AddUserManagementInfrastructure(
-        this IServiceCollection services,
-        string connectionString,
-        IConfiguration configuration)
+    public static IServiceCollection AddUserManagementInfrastructure(this IServiceCollection services,string connectionString,IConfiguration configuration)
     {
         services.Configure<KeycloakAdminOptions>(configuration.GetSection(KeycloakAdminOptions.SectionName));
         services.Configure<KeycloakBootstrapOptions>(configuration.GetSection(KeycloakBootstrapOptions.SectionName));

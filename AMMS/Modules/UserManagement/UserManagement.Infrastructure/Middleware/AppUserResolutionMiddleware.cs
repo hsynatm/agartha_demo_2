@@ -17,10 +17,7 @@ public sealed class AppUserResolutionMiddleware
         _next = next;
     }
 
-    public async Task InvokeAsync(
-        HttpContext context,
-        IUserManagementRepository users,
-        IUserManagementUnitOfWork unitOfWork)
+    public async Task InvokeAsync(HttpContext context,IUserManagementRepository users,IUserManagementUnitOfWork unitOfWork)
     {
         var keycloakUserId = KeycloakClaims.GetKeycloakUserId(context.User);
         if (!string.IsNullOrWhiteSpace(keycloakUserId))

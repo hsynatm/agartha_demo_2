@@ -16,9 +16,7 @@ public sealed class AmmsGraylogSchemaEnricher : ILogEventEnricher
     private readonly IHostEnvironment _hostEnvironment;
     private readonly string _source;
 
-    public AmmsGraylogSchemaEnricher(
-        IHttpContextAccessor httpContextAccessor,
-        IHostEnvironment hostEnvironment)
+    public AmmsGraylogSchemaEnricher(IHttpContextAccessor httpContextAccessor,IHostEnvironment hostEnvironment)
     {
         _httpContextAccessor = httpContextAccessor;
         _hostEnvironment = hostEnvironment;

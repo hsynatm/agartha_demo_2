@@ -22,10 +22,7 @@ public sealed class KeycloakUserSyncService : IKeycloakUserSyncService
     private readonly KeycloakAdminOptions _options;
     private readonly ILogger<KeycloakUserSyncService> _logger;
 
-    public KeycloakUserSyncService(
-        HttpClient httpClient,
-        IOptions<KeycloakAdminOptions> options,
-        ILogger<KeycloakUserSyncService> logger)
+    public KeycloakUserSyncService(HttpClient httpClient,IOptions<KeycloakAdminOptions> options,ILogger<KeycloakUserSyncService> logger)
     {
         _httpClient = httpClient;
         _options = options.Value;
@@ -160,18 +157,13 @@ public sealed class KeycloakUserSyncService : IKeycloakUserSyncService
         return tokenResponse.AccessToken;
     }
 
-    private async Task<string?> FindUserIdByUsernameInternalAsync(
-        string username,
-        CancellationToken cancellationToken)
+    private async Task<string?> FindUserIdByUsernameInternalAsync(string username,CancellationToken cancellationToken)
     {
         var token = await GetAdminTokenAsync(cancellationToken);
         return await FindUserIdByUsernameInternalAsync(username, token, cancellationToken);
     }
 
-    private async Task<string?> FindUserIdByUsernameInternalAsync(
-        string username,
-        string token,
-        CancellationToken cancellationToken)
+    private async Task<string?> FindUserIdByUsernameInternalAsync(string username,string token,CancellationToken cancellationToken)
     {
         var url = $"{AdminUsersUrl()}?username={Uri.EscapeDataString(username)}&exact=true";
         using var request = new HttpRequestMessage(HttpMethod.Get, url);
@@ -187,23 +179,17 @@ public sealed class KeycloakUserSyncService : IKeycloakUserSyncService
         return users.FirstOrDefault()?.Id;
     }
 
-    private async Task SetPasswordAsync(
-        string keycloakUserId,
-        string password,
-        string token,
-        CancellationToken cancellationToken)
+    private async Task SetPasswordAsync(string keycloakUserId,string password,string token,CancellationToken cancellationToken)
     {
-        using var request = new HttpRequestMessage(
-            HttpMethod.Put,
-            $"{AdminUserUrl(keycloakUserId)}/reset-password");
+        using var request = new HttpRequestMessage(HttpMethod.Put,$"{AdminUserUrl(keycloakUserId)}/reset-password");
+
         request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
         request.Content = JsonContent.Create(new { type = "password", value = password, temporary = false }, options: JsonOptions);
 
         using var response = await _httpClient.SendAsync(request, cancellationToken);
-        if (!response.IsSuccessStatusCode)
-        {
+        if (!response.IsSuccessStatusCode)        
             throw await CreateKeycloakExceptionAsync("reset-password", keycloakUserId, response, cancellationToken);
-        }
+        
     }
 
     private KeycloakUserRepresentation BuildUserRepresentation(AppUser user) =>
@@ -228,11 +214,7 @@ public sealed class KeycloakUserSyncService : IKeycloakUserSyncService
     private string AdminUserUrl(string keycloakUserId) =>
         $"{AdminUsersUrl()}/{keycloakUserId}";
 
-    private async Task<InvalidOperationException> CreateKeycloakExceptionAsync(
-        string operation,
-        string subject,
-        HttpResponseMessage response,
-        CancellationToken cancellationToken)
+    private async Task<InvalidOperationException> CreateKeycloakExceptionAsync(string operation,string subject,HttpResponseMessage response,CancellationToken cancellationToken)
     {
         var body = await response.Content.ReadAsStringAsync(cancellationToken);
         _logger.LogError(
@@ -245,11 +227,7 @@ public sealed class KeycloakUserSyncService : IKeycloakUserSyncService
         return CreateKeycloakException(operation, subject, response.StatusCode, ParseErrorMessage(body));
     }
 
-    private static InvalidOperationException CreateKeycloakException(
-        string operation,
-        string subject,
-        HttpStatusCode statusCode,
-        string detail) =>
+    private static InvalidOperationException CreateKeycloakException(string operation,string subject,HttpStatusCode statusCode, string detail) =>
         new($"Keycloak user {operation} failed for '{subject}': {statusCode}. {detail}");
 
     private static string ParseErrorMessage(string body)
