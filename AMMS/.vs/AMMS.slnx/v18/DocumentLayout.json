@@ -1,32 +1,7 @@
 {
   "Version": 1,
   "WorkspaceRootPath": "C:\\Agartha_Project\\demo2\\AMMS\\",
-  "Documents": [
-    {
-      "AbsoluteMoniker": "D:0:0:{2E39F5A6-84C4-28CD-F3B9-4E2A1F7E1B42}|Common\\AMMS.Infrastructure\\AMMS.Infrastructure.csproj|c:\\agartha_project\\demo2\\amms\\common\\amms.infrastructure\\authentication\\ammsauthorization.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{2E39F5A6-84C4-28CD-F3B9-4E2A1F7E1B42}|Common\\AMMS.Infrastructure\\AMMS.Infrastructure.csproj|solutionrelative:common\\amms.infrastructure\\authentication\\ammsauthorization.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{2E39F5A6-84C4-28CD-F3B9-4E2A1F7E1B42}|Common\\AMMS.Infrastructure\\AMMS.Infrastructure.csproj|c:\\agartha_project\\demo2\\amms\\common\\amms.infrastructure\\authentication\\ammsauthenticationoptions.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{2E39F5A6-84C4-28CD-F3B9-4E2A1F7E1B42}|Common\\AMMS.Infrastructure\\AMMS.Infrastructure.csproj|solutionrelative:common\\amms.infrastructure\\authentication\\ammsauthenticationoptions.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{2E39F5A6-84C4-28CD-F3B9-4E2A1F7E1B42}|Common\\AMMS.Infrastructure\\AMMS.Infrastructure.csproj|c:\\agartha_project\\demo2\\amms\\common\\amms.infrastructure\\auditing\\auditmodulenames.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{2E39F5A6-84C4-28CD-F3B9-4E2A1F7E1B42}|Common\\AMMS.Infrastructure\\AMMS.Infrastructure.csproj|solutionrelative:common\\amms.infrastructure\\auditing\\auditmodulenames.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{2E39F5A6-84C4-28CD-F3B9-4E2A1F7E1B42}|Common\\AMMS.Infrastructure\\AMMS.Infrastructure.csproj|c:\\agartha_project\\demo2\\amms\\common\\amms.infrastructure\\auditing\\auditinterceptorfactory.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{2E39F5A6-84C4-28CD-F3B9-4E2A1F7E1B42}|Common\\AMMS.Infrastructure\\AMMS.Infrastructure.csproj|solutionrelative:common\\amms.infrastructure\\auditing\\auditinterceptorfactory.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{2E39F5A6-84C4-28CD-F3B9-4E2A1F7E1B42}|Common\\AMMS.Infrastructure\\AMMS.Infrastructure.csproj|c:\\agartha_project\\demo2\\amms\\common\\amms.infrastructure\\auditing\\auditinterceptor.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{2E39F5A6-84C4-28CD-F3B9-4E2A1F7E1B42}|Common\\AMMS.Infrastructure\\AMMS.Infrastructure.csproj|solutionrelative:common\\amms.infrastructure\\auditing\\auditinterceptor.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{2E39F5A6-84C4-28CD-F3B9-4E2A1F7E1B42}|Common\\AMMS.Infrastructure\\AMMS.Infrastructure.csproj|c:\\agartha_project\\demo2\\amms\\common\\amms.infrastructure\\auditing\\auditinterceptor.capture.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{2E39F5A6-84C4-28CD-F3B9-4E2A1F7E1B42}|Common\\AMMS.Infrastructure\\AMMS.Infrastructure.csproj|solutionrelative:common\\amms.infrastructure\\auditing\\auditinterceptor.capture.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    }
-  ],
+  "Documents": [],
   "DocumentGroupContainers": [
     {
       "Orientation": 0,
@@ -34,89 +9,11 @@
       "DocumentGroups": [
         {
           "DockedWidth": 215,
-          "SelectedChildIndex": 1,
+          "SelectedChildIndex": -1,
           "Children": [
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "AmmsAuthorization.cs",
-              "DocumentMoniker": "C:\\Agartha_Project\\demo2\\AMMS\\Common\\AMMS.Infrastructure\\Authentication\\AmmsAuthorization.cs",
-              "RelativeDocumentMoniker": "Common\\AMMS.Infrastructure\\Authentication\\AmmsAuthorization.cs",
-              "ToolTip": "C:\\Agartha_Project\\demo2\\AMMS\\Common\\AMMS.Infrastructure\\Authentication\\AmmsAuthorization.cs",
-              "RelativeToolTip": "Common\\AMMS.Infrastructure\\Authentication\\AmmsAuthorization.cs",
-              "ViewState": "AgIAAEAAAAAAAAAAAAAcwEQAAABOAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-07-02T07:02:06.417Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "AmmsAuthenticationOptions.cs",
-              "DocumentMoniker": "C:\\Agartha_Project\\demo2\\AMMS\\Common\\AMMS.Infrastructure\\Authentication\\AmmsAuthenticationOptions.cs",
-              "RelativeDocumentMoniker": "Common\\AMMS.Infrastructure\\Authentication\\AmmsAuthenticationOptions.cs",
-              "ToolTip": "C:\\Agartha_Project\\demo2\\AMMS\\Common\\AMMS.Infrastructure\\Authentication\\AmmsAuthenticationOptions.cs",
-              "RelativeToolTip": "Common\\AMMS.Infrastructure\\Authentication\\AmmsAuthenticationOptions.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-07-02T07:02:02.477Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "AuditModuleNames.cs",
-              "DocumentMoniker": "C:\\Agartha_Project\\demo2\\AMMS\\Common\\AMMS.Infrastructure\\Auditing\\AuditModuleNames.cs",
-              "RelativeDocumentMoniker": "Common\\AMMS.Infrastructure\\Auditing\\AuditModuleNames.cs",
-              "ToolTip": "C:\\Agartha_Project\\demo2\\AMMS\\Common\\AMMS.Infrastructure\\Auditing\\AuditModuleNames.cs",
-              "RelativeToolTip": "Common\\AMMS.Infrastructure\\Auditing\\AuditModuleNames.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-07-02T07:01:47.606Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "AuditInterceptorFactory.cs",
-              "DocumentMoniker": "C:\\Agartha_Project\\demo2\\AMMS\\Common\\AMMS.Infrastructure\\Auditing\\AuditInterceptorFactory.cs",
-              "RelativeDocumentMoniker": "Common\\AMMS.Infrastructure\\Auditing\\AuditInterceptorFactory.cs",
-              "ToolTip": "C:\\Agartha_Project\\demo2\\AMMS\\Common\\AMMS.Infrastructure\\Auditing\\AuditInterceptorFactory.cs",
-              "RelativeToolTip": "Common\\AMMS.Infrastructure\\Auditing\\AuditInterceptorFactory.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-07-02T07:01:45.455Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "AuditInterceptor.cs",
-              "DocumentMoniker": "C:\\Agartha_Project\\demo2\\AMMS\\Common\\AMMS.Infrastructure\\Auditing\\AuditInterceptor.cs",
-              "RelativeDocumentMoniker": "Common\\AMMS.Infrastructure\\Auditing\\AuditInterceptor.cs",
-              "ToolTip": "C:\\Agartha_Project\\demo2\\AMMS\\Common\\AMMS.Infrastructure\\Auditing\\AuditInterceptor.cs",
-              "RelativeToolTip": "Common\\AMMS.Infrastructure\\Auditing\\AuditInterceptor.cs",
-              "ViewState": "AgIAADIAAAAAAAAAAAAgwAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-07-02T07:01:37.507Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "AuditInterceptor.Capture.cs",
-              "DocumentMoniker": "C:\\Agartha_Project\\demo2\\AMMS\\Common\\AMMS.Infrastructure\\Auditing\\AuditInterceptor.Capture.cs",
-              "RelativeDocumentMoniker": "Common\\AMMS.Infrastructure\\Auditing\\AuditInterceptor.Capture.cs",
-              "ToolTip": "C:\\Agartha_Project\\demo2\\AMMS\\Common\\AMMS.Infrastructure\\Auditing\\AuditInterceptor.Capture.cs",
-              "RelativeToolTip": "Common\\AMMS.Infrastructure\\Auditing\\AuditInterceptor.Capture.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-07-02T07:01:18.807Z",
-              "EditorCaption": ""
             }
           ]
         }
