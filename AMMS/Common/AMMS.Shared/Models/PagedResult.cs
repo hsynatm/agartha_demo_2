@@ -16,6 +16,19 @@
         public bool HasNextPage => Page < TotalPages;
 
         public bool HasPreviousPage => Page > 1;
+
+        public static PagedResult<TDestination> WithMappedItems<TSource, TDestination>(
+            PagedResult<TSource> source,
+            IReadOnlyList<TDestination> items)
+        {
+            return new PagedResult<TDestination>
+            {
+                Items = items,
+                Page = source.Page,
+                PageSize = source.PageSize,
+                TotalCount = source.TotalCount
+            };
+        }
     }
 
 

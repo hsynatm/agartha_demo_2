@@ -50,7 +50,7 @@ namespace AMMS.Infrastructure.Services
                     KeycloakUserId = keycloakUserId,
                     UserName = appUsername
                         ?? principal.Identity?.Name
-                        ?? principal.FindFirstValue("preferred_username")
+                        ?? principal.FindFirstValue(KeycloakClaims.PreferredUsernameClaimType)
                         ?? string.Empty,
                     Email = principal.FindFirstValue(ClaimTypes.Email),
                     Roles = []

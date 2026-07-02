@@ -1,4 +1,5 @@
 using AMMS.Core.Interfaces;
+using AMMS.Shared.Models;
 using UserManagement.Domain.Entities;
 
 namespace UserManagement.Domain.Repositories;
@@ -20,6 +21,8 @@ public interface IUserManagementRepository : IRepository<AppUser>
     Task<IReadOnlyList<AppUser>> GetActiveUsersForKeycloakBootstrapAsync(CancellationToken cancellationToken = default);
 
     Task<AppUser?> GetByIdWithAssignmentsAsync(Guid id, CancellationToken cancellationToken = default);
+
+    Task<PagedResult<AppUser>> GetPagedWithAssignmentsAsync(int page, int pageSize, CancellationToken cancellationToken = default);
 
     Task<bool> UsernameExistsAsync(string username, Guid? excludeUserId = null, CancellationToken cancellationToken = default);
 

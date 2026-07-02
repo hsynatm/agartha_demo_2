@@ -1,4 +1,5 @@
 using AMMS.Infrastructure.Persistence;
+using AMMS.Shared.Models;
 using Microsoft.EntityFrameworkCore;
 using UserManagement.Domain.Entities;
 using UserManagement.Domain.Repositories;
@@ -88,13 +89,32 @@ public class UserManagementRepository : EfRepository<AppUser>, IUserManagementRe
             .ToListAsync(cancellationToken);
 
     public async Task<AppUser?> GetByIdWithAssignmentsAsync(Guid id, CancellationToken cancellationToken = default) =>
-        await _context.Users
-            .AsNoTracking()
-            .Include(user => user.UserRoles)
-            .ThenInclude(userRole => userRole.Role)
-            .Include(user => user.UserRoleGroups)
-            .ThenInclude(userRoleGroup => userRoleGroup.RoleGroup)
+        await UsersWithAssignmentsQuery()
             .FirstOrDefaultAsync(user => user.Id == id, cancellationToken);
+
+    public async Task<PagedResult<AppUser>> GetPagedWithAssignmentsAsync(
+        int page,
+        int pageSize,
+        CancellationToken cancellationToken = default)
+    {
+        var normalizedPage = PagingDefaults.NormalizePage(page);
+        var normalizedPageSize = pageSize < 1 ? PagingDefaults.DefaultPageSize : pageSize;
+        var query = UsersWithAssignmentsQuery();
+        var totalCount = await query.CountAsync(cancellationToken);
+        var items = await query
+            .OrderBy(user => user.CreatedAt)
+            .Skip((normalizedPage - 1) * normalizedPageSize)
+            .Take(normalizedPageSize)
+            .ToListAsync(cancellationToken);
+
+        return new PagedResult<AppUser>
+        {
+            Items = items,
+            Page = normalizedPage,
+            PageSize = normalizedPageSize,
+            TotalCount = totalCount
+        };
+    }
 
     public async Task<bool> UsernameExistsAsync(string username,Guid? excludeUserId = null,CancellationToken cancellationToken = default)
     {
@@ -161,4 +181,12 @@ public class UserManagementRepository : EfRepository<AppUser>, IUserManagementRe
                 cancellationToken);
         }
     }
+
+    private IQueryable<AppUser> UsersWithAssignmentsQuery() =>
+        _context.Users
+            .AsNoTracking()
+            .Include(user => user.UserRoles)
+            .ThenInclude(userRole => userRole.Role)
+            .Include(user => user.UserRoleGroups)
+            .ThenInclude(userRoleGroup => userRoleGroup.RoleGroup);
 }

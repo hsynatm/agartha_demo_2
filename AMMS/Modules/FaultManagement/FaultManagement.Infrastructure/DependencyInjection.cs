@@ -3,7 +3,6 @@ using FaultManagement.Domain.Persistence;
 using FaultManagement.Domain.Repositories;
 using FaultManagement.Infrastructure.Persistence;
 using FaultManagement.Infrastructure.Repository;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace FaultManagement.Infrastructure;
@@ -15,11 +14,7 @@ public static class DependencyInjection
 
     public static IServiceCollection AddFaultManagementInfrastructure(this IServiceCollection services, string connectionString)
     {
-        services.AddDbContext<FaultManagementDbContext>((serviceProvider, options) =>
-        {
-            options.UseNpgsql(connectionString);
-            options.UseAmmsAuditInterceptor(serviceProvider, ModuleName);
-        });
+        services.AddAmmsModuleDbContext<FaultManagementDbContext>(connectionString, ModuleName);
 
         services.AddScoped<IFaultManagementRepository, FaultManagementRepository>();
         services.AddScoped<IFaultManagementUnitOfWork, FaultManagementUnitOfWork>();

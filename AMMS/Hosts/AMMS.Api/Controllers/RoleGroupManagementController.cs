@@ -19,39 +19,29 @@ public class RoleGroupManagementController : ApiBaseController
     }
 
     [HttpGet]
-    public async Task<ActionResult<PagedResult<RoleGroupDto>>> GetPaged([FromQuery] PagedRequest request, CancellationToken cancellationToken)
-    {
-        var result = await _service.GetPagedAsync(request, cancellationToken);
-        return Ok(result);
-    }
+    public Task<ActionResult<PagedResult<RoleGroupDto>>> GetPaged(
+        [FromQuery] PagedRequest request,
+        CancellationToken cancellationToken) =>
+        OkPagedAsync(ct => _service.GetPagedAsync(request, ct), cancellationToken);
 
     [HttpGet("{id:guid}")]
-    public async Task<ActionResult<RoleGroupDto>> GetById(Guid id, CancellationToken cancellationToken)
-    {
-        var result = await _service.GetByIdAsync(id, cancellationToken);
-        return Ok(result);
-    }
+    public Task<ActionResult<RoleGroupDto>> GetById(Guid id, CancellationToken cancellationToken) =>
+        OkByIdAsync(_service.GetByIdAsync, id, cancellationToken);
 
     [HttpPost]
-    public async Task<ActionResult<RoleGroupDto>> Create([FromBody] CreateRoleGroupDto request, CancellationToken cancellationToken)
-    {
-        EnsureValidRequest(request);
-        var result = await _service.CreateAsync(request, cancellationToken);
-        return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
-    }
+    public Task<ActionResult<RoleGroupDto>> Create(
+        [FromBody] CreateRoleGroupDto request,
+        CancellationToken cancellationToken) =>
+        CreatedAtGetByIdAsync(request, _service.CreateAsync, result => result.Id, nameof(GetById), cancellationToken);
 
     [HttpPut("{id:guid}")]
-    public async Task<ActionResult<RoleGroupDto>> Update(Guid id, [FromBody] UpdateRoleGroupDto request, CancellationToken cancellationToken)
-    {
-        EnsureValidRequest(request);
-        var result = await _service.UpdateAsync(id, request, cancellationToken);
-        return Ok(result);
-    }
+    public Task<ActionResult<RoleGroupDto>> Update(
+        Guid id,
+        [FromBody] UpdateRoleGroupDto request,
+        CancellationToken cancellationToken) =>
+        OkValidatedAsync(request, _service.UpdateAsync, id, cancellationToken);
 
     [HttpDelete("{id:guid}")]
-    public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken)
-    {
-        await _service.DeleteAsync(id, cancellationToken);
-        return NoContent();
-    }
+    public Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken) =>
+        NoContentDeleteAsync(_service.DeleteAsync, id, cancellationToken);
 }

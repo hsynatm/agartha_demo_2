@@ -1,6 +1,7 @@
 using AutoMapper;
 using AMMS.Core.Exceptions;
 using AMMS.Core.Localization;
+using AMMS.Core.Services;
 using AMMS.Shared.Models;
 using MaintenanceManagement.Application.Dtos;
 using MaintenanceManagement.Domain.Enums;
@@ -21,14 +22,12 @@ public class MaintenanceManagementService : IMaintenanceManagementService
 
     public async Task<WorkOrderDto> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        var entity = await _unitOfWork.WorkOrders.GetByIdWithDetailsAsync(id, cancellationToken);
-        if (entity is null)
-        {
-            throw AmmsException.NotFound.ForEntity(
-                LocalizationKeys.Modules.MaintenanceManagement.NotFound,
-                LocalizationKeys.Modules.MaintenanceManagement.ErrorCodes.NotFound,
-                id);
-        }
+        var entity = await EntityServiceHelpers.RequireAsync(
+            _unitOfWork.WorkOrders.GetByIdWithDetailsAsync,
+            id,
+            LocalizationKeys.Modules.MaintenanceManagement.NotFound,
+            LocalizationKeys.Modules.MaintenanceManagement.ErrorCodes.NotFound,
+            cancellationToken);
 
         return _mapper.Map<WorkOrderDto>(entity);
     }
@@ -38,14 +37,7 @@ public class MaintenanceManagementService : IMaintenanceManagementService
         CancellationToken cancellationToken = default)
     {
         var paged = await _unitOfWork.WorkOrders.GetPagedAsync(request.Page, request.PageSize, cancellationToken);
-
-        return new PagedResult<WorkOrderDto>
-        {
-            Items = _mapper.Map<List<WorkOrderDto>>(paged.Items),
-            Page = paged.Page,
-            PageSize = paged.PageSize,
-            TotalCount = paged.TotalCount
-        };
+        return PagedResult<WorkOrderDto>.WithMappedItems(paged, _mapper.Map<List<WorkOrderDto>>(paged.Items));
     }
 
     public async Task<WorkOrderDto> CreateAsync(WorkOrderDto request, CancellationToken cancellationToken = default)
@@ -65,14 +57,12 @@ public class MaintenanceManagementService : IMaintenanceManagementService
         WorkOrderDto request,
         CancellationToken cancellationToken = default)
     {
-        var entity = await _unitOfWork.WorkOrders.GetByIdAsync(id, cancellationToken);
-        if (entity is null)
-        {
-            throw AmmsException.NotFound.ForEntity(
-                LocalizationKeys.Modules.MaintenanceManagement.NotFound,
-                LocalizationKeys.Modules.MaintenanceManagement.ErrorCodes.NotFound,
-                id);
-        }
+        var entity = await EntityServiceHelpers.RequireAsync(
+            _unitOfWork.WorkOrders.GetByIdAsync,
+            id,
+            LocalizationKeys.Modules.MaintenanceManagement.NotFound,
+            LocalizationKeys.Modules.MaintenanceManagement.ErrorCodes.NotFound,
+            cancellationToken);
 
         if (entity.Status is WorkOrderStatus.Closed or WorkOrderStatus.Cancelled)
         {
@@ -93,14 +83,12 @@ public class MaintenanceManagementService : IMaintenanceManagementService
 
     public async Task DeleteAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        var entity = await _unitOfWork.WorkOrders.GetByIdAsync(id, cancellationToken);
-        if (entity is null)
-        {
-            throw AmmsException.NotFound.ForEntity(
-                LocalizationKeys.Modules.MaintenanceManagement.NotFound,
-                LocalizationKeys.Modules.MaintenanceManagement.ErrorCodes.NotFound,
-                id);
-        }
+        var entity = await EntityServiceHelpers.RequireAsync(
+            _unitOfWork.WorkOrders.GetByIdAsync,
+            id,
+            LocalizationKeys.Modules.MaintenanceManagement.NotFound,
+            LocalizationKeys.Modules.MaintenanceManagement.ErrorCodes.NotFound,
+            cancellationToken);
 
         _unitOfWork.WorkOrders.Remove(entity);
         await _unitOfWork.SaveChangesAsync(cancellationToken);

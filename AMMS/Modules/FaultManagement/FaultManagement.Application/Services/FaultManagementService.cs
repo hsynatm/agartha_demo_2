@@ -1,9 +1,9 @@
 using AutoMapper;
 using AMMS.Core.Exceptions;
 using AMMS.Core.Localization;
+using AMMS.Core.Services;
 using AMMS.Shared.Models;
 using FaultManagement.Application.Dtos;
-using FaultManagement.Application.Services;
 using FaultManagement.Domain.Entities;
 using FaultManagement.Domain.Enums;
 using FaultManagement.Domain.Persistence;
@@ -23,14 +23,12 @@ public class FaultManagementService : IFaultManagementService
 
     public async Task<FaultReportDto> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        var entity = await _unitOfWork.FaultReports.GetByIdWithDetailsAsync(id, cancellationToken);
-        if (entity is null)
-        {
-            throw AmmsException.NotFound.ForEntity(
-                LocalizationKeys.Modules.FaultManagement.NotFound,
-                LocalizationKeys.Modules.FaultManagement.ErrorCodes.NotFound,
-                id);
-        }
+        var entity = await EntityServiceHelpers.RequireAsync(
+            _unitOfWork.FaultReports.GetByIdWithDetailsAsync,
+            id,
+            LocalizationKeys.Modules.FaultManagement.NotFound,
+            LocalizationKeys.Modules.FaultManagement.ErrorCodes.NotFound,
+            cancellationToken);
 
         return _mapper.Map<FaultReportDto>(entity);
     }
@@ -40,14 +38,7 @@ public class FaultManagementService : IFaultManagementService
         CancellationToken cancellationToken = default)
     {
         var paged = await _unitOfWork.FaultReports.GetPagedAsync(request.Page, request.PageSize, cancellationToken);
-
-        return new PagedResult<FaultReportDto>
-        {
-            Items = _mapper.Map<List<FaultReportDto>>(paged.Items),
-            Page = paged.Page,
-            PageSize = paged.PageSize,
-            TotalCount = paged.TotalCount
-        };
+        return PagedResult<FaultReportDto>.WithMappedItems(paged, _mapper.Map<List<FaultReportDto>>(paged.Items));
     }
 
     public async Task<FaultReportDto> CreateAsync(
@@ -74,14 +65,12 @@ public class FaultManagementService : IFaultManagementService
         FaultReportDto request,
         CancellationToken cancellationToken = default)
     {
-        var entity = await _unitOfWork.FaultReports.GetByIdAsync(id, cancellationToken);
-        if (entity is null)
-        {
-            throw AmmsException.NotFound.ForEntity(
-                LocalizationKeys.Modules.FaultManagement.NotFound,
-                LocalizationKeys.Modules.FaultManagement.ErrorCodes.NotFound,
-                id);
-        }
+        var entity = await EntityServiceHelpers.RequireAsync(
+            _unitOfWork.FaultReports.GetByIdAsync,
+            id,
+            LocalizationKeys.Modules.FaultManagement.NotFound,
+            LocalizationKeys.Modules.FaultManagement.ErrorCodes.NotFound,
+            cancellationToken);
 
         if (entity.Status == FaultStatus.Closed)
         {
@@ -100,14 +89,12 @@ public class FaultManagementService : IFaultManagementService
 
     public async Task DeleteAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        var entity = await _unitOfWork.FaultReports.GetByIdAsync(id, cancellationToken);
-        if (entity is null)
-        {
-            throw AmmsException.NotFound.ForEntity(
-                LocalizationKeys.Modules.FaultManagement.NotFound,
-                LocalizationKeys.Modules.FaultManagement.ErrorCodes.NotFound,
-                id);
-        }
+        var entity = await EntityServiceHelpers.RequireAsync(
+            _unitOfWork.FaultReports.GetByIdAsync,
+            id,
+            LocalizationKeys.Modules.FaultManagement.NotFound,
+            LocalizationKeys.Modules.FaultManagement.ErrorCodes.NotFound,
+            cancellationToken);
 
         _unitOfWork.FaultReports.Remove(entity);
         await _unitOfWork.SaveChangesAsync(cancellationToken);

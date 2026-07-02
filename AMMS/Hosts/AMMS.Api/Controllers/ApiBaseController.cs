@@ -1,6 +1,7 @@
 ﻿using AMMS.Core.Exceptions;
 using AMMS.Core.Localization;
 using AMMS.Infrastructure.Validation;
+using AMMS.Shared.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,6 +12,51 @@ namespace AMMS.Api.Controllers
     [Authorize]
     public abstract class ApiBaseController : ControllerBase
     {
+        private static readonly string[] RequiredMessageKeywords = ["required"];
+        private static readonly string[] MaxLengthMessageKeywords = ["maximum", "max length", "character"];
+
+        protected async Task<ActionResult<PagedResult<T>>> OkPagedAsync<T>(
+            Func<CancellationToken, Task<PagedResult<T>>> action,
+            CancellationToken cancellationToken) =>
+            Ok(await action(cancellationToken));
+
+        protected async Task<ActionResult<T>> OkByIdAsync<T>(
+            Func<Guid, CancellationToken, Task<T>> action,
+            Guid id,
+            CancellationToken cancellationToken) =>
+            Ok(await action(id, cancellationToken));
+
+        protected async Task<ActionResult<TResult>> CreatedAtGetByIdAsync<TRequest, TResult>(
+            TRequest request,
+            Func<TRequest, CancellationToken, Task<TResult>> action,
+            Func<TResult, Guid?> idSelector,
+            string getByIdActionName,
+            CancellationToken cancellationToken)
+        {
+            EnsureValidRequest(request);
+            var result = await action(request, cancellationToken);
+            return CreatedAtAction(getByIdActionName, new { id = idSelector(result) }, result);
+        }
+
+        protected async Task<ActionResult<TResult>> OkValidatedAsync<TRequest, TResult>(
+            TRequest request,
+            Func<Guid, TRequest, CancellationToken, Task<TResult>> action,
+            Guid id,
+            CancellationToken cancellationToken)
+        {
+            EnsureValidRequest(request);
+            return Ok(await action(id, request, cancellationToken));
+        }
+
+        protected async Task<IActionResult> NoContentDeleteAsync(
+            Func<Guid, CancellationToken, Task> action,
+            Guid id,
+            CancellationToken cancellationToken)
+        {
+            await action(id, cancellationToken);
+            return NoContent();
+        }
+
         protected void EnsureValidRequest(object? model = null)
         {
             if (model is null)
@@ -63,20 +109,21 @@ namespace AMMS.Api.Controllers
                 return LocalizationKeys.Shared.Invalid;
             }
 
-            if (errorMessage.Contains("required", StringComparison.OrdinalIgnoreCase))
+            if (ContainsAnyKeyword(errorMessage, RequiredMessageKeywords))
             {
                 return LocalizationKeys.Shared.Required;
             }
 
-            if (errorMessage.Contains("maximum", StringComparison.OrdinalIgnoreCase)
-                || errorMessage.Contains("max length", StringComparison.OrdinalIgnoreCase)
-                || errorMessage.Contains("character", StringComparison.OrdinalIgnoreCase))
+            if (ContainsAnyKeyword(errorMessage, MaxLengthMessageKeywords))
             {
                 return LocalizationKeys.Shared.MaxLength;
             }
 
             return LocalizationKeys.Shared.Invalid;
         }
+
+        private static bool ContainsAnyKeyword(string message, string[] keywords) =>
+            keywords.Any(keyword => message.Contains(keyword, StringComparison.OrdinalIgnoreCase));
 
         private static string NormalizeFieldName(string modelStateKey)
         {

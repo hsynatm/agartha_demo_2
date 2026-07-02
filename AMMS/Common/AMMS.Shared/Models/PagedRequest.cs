@@ -2,19 +2,19 @@
 {
     public class PagedRequest
     {
-        private int _page = 1;
-        private int _pageSize = 10;
+        private int _page = PagingDefaults.DefaultPage;
+        private int _pageSize = PagingDefaults.DefaultPageSize;
 
         public int Page
         {
             get => _page;
-            set => _page = value < 1 ? 1 : value;
+            set => _page = PagingDefaults.NormalizePage(value);
         }
 
         public int PageSize
         {
             get => _pageSize;
-            set => _pageSize = value < 1 ? 10 : value > 100 ? 100 : value;
+            set => _pageSize = PagingDefaults.NormalizePageSize(value);
         }
     }
 }

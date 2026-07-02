@@ -16,43 +16,27 @@ public class AssetManagementController : ApiBaseController
     }
 
     [HttpGet]
-    public async Task<ActionResult<PagedResult<AssetDto>>> GetPaged([FromQuery] PagedRequest request,CancellationToken cancellationToken)
-    {
-        var result = await _service.GetPagedAsync(request, cancellationToken);
-        return Ok(result);
-    }
+    public Task<ActionResult<PagedResult<AssetDto>>> GetPaged(
+        [FromQuery] PagedRequest request,
+        CancellationToken cancellationToken) =>
+        OkPagedAsync(ct => _service.GetPagedAsync(request, ct), cancellationToken);
 
     [HttpGet("{id:guid}")]
-    public async Task<ActionResult<AssetDto>> GetById(Guid id, CancellationToken cancellationToken)
-    {
-        var result = await _service.GetByIdAsync(id, cancellationToken);
-        return Ok(result);
-    }
+    public Task<ActionResult<AssetDto>> GetById(Guid id, CancellationToken cancellationToken) =>
+        OkByIdAsync(_service.GetByIdAsync, id, cancellationToken);
 
     [HttpPost]
-    public async Task<ActionResult<AssetDto>> Create([FromBody] AssetDto request, CancellationToken cancellationToken)
-    {
-        EnsureValidRequest(request);
-        var result = await _service.CreateAsync(request, cancellationToken);
-        return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
-    }
+    public Task<ActionResult<AssetDto>> Create([FromBody] AssetDto request, CancellationToken cancellationToken) =>
+        CreatedAtGetByIdAsync(request, _service.CreateAsync, result => result.Id, nameof(GetById), cancellationToken);
 
     [HttpPut("{id:guid}")]
-    public async Task<ActionResult<AssetDto>> Update(Guid id,[FromBody] AssetDto request, CancellationToken cancellationToken)
-    {
-        var resultMevcut = await _service.GetByIdAsync(id, cancellationToken);
-        resultMevcut.Name= request.Name;    
-        resultMevcut.AssetCode= request.AssetCode;
-        EnsureValidRequest(request);
-
-        var result = await _service.UpdateAsync(id, request, cancellationToken);
-        return Ok(result);
-    }
+    public Task<ActionResult<AssetDto>> Update(
+        Guid id,
+        [FromBody] AssetDto request,
+        CancellationToken cancellationToken) =>
+        OkValidatedAsync(request, _service.UpdateAsync, id, cancellationToken);
 
     [HttpDelete("{id:guid}")]
-    public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken)
-    {
-        await _service.DeleteAsync(id, cancellationToken);
-        return NoContent();
-    }
+    public Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken) =>
+        NoContentDeleteAsync(_service.DeleteAsync, id, cancellationToken);
 }

@@ -6,6 +6,7 @@ namespace AMMS.Infrastructure.Authentication;
 
 public static class KeycloakClaims
 {
+    public const string PreferredUsernameClaimType = "preferred_username";
 
     public static string? GetKeycloakUserId(ClaimsPrincipal? principal) => principal?.FindFirstValue(ClaimTypes.NameIdentifier) ?? principal?.FindFirstValue("sub");
 }

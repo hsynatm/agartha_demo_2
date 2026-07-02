@@ -1,4 +1,5 @@
 using AMMS.Infrastructure.Persistence;
+using AMMS.Shared.Models;
 using UserManagement.Domain.Entities;
 using UserManagement.Domain.Repositories;
 using UserManagement.Infrastructure.Persistence;
@@ -19,11 +20,32 @@ public class RoleGroupRepository : EfRepository<RoleGroup>, IRoleGroupRepository
         await _context.RoleGroups.AsNoTracking().FirstOrDefaultAsync(roleGroup => roleGroup.Code == code, cancellationToken);
 
     public async Task<RoleGroup?> GetByIdWithRolesAsync(Guid id, CancellationToken cancellationToken = default) =>
-        await _context.RoleGroups
-            .AsNoTracking()
-            .Include(roleGroup => roleGroup.RoleGroupRoles)
-            .ThenInclude(roleGroupRole => roleGroupRole.Role)
+        await RoleGroupsWithRolesQuery()
             .FirstOrDefaultAsync(roleGroup => roleGroup.Id == id, cancellationToken);
+
+    public async Task<PagedResult<RoleGroup>> GetPagedWithRolesAsync(
+        int page,
+        int pageSize,
+        CancellationToken cancellationToken = default)
+    {
+        var normalizedPage = PagingDefaults.NormalizePage(page);
+        var normalizedPageSize = pageSize < 1 ? PagingDefaults.DefaultPageSize : pageSize;
+        var query = RoleGroupsWithRolesQuery();
+        var totalCount = await query.CountAsync(cancellationToken);
+        var items = await query
+            .OrderBy(roleGroup => roleGroup.CreatedAt)
+            .Skip((normalizedPage - 1) * normalizedPageSize)
+            .Take(normalizedPageSize)
+            .ToListAsync(cancellationToken);
+
+        return new PagedResult<RoleGroup>
+        {
+            Items = items,
+            Page = normalizedPage,
+            PageSize = normalizedPageSize,
+            TotalCount = totalCount
+        };
+    }
 
     public async Task<bool> CodeExistsAsync(string code, Guid? excludeRoleGroupId = null, CancellationToken cancellationToken = default)
     {
@@ -50,4 +72,10 @@ public class RoleGroupRepository : EfRepository<RoleGroup>, IRoleGroupRepository
                 cancellationToken);
         }
     }
+
+    private IQueryable<RoleGroup> RoleGroupsWithRolesQuery() =>
+        _context.RoleGroups
+            .AsNoTracking()
+            .Include(roleGroup => roleGroup.RoleGroupRoles)
+            .ThenInclude(roleGroupRole => roleGroupRole.Role);
 }

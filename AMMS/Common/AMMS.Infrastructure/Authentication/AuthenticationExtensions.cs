@@ -52,7 +52,7 @@ public static class AuthenticationExtensions
                     ValidateIssuerSigningKey = true,
                     ClockSkew = TimeSpan.Zero,
                     ValidAudiences = new[] { authOptions.Audience, "account" },
-                    NameClaimType = "preferred_username",
+                    NameClaimType = KeycloakClaims.PreferredUsernameClaimType,
                     RoleClaimType = ClaimTypes.Role
                 };
 

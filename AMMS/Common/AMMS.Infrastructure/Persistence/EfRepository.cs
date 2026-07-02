@@ -25,8 +25,8 @@ namespace AMMS.Infrastructure.Persistence
 
         public async Task<PagedResult<T>> GetPagedAsync(int page, int pageSize, CancellationToken cancellationToken = default)
         {
-            var normalizedPage = page < 1 ? 1 : page;
-            var normalizedPageSize = pageSize < 1 ? 10 : pageSize;
+            var normalizedPage = PagingDefaults.NormalizePage(page);
+            var normalizedPageSize = pageSize < 1 ? PagingDefaults.DefaultPageSize : pageSize;
 
             var query = _dbSet.AsNoTracking();
             var totalCount = await query.CountAsync(cancellationToken);

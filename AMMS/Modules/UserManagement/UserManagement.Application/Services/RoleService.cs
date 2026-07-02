@@ -1,6 +1,7 @@
 using AutoMapper;
 using AMMS.Core.Exceptions;
 using AMMS.Core.Localization;
+using AMMS.Core.Services;
 using AMMS.Shared.Models;
 using UserManagement.Application.Dtos;
 using UserManagement.Domain.Entities;
@@ -21,14 +22,12 @@ public sealed class RoleService : IRoleService
 
     public async Task<RoleDto> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        var entity = await _unitOfWork.Roles.GetByIdAsync(id, cancellationToken);
-        if (entity is null)
-        {
-            throw AmmsException.NotFound.ForEntity(
-                LocalizationKeys.Modules.UserManagement.RoleNotFound,
-                LocalizationKeys.Modules.UserManagement.ErrorCodes.RoleNotFound,
-                id);
-        }
+        var entity = await EntityServiceHelpers.RequireAsync(
+            _unitOfWork.Roles.GetByIdAsync,
+            id,
+            LocalizationKeys.Modules.UserManagement.RoleNotFound,
+            LocalizationKeys.Modules.UserManagement.ErrorCodes.RoleNotFound,
+            cancellationToken);
 
         return _mapper.Map<RoleDto>(entity);
     }
@@ -36,13 +35,7 @@ public sealed class RoleService : IRoleService
     public async Task<PagedResult<RoleDto>> GetPagedAsync(PagedRequest request, CancellationToken cancellationToken = default)
     {
         var paged = await _unitOfWork.Roles.GetPagedAsync(request.Page, request.PageSize, cancellationToken);
-        return new PagedResult<RoleDto>
-        {
-            Items = _mapper.Map<List<RoleDto>>(paged.Items),
-            Page = paged.Page,
-            PageSize = paged.PageSize,
-            TotalCount = paged.TotalCount
-        };
+        return PagedResult<RoleDto>.WithMappedItems(paged, _mapper.Map<List<RoleDto>>(paged.Items));
     }
 
     public async Task<RoleDto> CreateAsync(CreateRoleDto request, CancellationToken cancellationToken = default)
@@ -67,14 +60,12 @@ public sealed class RoleService : IRoleService
 
     public async Task<RoleDto> UpdateAsync(Guid id, UpdateRoleDto request, CancellationToken cancellationToken = default)
     {
-        var entity = await _unitOfWork.Roles.GetByIdAsync(id, cancellationToken);
-        if (entity is null)
-        {
-            throw AmmsException.NotFound.ForEntity(
-                LocalizationKeys.Modules.UserManagement.RoleNotFound,
-                LocalizationKeys.Modules.UserManagement.ErrorCodes.RoleNotFound,
-                id);
-        }
+        var entity = await EntityServiceHelpers.RequireAsync(
+            _unitOfWork.Roles.GetByIdAsync,
+            id,
+            LocalizationKeys.Modules.UserManagement.RoleNotFound,
+            LocalizationKeys.Modules.UserManagement.ErrorCodes.RoleNotFound,
+            cancellationToken);
 
         _mapper.Map(request, entity);
         _unitOfWork.Roles.Update(entity);
@@ -85,14 +76,12 @@ public sealed class RoleService : IRoleService
 
     public async Task DeleteAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        var entity = await _unitOfWork.Roles.GetByIdAsync(id, cancellationToken);
-        if (entity is null)
-        {
-            throw AmmsException.NotFound.ForEntity(
-                LocalizationKeys.Modules.UserManagement.RoleNotFound,
-                LocalizationKeys.Modules.UserManagement.ErrorCodes.RoleNotFound,
-                id);
-        }
+        var entity = await EntityServiceHelpers.RequireAsync(
+            _unitOfWork.Roles.GetByIdAsync,
+            id,
+            LocalizationKeys.Modules.UserManagement.RoleNotFound,
+            LocalizationKeys.Modules.UserManagement.ErrorCodes.RoleNotFound,
+            cancellationToken);
 
         _unitOfWork.Roles.Remove(entity);
         await _unitOfWork.SaveChangesAsync(cancellationToken);

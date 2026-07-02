@@ -5,7 +5,6 @@ using UserManagement.Domain.Repositories;
 using UserManagement.Infrastructure.Keycloak;
 using UserManagement.Infrastructure.Persistence;
 using UserManagement.Infrastructure.Repository;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -20,11 +19,7 @@ public static class DependencyInjection
     {
         services.Configure<KeycloakAdminOptions>(configuration.GetSection(KeycloakAdminOptions.SectionName));
         services.Configure<KeycloakBootstrapOptions>(configuration.GetSection(KeycloakBootstrapOptions.SectionName));
-        services.AddDbContext<UserManagementDbContext>((serviceProvider, options) =>
-        {
-            options.UseNpgsql(connectionString);
-            options.UseAmmsAuditInterceptor(serviceProvider, ModuleName);
-        });
+        services.AddAmmsModuleDbContext<UserManagementDbContext>(connectionString, ModuleName);
 
         services.AddScoped<IUserManagementRepository, UserManagementRepository>();
         services.AddScoped<IRoleRepository, RoleRepository>();

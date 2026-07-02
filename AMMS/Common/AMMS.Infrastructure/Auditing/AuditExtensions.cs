@@ -19,5 +19,20 @@ namespace AMMS.Infrastructure.Auditing
             var auditInterceptorFactory = serviceProvider.GetRequiredService<AuditInterceptorFactory>();
             return options.AddInterceptors(auditInterceptorFactory.Create(serviceProvider, moduleName));
         }
+
+        public static IServiceCollection AddAmmsModuleDbContext<TContext>(
+            this IServiceCollection services,
+            string connectionString,
+            string moduleName)
+            where TContext : DbContext
+        {
+            services.AddDbContext<TContext>((serviceProvider, options) =>
+            {
+                options.UseNpgsql(connectionString);
+                options.UseAmmsAuditInterceptor(serviceProvider, moduleName);
+            });
+
+            return services;
+        }
     }
 }

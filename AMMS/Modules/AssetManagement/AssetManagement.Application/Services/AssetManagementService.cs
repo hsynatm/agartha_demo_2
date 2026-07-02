@@ -1,6 +1,7 @@
 using AutoMapper;
 using AMMS.Core.Exceptions;
 using AMMS.Core.Localization;
+using AMMS.Core.Services;
 using AMMS.Shared.Models;
 using AssetManagement.Application.Dtos;
 using AssetManagement.Domain.Persistence;
@@ -20,14 +21,12 @@ public class AssetManagementService : IAssetManagementService
 
     public async Task<AssetDto> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        var entity = await _unitOfWork.Assets.GetByIdWithDetailsAsync(id, cancellationToken);
-        if (entity is null)
-        {
-            throw AmmsException.NotFound.ForEntity(
-                LocalizationKeys.Modules.AssetManagement.NotFound,
-                LocalizationKeys.Modules.AssetManagement.ErrorCodes.NotFound,
-                id);
-        }
+        var entity = await EntityServiceHelpers.RequireAsync(
+            _unitOfWork.Assets.GetByIdWithDetailsAsync,
+            id,
+            LocalizationKeys.Modules.AssetManagement.NotFound,
+            LocalizationKeys.Modules.AssetManagement.ErrorCodes.NotFound,
+            cancellationToken);
 
         return _mapper.Map<AssetDto>(entity);
     }
@@ -37,14 +36,7 @@ public class AssetManagementService : IAssetManagementService
         CancellationToken cancellationToken = default)
     {
         var paged = await _unitOfWork.Assets.GetPagedAsync(request.Page, request.PageSize, cancellationToken);
-
-        return new PagedResult<AssetDto>
-        {
-            Items = _mapper.Map<List<AssetDto>>(paged.Items),
-            Page = paged.Page,
-            PageSize = paged.PageSize,
-            TotalCount = paged.TotalCount
-        };
+        return PagedResult<AssetDto>.WithMappedItems(paged, _mapper.Map<List<AssetDto>>(paged.Items));
     }
 
     public async Task<AssetDto> CreateAsync(AssetDto request, CancellationToken cancellationToken = default)
@@ -62,14 +54,12 @@ public class AssetManagementService : IAssetManagementService
         AssetDto request,
         CancellationToken cancellationToken = default)
     {
-        var entity = await _unitOfWork.Assets.GetByIdAsync(id, cancellationToken);
-        if (entity is null)
-        {
-            throw AmmsException.NotFound.ForEntity(
-                LocalizationKeys.Modules.AssetManagement.NotFound,
-                LocalizationKeys.Modules.AssetManagement.ErrorCodes.NotFound,
-                id);
-        }
+        var entity = await EntityServiceHelpers.RequireAsync(
+            _unitOfWork.Assets.GetByIdAsync,
+            id,
+            LocalizationKeys.Modules.AssetManagement.NotFound,
+            LocalizationKeys.Modules.AssetManagement.ErrorCodes.NotFound,
+            cancellationToken);
 
         _mapper.Map(request, entity);
         _unitOfWork.Assets.Update(entity);
@@ -80,14 +70,12 @@ public class AssetManagementService : IAssetManagementService
 
     public async Task DeleteAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        var entity = await _unitOfWork.Assets.GetByIdAsync(id, cancellationToken);
-        if (entity is null)
-        {
-            throw AmmsException.NotFound.ForEntity(
-                LocalizationKeys.Modules.AssetManagement.NotFound,
-                LocalizationKeys.Modules.AssetManagement.ErrorCodes.NotFound,
-                id);
-        }
+        var entity = await EntityServiceHelpers.RequireAsync(
+            _unitOfWork.Assets.GetByIdAsync,
+            id,
+            LocalizationKeys.Modules.AssetManagement.NotFound,
+            LocalizationKeys.Modules.AssetManagement.ErrorCodes.NotFound,
+            cancellationToken);
 
         _unitOfWork.Assets.Remove(entity);
         await _unitOfWork.SaveChangesAsync(cancellationToken);

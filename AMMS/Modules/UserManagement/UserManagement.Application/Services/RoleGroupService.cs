@@ -1,6 +1,7 @@
 using AutoMapper;
 using AMMS.Core.Exceptions;
 using AMMS.Core.Localization;
+using AMMS.Core.Services;
 using AMMS.Shared.Models;
 using UserManagement.Application.Dtos;
 using UserManagement.Domain.Entities;
@@ -21,36 +22,25 @@ public sealed class RoleGroupService : IRoleGroupService
 
     public async Task<RoleGroupDto> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        var entity = await _unitOfWork.RoleGroups.GetByIdWithRolesAsync(id, cancellationToken);
-        if (entity is null)
-        {
-            throw AmmsException.NotFound.ForEntity(
-                LocalizationKeys.Modules.UserManagement.RoleGroupNotFound,
-                LocalizationKeys.Modules.UserManagement.ErrorCodes.RoleGroupNotFound,
-                id);
-        }
+        var entity = await EntityServiceHelpers.RequireAsync(
+            _unitOfWork.RoleGroups.GetByIdWithRolesAsync,
+            id,
+            LocalizationKeys.Modules.UserManagement.RoleGroupNotFound,
+            LocalizationKeys.Modules.UserManagement.ErrorCodes.RoleGroupNotFound,
+            cancellationToken);
 
         return MapRoleGroup(entity);
     }
 
     public async Task<PagedResult<RoleGroupDto>> GetPagedAsync(PagedRequest request, CancellationToken cancellationToken = default)
     {
-        var paged = await _unitOfWork.RoleGroups.GetPagedAsync(request.Page, request.PageSize, cancellationToken);
-        var items = new List<RoleGroupDto>(paged.Items.Count);
+        var paged = await _unitOfWork.RoleGroups.GetPagedWithRolesAsync(
+            request.Page,
+            request.PageSize,
+            cancellationToken);
 
-        foreach (var roleGroup in paged.Items)
-        {
-            var detailed = await _unitOfWork.RoleGroups.GetByIdWithRolesAsync(roleGroup.Id, cancellationToken);
-            items.Add(MapRoleGroup(detailed ?? roleGroup));
-        }
-
-        return new PagedResult<RoleGroupDto>
-        {
-            Items = items,
-            Page = paged.Page,
-            PageSize = paged.PageSize,
-            TotalCount = paged.TotalCount
-        };
+        var items = paged.Items.Select(MapRoleGroup).ToList();
+        return PagedResult<RoleGroupDto>.WithMappedItems(paged, items);
     }
 
     public async Task<RoleGroupDto> CreateAsync(CreateRoleGroupDto request, CancellationToken cancellationToken = default)
@@ -64,7 +54,7 @@ public sealed class RoleGroupService : IRoleGroupService
                 errorCode: LocalizationKeys.Modules.UserManagement.ErrorCodes.DuplicateRoleGroupCode);
         }
 
-        var roleIds = await ResolveRoleIdsAsync(request.Roles, cancellationToken);
+        var roleIds = await RoleCodeResolver.ResolveRoleIdsAsync(_unitOfWork.Roles, request.Roles, cancellationToken);
         var entity = _mapper.Map<RoleGroup>(request);
         entity.Code = code;
 
@@ -79,16 +69,14 @@ public sealed class RoleGroupService : IRoleGroupService
 
     public async Task<RoleGroupDto> UpdateAsync(Guid id, UpdateRoleGroupDto request, CancellationToken cancellationToken = default)
     {
-        var entity = await _unitOfWork.RoleGroups.GetByIdAsync(id, cancellationToken);
-        if (entity is null)
-        {
-            throw AmmsException.NotFound.ForEntity(
-                LocalizationKeys.Modules.UserManagement.RoleGroupNotFound,
-                LocalizationKeys.Modules.UserManagement.ErrorCodes.RoleGroupNotFound,
-                id);
-        }
+        var entity = await EntityServiceHelpers.RequireAsync(
+            _unitOfWork.RoleGroups.GetByIdAsync,
+            id,
+            LocalizationKeys.Modules.UserManagement.RoleGroupNotFound,
+            LocalizationKeys.Modules.UserManagement.ErrorCodes.RoleGroupNotFound,
+            cancellationToken);
 
-        var roleIds = await ResolveRoleIdsAsync(request.Roles, cancellationToken);
+        var roleIds = await RoleCodeResolver.ResolveRoleIdsAsync(_unitOfWork.Roles, request.Roles, cancellationToken);
         _mapper.Map(request, entity);
         await _unitOfWork.RoleGroups.ReplaceRoleAssignmentsAsync(entity.Id, roleIds, cancellationToken);
         _unitOfWork.RoleGroups.Update(entity);
@@ -99,39 +87,15 @@ public sealed class RoleGroupService : IRoleGroupService
 
     public async Task DeleteAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        var entity = await _unitOfWork.RoleGroups.GetByIdAsync(id, cancellationToken);
-        if (entity is null)
-        {
-            throw AmmsException.NotFound.ForEntity(
-                LocalizationKeys.Modules.UserManagement.RoleGroupNotFound,
-                LocalizationKeys.Modules.UserManagement.ErrorCodes.RoleGroupNotFound,
-                id);
-        }
+        var entity = await EntityServiceHelpers.RequireAsync(
+            _unitOfWork.RoleGroups.GetByIdAsync,
+            id,
+            LocalizationKeys.Modules.UserManagement.RoleGroupNotFound,
+            LocalizationKeys.Modules.UserManagement.ErrorCodes.RoleGroupNotFound,
+            cancellationToken);
 
         _unitOfWork.RoleGroups.Remove(entity);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
-    }
-
-    private async Task<IReadOnlyCollection<Guid>> ResolveRoleIdsAsync(
-        IReadOnlyCollection<string> roleCodes,
-        CancellationToken cancellationToken)
-    {
-        var roleIds = new List<Guid>();
-        foreach (var code in roleCodes.Distinct(StringComparer.OrdinalIgnoreCase))
-        {
-            var role = await _unitOfWork.Roles.GetByCodeAsync(code, cancellationToken);
-            if (role is null)
-            {
-                throw new AmmsException.Business(
-                    LocalizationKeys.Modules.UserManagement.RoleNotFound,
-                    messageArgs: new { Code = code },
-                    errorCode: LocalizationKeys.Modules.UserManagement.ErrorCodes.RoleNotFound);
-            }
-
-            roleIds.Add(role.Id);
-        }
-
-        return roleIds;
     }
 
     private RoleGroupDto MapRoleGroup(RoleGroup entity)

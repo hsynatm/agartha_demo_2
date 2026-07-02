@@ -19,39 +19,29 @@ public class RoleManagementController : ApiBaseController
     }
 
     [HttpGet]
-    public async Task<ActionResult<PagedResult<RoleDto>>> GetPaged([FromQuery] PagedRequest request, CancellationToken cancellationToken)
-    {
-        var result = await _service.GetPagedAsync(request, cancellationToken);
-        return Ok(result);
-    }
+    public Task<ActionResult<PagedResult<RoleDto>>> GetPaged(
+        [FromQuery] PagedRequest request,
+        CancellationToken cancellationToken) =>
+        OkPagedAsync(ct => _service.GetPagedAsync(request, ct), cancellationToken);
 
     [HttpGet("{id:guid}")]
-    public async Task<ActionResult<RoleDto>> GetById(Guid id, CancellationToken cancellationToken)
-    {
-        var result = await _service.GetByIdAsync(id, cancellationToken);
-        return Ok(result);
-    }
+    public Task<ActionResult<RoleDto>> GetById(Guid id, CancellationToken cancellationToken) =>
+        OkByIdAsync(_service.GetByIdAsync, id, cancellationToken);
 
     [HttpPost]
-    public async Task<ActionResult<RoleDto>> Create([FromBody] CreateRoleDto request, CancellationToken cancellationToken)
-    {
-        EnsureValidRequest(request);
-        var result = await _service.CreateAsync(request, cancellationToken);
-        return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
-    }
+    public Task<ActionResult<RoleDto>> Create(
+        [FromBody] CreateRoleDto request,
+        CancellationToken cancellationToken) =>
+        CreatedAtGetByIdAsync(request, _service.CreateAsync, result => result.Id, nameof(GetById), cancellationToken);
 
     [HttpPut("{id:guid}")]
-    public async Task<ActionResult<RoleDto>> Update(Guid id, [FromBody] UpdateRoleDto request, CancellationToken cancellationToken)
-    {
-        EnsureValidRequest(request);
-        var result = await _service.UpdateAsync(id, request, cancellationToken);
-        return Ok(result);
-    }
+    public Task<ActionResult<RoleDto>> Update(
+        Guid id,
+        [FromBody] UpdateRoleDto request,
+        CancellationToken cancellationToken) =>
+        OkValidatedAsync(request, _service.UpdateAsync, id, cancellationToken);
 
     [HttpDelete("{id:guid}")]
-    public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken)
-    {
-        await _service.DeleteAsync(id, cancellationToken);
-        return NoContent();
-    }
+    public Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken) =>
+        NoContentDeleteAsync(_service.DeleteAsync, id, cancellationToken);
 }
