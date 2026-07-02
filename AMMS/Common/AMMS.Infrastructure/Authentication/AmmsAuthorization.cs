@@ -5,10 +5,6 @@ using Microsoft.AspNetCore.Http;
 
 namespace AMMS.Infrastructure.Authentication;
 
-/// <summary>
-/// PostgreSQL-backed authorization. Roles and role groups are evaluated from the database, not JWT claims.
-/// When both are specified, the user needs any matching role or any matching role group (OR).
-/// </summary>
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = true, Inherited = true)]
 public sealed class AmmsAuthorizeAttribute : AuthorizeAttribute, IAuthorizationRequirementData
 {
@@ -63,9 +59,7 @@ public sealed class AmmsPermissionAuthorizationHandler : AuthorizationHandler<Am
         _httpContextAccessor = httpContextAccessor;
     }
 
-    protected override async Task HandleRequirementAsync(
-        AuthorizationHandlerContext context,
-        AmmsPermissionRequirement requirement)
+    protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context,AmmsPermissionRequirement requirement)
     {
         if (context.User.Identity?.IsAuthenticated != true)
         {

@@ -20,11 +20,7 @@ namespace AMMS.Infrastructure.Auditing
             return options.AddInterceptors(auditInterceptorFactory.Create(serviceProvider, moduleName));
         }
 
-        public static IServiceCollection AddAmmsModuleDbContext<TContext>(
-            this IServiceCollection services,
-            string connectionString,
-            string moduleName)
-            where TContext : DbContext
+        public static IServiceCollection AddAmmsModuleDbContext<TContext>(this IServiceCollection services,string connectionString,string moduleName) where TContext : DbContext
         {
             services.AddDbContext<TContext>((serviceProvider, options) =>
             {
